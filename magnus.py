@@ -51,7 +51,7 @@ class Chess:
                 piece = None
             l = 11 + (i//8)*10 + i%8
             print(i, piece, l)
-            launchOut.send_message([NOTE_ON, l, colors[piece] if piece else 0])
+            launchOut.send_message([NOTE_ON, l, colors[piece] if piece else 0 if (i + i//8) % 2 == 0 else 1])
         
     def __call__(self, event, data=None):
         message, deltatime = event
