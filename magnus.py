@@ -22,7 +22,7 @@ colors = {
 'k': 51,
 }
 
-sf = chess.engine.SimpleEngine.popen_uci('/home/harpo/Downloads/stockfish_20090216_x64_avx2')
+sf = chess.engine.SimpleEngine.popen_uci('stockfish_20090216_x64_avx2')
     # parameters={'Threads':24}
 
 class Chess:
