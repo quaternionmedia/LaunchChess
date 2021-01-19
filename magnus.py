@@ -23,7 +23,7 @@ colors = {
 }
 
 sf = chess.engine.SimpleEngine.popen_uci('./stockfish_20090216_x64_avx2')
-sf.configure({'Threads':24, 'UCI_LimitStrength':100})
+sf.configure({'Threads':1, 'UCI_LimitStrength':True, 'UCI_Elo':1350})
 
 class Chess:
     def __init__(self, invert=False):
@@ -73,7 +73,7 @@ class Chess:
         launchOut.send_message([NOTE_ON | 2, self.nToLaunch(lastMove.from_square), 70])
         launchOut.send_message([NOTE_ON | 2, self.nToLaunch(lastMove.to_square), colors[self.board.piece_at(lastMove.to_square).symbol()]])
     def engineMove(self):
-        move = sf.play(c.board, chess.engine.Limit(time=1)).move
+        move = sf.play(c.board, chess.engine.Limit(time=0)).move
         print('stockfish moved', move)
         c.board.push(move)
         c.lightBoard()
