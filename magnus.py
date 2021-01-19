@@ -28,14 +28,14 @@ sf.configure({'Threads':24, 'UCI_LimitStrength':100})
 class Chess:
     def __init__(self, args=None):
         self.args = args
-        self.board = Board(chess.STARTING_FEN)
-        self.live = True
         self.selected = False
         self.moved = False
         self.invert = False
+        self.live = True
         self.toggleLive()
         self.grid()
-        self.fen(self.board.fen())
+        self.board = Board(chess.STARTING_FEN)
+        self.lightBoard()
     def toggleLive(self):
         # switch to / from programming / Live mode
         launchOut.send_message([240, 0, 32, 41, 2, 12, 14, 1 if self.live else 0, 247])
@@ -46,8 +46,7 @@ class Chess:
         for y in range(8):
             for x in range(8):
                 launchOut.send_message([NOTE_ON, 11+x+y*10, 0 if (x+y) % 2 == 0 else 1])
-    def fen(self, fen):
-        self.board = Board(fen)
+    def lightBoard(self):
         for i in range(64):
             if self.board.piece_at(i):
                 piece = self.board.piece_at(i).symbol()
@@ -82,14 +81,13 @@ class Chess:
                 # print('checking if ', move.uci(), ' is legal')
                 if move.uci() in legal_moves:
                     self.board.push(move)
-                    self.fen(self.board.fen())
-                    self.board = Board(self.board.fen())
+                    self.lightBoard()
                     self.selected = False
                     self.moved = True
                 else:
                     print('illegal move', move.uci())
                     self.selected = False
-                    self.fen(self.board.fen())
+                    self.lightBoard()
             else:
                 if self.board.piece_at(63 - s if self.invert else s):
                     # select square
