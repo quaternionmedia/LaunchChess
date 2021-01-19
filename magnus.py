@@ -64,7 +64,14 @@ class Chess:
             l = self.nToLaunch(i)
             # print(i, piece, l)
             launchOut.send_message([NOTE_ON, l, colors[piece] if piece else 0 if (i + i//8) % 2 == 0 else 1])
-        
+        if len(self.board.move_stack):
+            self.highlightMove(-1)
+            if len(self.board.move_stack) > 1:
+                self.highlightMove(-2)
+    def highlightMove(self, move):
+        lastMove = self.board.move_stack[move]
+        launchOut.send_message([NOTE_ON | 2, self.nToLaunch(lastMove.from_square), 70])
+        launchOut.send_message([NOTE_ON | 2, self.nToLaunch(lastMove.to_square), colors[self.board.piece_at(lastMove.to_square).symbol()]])
     def engineMove(self):
         move = sf.play(c.board, chess.engine.Limit(time=1)).move
         print('stockfish moved', move)
