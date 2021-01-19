@@ -60,6 +60,11 @@ class Chess:
             # print(i, piece, l)
             launchOut.send_message([NOTE_ON, l, colors[piece] if piece else 0 if (i + i//8) % 2 == 0 else 1])
         
+    def engineMove(self):
+        move = sf.play(c.board, chess.engine.Limit(time=1)).move
+        print('stockfish moved', move)
+        c.board.push(move)
+        c.lightBoard()
     def __call__(self, event, data=None):
         message, deltatime = event
         if message[0] == NOTE_ON and message[2]:
@@ -101,22 +106,14 @@ if __name__ == '__main__':
     if random() > .5:
         # switch sides
         c.invert = True
-        c.fen(c.board.fen())
-        move = sf.play(c.board, chess.engine.Limit(time=1)).move
-        print('stockfish moved', move)
-        c.board.push(move)
-        c.fen(c.board.fen())
+        c.engineMove()
     try:
         while not c.board.is_game_over():
             if c.moved:
-                move = sf.play(c.board, chess.engine.Limit(time=1)).move
-                # move = sf.get_best_move_time(1000)
-                print('stockfish moved', move)
-                c.board.push(move)
-                c.fen(c.board.fen())
+                c.engineMove()
                 c.moved = False
             else:
-                sleep(1)
+                sleep(.1)
     except KeyboardInterrupt:
         print('')
     finally:
