@@ -33,6 +33,7 @@ class Chess:
         self.live = True
         self.selected = False
         self.moved = False
+        self.invert = False
         self.toggleLive()
         self.grid()
         self.fen(self.board.fen())
@@ -53,7 +54,10 @@ class Chess:
                 piece = self.board.piece_at(i).symbol()
             else:
                 piece = None
-            l = 11 + (i//8)*10 + i%8
+            if self.invert: 
+                l = 11 + ((63-i)//8)*10 + (63-i)%8
+            else:
+                l = 11 + (i//8)*10 + i%8
             # print(i, piece, l)
             launchOut.send_message([NOTE_ON, l, colors[piece] if piece else 0 if (i + i//8) % 2 == 0 else 1])
         
@@ -70,7 +74,7 @@ class Chess:
                 # move selected to square
                 print('moving', self.selected, 'to', s)
                 legal_moves = [i.uci() for i in self.board.legal_moves]
-                move = chess.Move.from_uci(self.selected + square)
+                move = chess.Move(self.selected , 63 - s if self.invert else s)
                 # print('checking if ', move.uci(), ' is legal')
                 if move.uci() in legal_moves:
                     self.board.push(move)
@@ -83,9 +87,9 @@ class Chess:
                     self.selected = False
                     self.fen(self.board.fen())
             else:
-                if self.board.piece_at(s):
+                if self.board.piece_at(63 - s if self.invert else s):
                     # select square
-                    self.selected = square
+                    self.selected = 63 - s if self.invert else s
                     launchOut.send_message([NOTE_ON, message[1], 21])
             
 if __name__ == '__main__':
@@ -94,6 +98,15 @@ if __name__ == '__main__':
     c = Chess()
     launchIn.set_callback(c, 0)
     moved = False
+    from random import random
+    if random() > .5:
+        # switch sides
+        c.invert = True
+        c.fen(c.board.fen())
+        move = sf.play(c.board, chess.engine.Limit(time=1)).move
+        print('stockfish moved', move)
+        c.board.push(move)
+        c.fen(c.board.fen())
     try:
         while not c.board.is_game_over():
             if c.moved:
