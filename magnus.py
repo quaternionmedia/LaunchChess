@@ -71,7 +71,8 @@ class Chess:
     def highlightMove(self, move):
         lastMove = self.board.move_stack[move]
         launchOut.send_message([NOTE_ON | 2, self.nToLaunch(lastMove.from_square), 70])
-        launchOut.send_message([NOTE_ON | 2, self.nToLaunch(lastMove.to_square), colors[self.board.piece_at(lastMove.to_square).symbol()]])
+        if self.board.piece_at(lastMove.to_square):
+            launchOut.send_message([NOTE_ON | 2, self.nToLaunch(lastMove.to_square), colors[self.board.piece_at(lastMove.to_square).symbol()]])
     def engineMove(self):
         move = sf.play(c.board, chess.engine.Limit(time=0)).move
         print('stockfish moved', move)
