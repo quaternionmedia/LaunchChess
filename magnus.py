@@ -26,11 +26,10 @@ sf = chess.engine.SimpleEngine.popen_uci('./stockfish_20090216_x64_avx2')
 sf.configure({'Threads':24, 'UCI_LimitStrength':100})
 
 class Chess:
-    def __init__(self, args=None):
-        self.args = args
+    def __init__(self, invert=False):
+        self.invert = invert
         self.selected = False
         self.moved = False
-        self.invert = False
         self.live = True
         self.toggleLive()
         self.grid()
@@ -100,13 +99,11 @@ class Chess:
 if __name__ == '__main__':
     launchOut, p = open_midioutput('Launchpad X:Launchpad X MIDI 2', client_name='launchOut')
     launchIn, p = open_midiinput('Launchpad X:Launchpad X MIDI 2', client_name='launchIn')
-    c = Chess()
+    from random import choice
+    c = Chess(invert=choice([True, False]))
     launchIn.set_callback(c, 0)
-    moved = False
-    from random import random
-    if random() > .5:
-        # switch sides
-        c.invert = True
+    if c.invert:
+        # if playing as black, engine move first
         c.engineMove()
     try:
         while not c.board.is_game_over():
