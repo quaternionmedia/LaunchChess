@@ -82,11 +82,12 @@ class Chess:
         message, deltatime = event
         if message[0] == NOTE_ON and message[2]:
             s = self.launchToN(message[1])
-            print('touched', s)
+            # print('touched', s)
+            legal_moves = [i.uci() for i in self.board.legal_moves]
+            # print('legal moves', legal_moves)
             if self.selected:
                 # move selected to square
                 print('moving', self.selected, 'to', s)
-                legal_moves = [i.uci() for i in self.board.legal_moves]
                 move = chess.Move(self.selected , s)
                 # print('checking if ', move.uci(), ' is legal')
                 if move.uci() in legal_moves:
@@ -102,7 +103,15 @@ class Chess:
                 if self.board.piece_at(s):
                     # select square
                     self.selected = s
+                    square = ascii_lowercase[s%8] + str(1+s//8)
+                    print('selected square', square)
                     launchOut.send_message([NOTE_ON, message[1], 21])
+                    pieceMoves = [i[2:] for i in legal_moves if i[:2] == square]
+                    print('possible moves:', pieceMoves)
+                    for m in pieceMoves:
+                        sq = 8*(int(m[1])-1) + ord(m[0])-97
+                        launchOut.send_message([NOTE_ON | 2, self.nToLaunch(sq), 21])
+                    
             
 if __name__ == '__main__':
     launchOut, p = open_midioutput('Launchpad X:Launchpad X MIDI 2', client_name='launchOut')
