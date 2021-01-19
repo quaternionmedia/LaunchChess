@@ -23,7 +23,7 @@ colors = {
 }
 
 sf = chess.engine.SimpleEngine.popen_uci('./stockfish_20090216_x64_avx2')
-    # parameters={'Threads':24}
+sf.configure({'Threads':24, 'UCI_LimitStrength':100})
 
 class Chess:
     def __init__(self, args=None):
