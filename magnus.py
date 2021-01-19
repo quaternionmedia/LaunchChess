@@ -40,6 +40,16 @@ class Chess:
         # switch to / from programming / Live mode
         launchOut.send_message([240, 0, 32, 41, 2, 12, 14, 1 if self.live else 0, 247])
         self.live = not self.live
+    def nToLaunch(self, n):
+        # 0-63 mapped to launchpad notes
+        if self.invert: 
+            return 11 + ((63-n)//8)*10 + (63-n)%8
+        else:
+            return 11 + (n//8)*10 + n%8
+    def launchToN(self, n):
+        # launchpad note mapped to 0-63
+        s = (n-11)//10*8 + (n-11) % 10        
+        return 63 - s if self.invert else s
     def exit(self):
         self.toggleLive()
     def grid(self):
@@ -52,10 +62,7 @@ class Chess:
                 piece = self.board.piece_at(i).symbol()
             else:
                 piece = None
-            if self.invert: 
-                l = 11 + ((63-i)//8)*10 + (63-i)%8
-            else:
-                l = 11 + (i//8)*10 + i%8
+            l = self.nToLaunch(i)
             # print(i, piece, l)
             launchOut.send_message([NOTE_ON, l, colors[piece] if piece else 0 if (i + i//8) % 2 == 0 else 1])
         
@@ -67,17 +74,13 @@ class Chess:
     def __call__(self, event, data=None):
         message, deltatime = event
         if message[0] == NOTE_ON and message[2]:
-            n = message[1] - 11
-            rank = n//10
-            file = n % 10
-            square = ascii_lowercase[file] + str(rank+1)
-            s = rank*8 + file
-            print('touched', n, rank, file, square, s)
+            s = self.launchToN(message[1])
+            print('touched', s)
             if self.selected:
                 # move selected to square
                 print('moving', self.selected, 'to', s)
                 legal_moves = [i.uci() for i in self.board.legal_moves]
-                move = chess.Move(self.selected , 63 - s if self.invert else s)
+                move = chess.Move(self.selected , s)
                 # print('checking if ', move.uci(), ' is legal')
                 if move.uci() in legal_moves:
                     self.board.push(move)
@@ -89,9 +92,9 @@ class Chess:
                     self.selected = False
                     self.lightBoard()
             else:
-                if self.board.piece_at(63 - s if self.invert else s):
+                if self.board.piece_at(s):
                     # select square
-                    self.selected = 63 - s if self.invert else s
+                    self.selected = s
                     launchOut.send_message([NOTE_ON, message[1], 21])
             
 if __name__ == '__main__':
