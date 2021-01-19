@@ -1,6 +1,5 @@
 import chess
 from chess import Board
-from stockfish import Stockfish
 from rtmidi.midiutil import open_midioutput, open_midiinput
 from time import sleep
 from rtmidi.midiconstants import NOTE_ON, NOTE_OFF, CONTROL_CHANGE
