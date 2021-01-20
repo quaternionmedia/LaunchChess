@@ -91,7 +91,7 @@ class Chess:
                 print('moving', self.selected, 'to', s)
                 if self.board.piece_at(self.selected).piece_type == chess.PAWN:
                     p = self.board.piece_at(self.selected)
-                    if (p.color and s//8 == 7) or (s//8 == 0 != p.color ):
+                    if (p.color and s//8 == 7) or (s//8 == 0 and not p.color ):
                         print('promotion! Auto promote to Queen')
                         move = chess.Move(self.selected , s, promotion=chess.QUEEN)
                     else:
