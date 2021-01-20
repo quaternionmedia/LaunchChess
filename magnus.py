@@ -5,6 +5,7 @@ from time import sleep
 from rtmidi.midiconstants import NOTE_ON, NOTE_OFF, CONTROL_CHANGE
 from string import ascii_lowercase
 import chess.engine
+import config
 
 colors = {
 '': 0,
@@ -22,7 +23,7 @@ colors = {
 'k': 51,
 }
 
-sf = chess.engine.SimpleEngine.popen_uci('./stockfish_20090216_x64_avx2')
+sf = chess.engine.SimpleEngine.popen_uci(config.STOCKFISH)
 sf.configure({'Threads':1, 'UCI_LimitStrength':True, 'UCI_Elo':1350})
 
 class Chess:
