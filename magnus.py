@@ -69,6 +69,7 @@ class Chess:
             self.highlightMove(-1)
             if len(self.board.move_stack) > 1:
                 self.highlightMove(-2)
+        launchOut.send_message([NOTE_ON, 99, 3 if self.board.turn else 83])
     def highlightMove(self, move):
         lastMove = self.board.move_stack[move]
         if not self.board.piece_at(lastMove.from_square):
