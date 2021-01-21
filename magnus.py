@@ -77,7 +77,7 @@ class Chess:
         if self.board.piece_at(lastMove.to_square):
             launchOut.send_message([NOTE_ON | 2, self.nToLaunch(lastMove.to_square), colors[self.board.piece_at(lastMove.to_square).symbol()]])
     def engineMove(self):
-        move = sf.play(c.board, chess.engine.Limit(time=0)).move
+        move = sf.play(c.board, chess.engine.Limit(time=1, depth=1, nodes=1)).move
         print('stockfish moved', move)
         c.board.push(move)
         c.lightBoard()
@@ -139,7 +139,8 @@ if __name__ == '__main__':
                 c.engineMove()
                 c.moved = False
             else:
-                sleep(.1)
+                sleep(1)
+            
     except KeyboardInterrupt:
         print('')
     finally:
