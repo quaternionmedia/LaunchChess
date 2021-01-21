@@ -71,7 +71,8 @@ class Chess:
                 self.highlightMove(-2)
     def highlightMove(self, move):
         lastMove = self.board.move_stack[move]
-        launchOut.send_message([NOTE_ON | 2, self.nToLaunch(lastMove.from_square), 70])
+        if not self.board.piece_at(lastMove.from_square):
+            launchOut.send_message([NOTE_ON | 2, self.nToLaunch(lastMove.from_square), 70])
         if self.board.piece_at(lastMove.to_square):
             launchOut.send_message([NOTE_ON | 2, self.nToLaunch(lastMove.to_square), colors[self.board.piece_at(lastMove.to_square).symbol()]])
     def engineMove(self):
