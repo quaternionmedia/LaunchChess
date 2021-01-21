@@ -88,9 +88,9 @@ class Chess:
             # print('touched', s)
             legal_moves = [i.uci() for i in self.board.legal_moves]
             # print('legal moves', legal_moves)
-            if self.selected:
+            if self.selected is not None:
                 # move selected to square
-                print('moving', self.selected, 'to', s)
+                print('moving', chess.square_name(self.selected), chess.square_name(s))
                 if self.board.piece_at(self.selected).piece_type == chess.PAWN:
                     p = self.board.piece_at(self.selected)
                     if (p.color and s//8 == 7) or (s//8 == 0 and not p.color ):
@@ -104,11 +104,11 @@ class Chess:
                 if move.uci() in legal_moves:
                     self.board.push(move)
                     self.lightBoard()
-                    self.selected = False
+                    self.selected = None
                     self.moved = True
                 else:
                     print('illegal move', move.uci())
-                    self.selected = False
+                    self.selected = None
                     self.lightBoard()
             else:
                 if self.board.piece_at(s):
