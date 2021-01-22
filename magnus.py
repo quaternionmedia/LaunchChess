@@ -126,9 +126,12 @@ class Chess:
             if message[1] == 93:
                 # undo move
                 self.board.pop()
-                self.lightBoard()
-                self.moved = self.board.turn == self.invert
                 self.selected = None
+                self.lightBoard()
+                self.moved = False
+            elif message[1] == 94:
+                # force move
+                self.engineMove()
             
                     
             
