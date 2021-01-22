@@ -121,7 +121,10 @@ class Chess:
                     print('possible moves:', pieceMoves)
                     for m in pieceMoves:
                         sq = 8*(int(m[1])-1) + ord(m[0])-97
-                        launchOut.send_message([NOTE_ON | 2, self.nToLaunch(sq), 21])
+                        if self.board.piece_at(sq) and self.board.piece_at(sq).color == self.invert:
+                            launchOut.send_message([NOTE_ON | 1, self.nToLaunch(sq), 5])
+                        else:
+                            launchOut.send_message([NOTE_ON | 2, self.nToLaunch(sq), 21])
         elif message[0] == CONTROL_CHANGE and message[2]:
             if message[1] == 93:
                 # undo move
