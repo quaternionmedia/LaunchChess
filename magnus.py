@@ -29,7 +29,7 @@ sf.configure({'Threads':1, 'UCI_LimitStrength':True, 'UCI_Elo':1350})
 class Chess:
     def __init__(self, invert=False):
         self.invert = invert
-        self.selected = False
+        self.selected = None
         self.moved = False
         self.live = True
         self.toggleLive()
@@ -136,10 +136,11 @@ if __name__ == '__main__':
     try:
         while not c.board.is_game_over():
             if c.moved:
+                sleep(1)
                 c.engineMove()
                 c.moved = False
             else:
-                sleep(1)
+                sleep(.1)
             
     except KeyboardInterrupt:
         print('')
