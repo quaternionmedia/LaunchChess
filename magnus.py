@@ -122,6 +122,14 @@ class Chess:
                     for m in pieceMoves:
                         sq = 8*(int(m[1])-1) + ord(m[0])-97
                         launchOut.send_message([NOTE_ON | 2, self.nToLaunch(sq), 21])
+        elif message[0] == CONTROL_CHANGE and message[2]:
+            if message[1] == 93:
+                # undo move
+                self.board.pop()
+                self.lightBoard()
+                self.moved = self.board.turn == self.invert
+                self.selected = None
+            
                     
             
 if __name__ == '__main__':
