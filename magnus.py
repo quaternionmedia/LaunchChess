@@ -76,6 +76,8 @@ class Chess:
             launchOut.send_message([NOTE_ON | 2, self.nToLaunch(lastMove.from_square), 70])
         if self.board.piece_at(lastMove.to_square):
             launchOut.send_message([NOTE_ON | 2, self.nToLaunch(lastMove.to_square), colors[self.board.piece_at(lastMove.to_square).symbol()]])
+        if self.board.is_check():
+            launchOut.send_message([NOTE_ON | 1, self.nToLaunch(self.board.king(self.board.turn)), 5])
     def engineMove(self):
         move = sf.play(c.board, chess.engine.Limit(time=1, depth=1, nodes=1)).move
         print('stockfish moved', move)
