@@ -42,13 +42,13 @@ class Chess:
         self.live = not self.live
     def nToLaunch(self, n):
         # 0-63 mapped to launchpad notes
-        if self.invert: 
+        if self.invert:
             return 11 + ((63-n)//8)*10 + (63-n)%8
         else:
             return 11 + (n//8)*10 + n%8
     def launchToN(self, n):
         # launchpad note mapped to 0-63
-        s = (n-11)//10*8 + (n-11) % 10        
+        s = (n-11)//10*8 + (n-11) % 10
         return 63 - s if self.invert else s
     def exit(self):
         self.toggleLive()
@@ -113,8 +113,8 @@ class Chess:
                     self.selected = None
                     self.lightBoard()
             else:
-                if self.board.piece_at(s):
-                    # select square
+                if self.board.piece_at(s) and self.board.piece_at(s).color == self.board.turn:
+                    # select piece
                     self.selected = s
                     square = ascii_lowercase[s%8] + str(1+s//8)
                     print('selected square', square)
@@ -134,9 +134,9 @@ class Chess:
             elif message[1] == 94:
                 # force move
                 self.engineMove()
-            
-                    
-            
+
+
+
 if __name__ == '__main__':
     launchOut, p = open_midioutput('Launchpad X:Launchpad X MIDI 2', client_name='launchOut')
     launchIn, p = open_midiinput('Launchpad X:Launchpad X MIDI 2', client_name='launchIn')
@@ -154,7 +154,7 @@ if __name__ == '__main__':
                 c.moved = False
             else:
                 sleep(.1)
-            
+
     except KeyboardInterrupt:
         print('')
     finally:
