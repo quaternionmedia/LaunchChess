@@ -1,0 +1,22 @@
+body {
+  width: 100vw;
+  background: #222;
+  color: #ddd;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+
+}
+.layout {
+  margin: 1em auto;
+}
+
+.menu {
+  display: flex;
+  justify-content: space-between;
+  margin: 1em 1em .5em;
+  padding: .5em 1em;
+  background: #8883;
+} 
