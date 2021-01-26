@@ -43,9 +43,8 @@ class Chess:
     def nToLaunch(self, n):
         # 0-63 mapped to launchpad notes
         if self.invert:
-            return 11 + ((63-n)//8)*10 + (63-n)%8
-        else:
-            return 11 + (n//8)*10 + n%8
+            n = 63 - n
+        return 11 + (n//8)*10 + n%8
     def launchToN(self, n):
         # launchpad note mapped to 0-63
         s = (n-11)//10*8 + (n-11) % 10
@@ -118,7 +117,7 @@ class Chess:
                     self.selected = s
                     square = ascii_lowercase[s%8] + str(1+s//8)
                     print('selected square', square)
-                    launchOut.send_message([NOTE_ON, message[1], 21])
+                    launchOut.send_message([NOTE_ON | 1, message[1], 21])
                     pieceMoves = [i[2:] for i in legal_moves if i[:2] == square]
                     print('possible moves:', pieceMoves)
                     for m in pieceMoves:
