@@ -36,7 +36,7 @@ export function Layout() {
     view: vnode => {
       return m('main.layout', {}, [
         m('nav.menu', {}, m(Menu)),
-        m('section', vnode.children)
+        m('section', vnode.attrs, vnode.children)
       ])
     }
   }
