@@ -5,6 +5,7 @@ if [ $1 = "version" -o $1 = "v" -o $1 = "-v" ]; then
 
 elif [ $1 = "install" -o $1 = "i" ]; then
   pip install -r requirements.txt
+  shift
   docker run -it -v $(pwd)/web:/app -w /app node:current-alpine yarn add "$@"
 
 elif [ $1 = "build" ]; then
