@@ -20,3 +20,9 @@ a {
   padding: .5em 1em;
   background: #8883;
 } 
+
+.board {
+  width: 100vw;
+  height: 100vw;
+  
+}

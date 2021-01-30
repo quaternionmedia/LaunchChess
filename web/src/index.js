@@ -1,7 +1,7 @@
 import m from 'mithril'
 import { Layout } from './Menu'
 import WebMidi from 'webmidi'
-
+import { Board } from './Board'
 import './style.css'
 
 export function Home() {
@@ -12,7 +12,6 @@ export function Home() {
   }
 }
 export function Connect() {
-  function 
   return {
     oninit: vnode => {
       WebMidi.enable(function (err) {
@@ -40,5 +39,6 @@ console.log('magnus started!')
 m.route(document.body, '/', {
   '/': { render: () => m(Layout, m(Home))},
   '/connect': { render: () => m(Layout, m(Connect))},
+  '/board': { render: () => m(Layout, m(Board))},
 
 })

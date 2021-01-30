@@ -15,6 +15,7 @@
   "author": "Harpo",
   "license": "MIT",
   "dependencies": {
+    "chessground": "^7.9.3",
     "mithril": "^2.0.4",
     "webmidi": "^2.5.1"
   },
