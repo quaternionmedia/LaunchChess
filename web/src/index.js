@@ -58,7 +58,7 @@ export function Connect() {
     },
     
     view: vnode => {
-      return m('#connect', {}, input && output ? 'connected!' : 'disconnected')
+      return m('.status', {class: input && output ? 'connected' : 'disconnected'}, '')
     }
   }
 }

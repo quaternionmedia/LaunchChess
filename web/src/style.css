@@ -26,3 +26,17 @@ a {
   height: 100vw;
   
 }
+.status {
+  height: 1em;
+  width: 1em;
+  border-radius: 50%;
+  border: solid;
+  border-width: .15em;
+  border-color: white;
+}
+.connected {
+  background-color: green;
+}
+.disconnected {
+  background-color: red;
+}
