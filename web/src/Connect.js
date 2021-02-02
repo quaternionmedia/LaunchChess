@@ -70,6 +70,13 @@ export function Connect() {
       }
     }, true)
   }
+  const find_piece = piece => {
+    return [].concat(...chess.board()).map((p, index) => {
+      if (p !== null && p.type === piece.type && p.color === piece.color) {
+        return index
+      }})
+    }
+
     function nToLaunch(n) {
       // 0-63 mapped to launchpad notes
       if (invert) {
