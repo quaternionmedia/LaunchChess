@@ -10,10 +10,16 @@ export function Connect() {
     connected = !connected
     output.sendSysex([0, 32, 41], [2, 12, 14, connected ? 1 : 0])
   }
-  function exit() {
-    if (connected) toggleLive()
+  function connect() {
+    input = WebMidi.getInputByName(deviceName)
+    output = WebMidi.getOutputByName(deviceName)
+    console.log('connecting', input, output)
   }
-  function midiConnect() {
+  function close() {
+    if (connected) toggleLive()
+    input, output = null
+  }
+  function init() {
     WebMidi.enable(function (err) {
       console.log(WebMidi.inputs)
       console.log(WebMidi.outputs)
@@ -50,14 +56,14 @@ export function Connect() {
       
       window.onunload = e => {
         console.log('unloading')
-        exit()
+        close()
       }
     }, true)
   }
 
   return {
     oninit: vnode => {
-      midiConnect()
+      init()
     },
     
     view: vnode => {
@@ -67,10 +73,13 @@ export function Connect() {
           onclick: e => {
             if (connected) {
               console.log('disconnecting')
-              exit()
+              close()
               m.redraw()
             } else {
-              midiConnect()
+              console.log('connecting')
+              connect()
+              toggleLive()
+              m.redraw()
             }
           },
         }, input && output ? 'disconnect' : 'connect')
