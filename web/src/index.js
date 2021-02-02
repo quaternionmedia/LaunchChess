@@ -16,7 +16,10 @@ export function Home() {
 export function Connect() {
   var input, output
   var connected = false
-  
+  function toggleLive() {
+    connected = !connected
+    output.sendSysex([0, 32, 41], [2, 12, 14, connected ? 1 : 0])
+  }
   function midiConnect() {
     WebMidi.enable(function (err) {
       console.log(WebMidi.inputs)
@@ -27,7 +30,8 @@ export function Connect() {
           if (e.port.type == 'output') {
             output = e.port
             console.log('output', output)
-            output.playNote('F4')
+            // output.playNote('F4')
+            toggleLive()
           } else {
             input = e.port
             console.log('input', input)
@@ -43,13 +47,19 @@ export function Connect() {
         if (e.port.name == deviceName) {
           if (e.port.type == 'output') {
             output = null
+            connected = false
           } else {
             input = null
           }
           m.redraw()
         }
       })
-    })
+      
+      window.onunload = e => {
+        console.log('unloading')
+        if (connected) toggleLive()
+      }
+    }, true)
   }
 
   return {

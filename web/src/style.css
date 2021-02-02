@@ -31,7 +31,7 @@ a {
   width: 1em;
   border-radius: 50%;
   border: solid;
-  border-width: .15em;
+  border-width: .1em;
   border-color: white;
 }
 .connected {
