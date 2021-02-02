@@ -63,7 +63,7 @@ export function Connect() {
     view: vnode => {
       return [
         m('.status', {class: input && output ? 'connected' : 'disconnected'}, ''),
-        m('input[type=button].button', {
+        m('button.button', {
           onclick: e => {
             if (connected) {
               console.log('disconnecting')

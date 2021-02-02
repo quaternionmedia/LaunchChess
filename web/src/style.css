@@ -26,7 +26,12 @@ a {
   height: 100vw;
   
 }
+.button {
+  display: inline-flex;
+}
 .status {
+  display: inline-flex;
+  margin-right: 1em;
   height: 1em;
   width: 1em;
   border-radius: 50%;
