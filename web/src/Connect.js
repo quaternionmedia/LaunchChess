@@ -1,11 +1,19 @@
 import m from 'mithril'
 import WebMidi from 'webmidi'
+import { Board } from './Board'
+import { Chess } from 'chess.js'
 
 const deviceName = 'Launchpad X MIDI 2'
+const NOTE_ON = 144
+
+const colors = {'': 0,'P': 13,'R': 9,'N': 45,'B': 37,'K': 49,'Q': 53,'p': 15,'r': 11,'n': 47,'b': 39,'q': 55,'k': 51}
 
 export function Connect() {
   var input, output
-  var connected = false
+  var connected, invert = false
+  var chess = new Chess()
+  
+  
   function toggleLive() {
     connected = !connected
     output.sendSysex([0, 32, 41], [2, 12, 14, connected ? 1 : 0])
@@ -31,6 +39,8 @@ export function Connect() {
             console.log('output', output)
             // output.playNote('F4')
             toggleLive()
+            lightBoard()
+
           } else {
             input = e.port
             console.log('input', input)
@@ -60,6 +70,41 @@ export function Connect() {
       }
     }, true)
   }
+    function nToLaunch(n) {
+      // 0-63 mapped to launchpad notes
+      if (invert) {
+        n = 63 - n
+      }
+      return 11 + (n>>3)*10 + n%8
+    }
+    function launchToN(n) {
+  
+      // launchpad note mapped to 0-63
+      s = Math.floor(n-11/ 10)*8 + (n-11) % 10
+      return invert ? 63 - s : s
+    }
+    function grid() {
+          for (var y=0; y<8; y++) {
+              for (var x=0; x<8; x++) {
+                  output.send(NOTE_ON, [11+x+y*10, (x+y) % 2 == 0 ? 0 : 1])
+                }
+              }
+            }
+      function lightBoard() {
+          for (var i=0; i< 64; i++) {
+              if (chess.board()[i >> 3][i % 8]) {
+                var piece = chess.board()[i >> 3][i % 8]
+                console.log('piece at i', i, piece)
+              } else {
+                  var piece = null
+                }
+              var l = nToLaunch(i)
+              console.log(i, piece, l)
+              console.log(NOTE_ON, l, piece ? colors[piece.type] : (i + (i >> 3)) % 2 == 0 ? 0 : 1)
+
+              output.send(NOTE_ON, [l, piece ? colors[piece.type] : (i + (i >> 3)) % 2 == 0 ? 0 : 1])
+              }
+  }
 
   return {
     oninit: vnode => {
@@ -79,6 +124,7 @@ export function Connect() {
               console.log('connecting')
               connect()
               toggleLive()
+              lightBoard()
               m.redraw()
             }
           },
