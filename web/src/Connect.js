@@ -71,10 +71,12 @@ export function Connect() {
     }, true)
   }
   const find_piece = piece => {
-    return [].concat(...chess.board()).map((p, index) => {
+    const index = null
+    chess.board().map((p, i) => {
       if (p !== null && p.type === piece.type && p.color === piece.color) {
-        return index
+        index = i
       }})
+      return index
     }
     
     function nToLaunch(n) {
