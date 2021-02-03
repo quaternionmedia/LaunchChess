@@ -103,9 +103,10 @@ export function Connect() {
       }
     }
     function lightBoard() {
-      for (var i=0; i< 64; i++) {
-        if (chess.board()[i >> 3][i % 8]) {
-          var piece = chess.board()[i >> 3][i % 8]
+      const board = chess.board()
+      for (var i=0; i<64; i++) {
+        if (board[(63-i) >> 3][i % 8]) {
+          var piece = board[(63-i) >> 3][i % 8]
           console.log('piece at i', i, piece)
         } else {
           var piece = null
