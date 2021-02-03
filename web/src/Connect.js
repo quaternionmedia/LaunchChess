@@ -189,7 +189,7 @@ export function Connect() {
               output.send(NOTE_ON | 1, [nToLaunch(squareToN(p.to)), 21])
             } else {
               console.log('regular move', p.to, squareToN(p.to), nToLaunch(squareToN(p.to)))
-              output.send(NOTE_ON, [nToLaunch(squareToN(p.to)), 21])
+              output.send(NOTE_ON | 2, [nToLaunch(squareToN(p.to)), 21])
             }
           })
         }
