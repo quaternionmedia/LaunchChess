@@ -216,6 +216,7 @@ export function Connect() {
         case 93: {
           //undo move
           chess.undo()
+          selected, square = null
           lightBoard()
           break
         }
