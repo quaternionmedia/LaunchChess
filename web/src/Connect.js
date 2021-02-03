@@ -85,9 +85,8 @@ export function Connect() {
       return 11 + (n>>3)*10 + n%8
     }
     function launchToN(n) {
-      
       // launchpad note mapped to 0-63
-      s = Math.floor(n-11/ 10)*8 + (n-11) % 10
+      const s = Math.floor((n-11)/ 10)*8 + (n-11) % 10
       return invert ? 63 - s : s
     }
     function grid() {
