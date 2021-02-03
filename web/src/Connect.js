@@ -5,6 +5,7 @@ import { Chess } from 'chess.js'
 
 const deviceName = 'Launchpad X MIDI 2'
 const NOTE_ON = 144
+const CONTROL_CHANGE = 176
 
 const colors = {'p': 13,'r': 9,'n': 45,'b': 37,'q': 53,'k': 49}
 
@@ -21,6 +22,7 @@ export function Connect() {
   function connect() {
     input = WebMidi.getInputByName(deviceName)
     input.addListener('noteon', "all", onInput)
+    input.addListener('controlchange', "all", onCC)
     output = WebMidi.getOutputByName(deviceName)
     console.log('connecting', input, output)
   }
@@ -47,6 +49,7 @@ export function Connect() {
             input = e.port
             console.log('input', input)
             input.addListener('noteon', "all", onInput)
+            input.addListener('controlchange', "all", onCC)
           }
           m.redraw()
         }
@@ -110,17 +113,17 @@ export function Connect() {
     }
     function lightBoard() {
       const board = chess.board()
-      for (var i=0; i<64; i++) {
+      for (let i=0; i<64; i++) {
         if (board[(63-i) >> 3][i % 8]) {
           var piece = board[(63-i) >> 3][i % 8]
-          console.log('piece at i', i, piece)
+          // console.log('piece at i', i, piece)
         } else {
           var piece = null
         }
         const l = nToLaunch(i)
-        console.log(i, piece, l)
+        // console.log(i, piece, l)
         const c = piece ? colors[piece.type] : (i + (i >> 3)) % 2 == 0 ? 0 : 1
-        console.log(NOTE_ON, l, c)
+        // console.log(NOTE_ON, l, c)
         
         output.send(NOTE_ON, [l, piece ? (piece.color == 'w' ? c : c + 2) : c])
       }
@@ -154,7 +157,7 @@ export function Connect() {
     function onInput(message) {
       message = message.data
       console.log('input', message)
-      if (message[0] == NOTE_ON && message[2]) {
+      if (message[2]) {
         const s = launchToN(message[1])
         console.log('touched', s)
         const legal_moves = chess.moves({verbose:true})
@@ -174,6 +177,8 @@ export function Connect() {
             chess.move(move)
             console.log(chess.board())
             
+          } else {
+            console.log('illegal move', move)
           }
           lightBoard()
           selected = null
@@ -200,6 +205,13 @@ export function Connect() {
               })
           }
         }
+    }
+    
+  }
+  function onCC(message) {
+    message = message.data
+    if (message[2]) {
+      console.log('cc', message)
     }
   }
     return {
