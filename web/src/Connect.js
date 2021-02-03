@@ -20,12 +20,14 @@ export function Connect() {
   }
   function connect() {
     input = WebMidi.getInputByName(deviceName)
+    input.addListener('noteon', "all", onInput)
     output = WebMidi.getOutputByName(deviceName)
     console.log('connecting', input, output)
   }
   function close() {
     if (connected) toggleLive()
     input, output = null
+    input.removeListener()
   }
   function init() {
     WebMidi.enable(function (err) {
