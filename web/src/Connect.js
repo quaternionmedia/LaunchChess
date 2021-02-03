@@ -6,7 +6,7 @@ import { Chess } from 'chess.js'
 const deviceName = 'Launchpad X MIDI 2'
 const NOTE_ON = 144
 
-const colors = {'': 0,'P': 13,'R': 9,'N': 45,'B': 37,'K': 49,'Q': 53,'p': 15,'r': 11,'n': 47,'b': 39,'q': 55,'k': 51}
+const colors = {'p': 13,'r': 9,'n': 45,'b': 37,'q': 53,'k': 49}
 
 export function Connect() {
   var input, output, selected, square, piece_moves
@@ -117,11 +117,12 @@ export function Connect() {
         } else {
           var piece = null
         }
-        var l = nToLaunch(i)
+        const l = nToLaunch(i)
         console.log(i, piece, l)
-        console.log(NOTE_ON, l, piece ? colors[piece.type] : (i + (i >> 3)) % 2 == 0 ? 0 : 1)
+        const c = piece ? colors[piece.type] : (i + (i >> 3)) % 2 == 0 ? 0 : 1
+        console.log(NOTE_ON, l, c)
         
-        output.send(NOTE_ON, [l, piece ? colors[piece.type] : (i + (i >> 3)) % 2 == 0 ? 0 : 1])
+        output.send(NOTE_ON, [l, piece ? (piece.color == 'w' ? c : c + 2) : c])
       }
       if (chess.history().length) {
         highlightMove()
