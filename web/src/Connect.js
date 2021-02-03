@@ -84,127 +84,136 @@ export function Connect() {
       })
     })  
     return index
+  }
+  
+  function nToLaunch(n) {
+    // 0-63 mapped to launchpad notes
+    if (invert) {
+      n = 63 - n
     }
-    
-    function nToLaunch(n) {
-      // 0-63 mapped to launchpad notes
-      if (invert) {
-        n = 63 - n
+    return 11 + (n>>3)*10 + n%8
+  }
+  function launchToN(n) {
+    // launchpad note mapped to 0-63
+    const s = Math.floor((n-11)/ 10)*8 + (n-11) % 10
+    return invert ? 63 - s : s
+  }
+  function squareToN(sq) {
+    return (Number(sq[1]) - 1)*8 + sq.charCodeAt(0) - 97
+  }
+  function nToSquare(n) {
+    return String.fromCharCode(97+(n%8), 49+(n>>3))
+  }
+  function grid() {
+    for (var y=0; y<8; y++) {
+      for (var x=0; x<8; x++) {
+        output.send(NOTE_ON, [11+x+y*10, (x+y) % 2 == 0 ? 0 : 1])
       }
-      return 11 + (n>>3)*10 + n%8
     }
-    function launchToN(n) {
-      // launchpad note mapped to 0-63
-      const s = Math.floor((n-11)/ 10)*8 + (n-11) % 10
-      return invert ? 63 - s : s
-    }
-    function squareToN(sq) {
-      return (Number(sq[1]) - 1)*8 + sq.charCodeAt(0) - 97
-    }
-    function nToSquare(n) {
-      return String.fromCharCode(97+(n%8), 49+(n>>3))
-    }
-    function grid() {
-      for (var y=0; y<8; y++) {
-        for (var x=0; x<8; x++) {
-          output.send(NOTE_ON, [11+x+y*10, (x+y) % 2 == 0 ? 0 : 1])
-        }
+  }
+  function lightBoard() {
+    const board = chess.board()
+    for (let i=0; i<64; i++) {
+      if (board[(63-i) >> 3][i % 8]) {
+        var piece = board[(63-i) >> 3][i % 8]
+        // console.log('piece at i', i, piece)
+      } else {
+        var piece = null
       }
+      const l = nToLaunch(i)
+      // console.log(i, piece, l)
+      const c = piece ? colors[piece.type] : (i + (i >> 3)) % 2 == 0 ? 0 : 1
+      // console.log(NOTE_ON, l, c)
+      
+      output.send(NOTE_ON, [l, piece ? (piece.color == 'w' ? c : c + 2) : c])
     }
-    function lightBoard() {
-      const board = chess.board()
-      for (let i=0; i<64; i++) {
-        if (board[(63-i) >> 3][i % 8]) {
-          var piece = board[(63-i) >> 3][i % 8]
-          // console.log('piece at i', i, piece)
-        } else {
-          var piece = null
-        }
-        const l = nToLaunch(i)
-        // console.log(i, piece, l)
-        const c = piece ? colors[piece.type] : (i + (i >> 3)) % 2 == 0 ? 0 : 1
-        // console.log(NOTE_ON, l, c)
-        
-        output.send(NOTE_ON, [l, piece ? (piece.color == 'w' ? c : c + 2) : c])
-      }
-      if (chess.history().length) {
-        highlightMove()
-        if (chess.history().length > 1)
-        highlightMove(chess.history().length - 1)
-      }
-      output.send(NOTE_ON, [99, chess.turn() == 'w' ? 3 : 83])
+    if (chess.history().length) {
+      highlightMove()
+      if (chess.history().length > 1)
+      highlightMove(chess.history().length - 1)
     }
-    function highlightMove(index=null) {
-      var lastMove = chess.history({verbose:true})[index ? index : chess.history().length-1]
-      if (lastMove) {
-        var from_square = lastMove.from
-        var to_square = lastMove.to
-        console.log('highlighting', lastMove, from_square, to_square)
-        if (! chess.get(from_square)) {
-          output.send(NOTE_ON | 2, [nToLaunch(squareToN(from_square)), 70])
-        }
-        if (chess.get(to_square)) {
-          output.send(NOTE_ON | 2, [nToLaunch(squareToN(to_square)), colors[chess.get(to_square).type]])
-        }
-        
-        if (chess.in_check() && ! index) {
-          console.log('check!', find_piece({type:'k', color: chess.turn() }))
-          output.send(NOTE_ON | 1, [nToLaunch(find_piece({type:'k', color: chess.turn() })), 5])
-        }
+    output.send(NOTE_ON, [99, chess.turn() == 'w' ? 3 : 83])
+  }
+  function highlightMove(index=null) {
+    var lastMove = chess.history({verbose:true})[index ? index : chess.history().length-1]
+    if (lastMove) {
+      var from_square = lastMove.from
+      var to_square = lastMove.to
+      console.log('highlighting', lastMove, from_square, to_square)
+      if (! chess.get(from_square)) {
+        output.send(NOTE_ON | 2, [nToLaunch(squareToN(from_square)), 70])
+      }
+      if (chess.get(to_square)) {
+        output.send(NOTE_ON | 2, [nToLaunch(squareToN(to_square)), colors[chess.get(to_square).type]])
       }
       
+      if (chess.in_check() && ! index) {
+        console.log('check!', find_piece({type:'k', color: chess.turn() }))
+        output.send(NOTE_ON | 1, [nToLaunch(find_piece({type:'k', color: chess.turn() })), 5])
+      }
     }
-    function onInput(message) {
-      message = message.data
-      console.log('input', message)
-      if (message[2]) {
-        const s = launchToN(message[1])
-        console.log('touched', s)
-        const legal_moves = chess.moves({verbose:true})
-        console.log('legal moves', legal_moves)
-        if (selected != null) {
-          // move selected to square
-          
-          const move = {from: square, to: nToSquare(s)}
-          if (selected.type == 'p' && (selected.color == 'w' && s >> 3 == 7 ) || (selected.color == 'b' && s >> 3 == 0 )) {
-            console.log('promotion! Auto promote to Queen')
-            move.promotion = 'q'
-          }
-          console.log('checking if ', move, ' is legal')
-          const squares = piece_moves.map(m => m.to)
-          if (squares.includes(move.to)) {
-            console.log('moving', move)
-            chess.move(move)
-            console.log(chess.board())
-            
-          } else {
-            console.log('illegal move', move)
-          }
+    
+  }
+  function onInput(message) {
+    message = message.data
+    console.log('input', message)
+    if (message[2]) {
+      const s = launchToN(message[1])
+      console.log('touched', s)
+      const legal_moves = chess.moves({verbose:true})
+      console.log('legal moves', legal_moves)
+      if (square && squareToN(square) == s) {
+        // clear selected piece
+        selected, square = null
+        lightBoard()
+      } else if (chess.get(nToSquare(s)) && chess.get(nToSquare(s)).color == chess.turn()) {
+        if (selected) {
+          // clear other selected piece
           lightBoard()
-          selected = null
-        } else {
-          console.log('checking', nToSquare(s), chess.get(nToSquare(s)))
-            if (chess.get(nToSquare(s)) && (chess.get(nToSquare(s)).color == chess.turn())) {
-              // select piece
-              square = nToSquare(s)
-              selected = chess.get(square)
-              console.log('selected', selected)
-              output.send(NOTE_ON | 1, [message[1], 21])
-              piece_moves = chess.moves({square: square, verbose:true})
-              console.log('possible moves', piece_moves)
-              piece_moves.forEach((p, i) => {
-                console.log(p)
-                if (chess.get(p.to)) {
-                  // piece at square. flash green
-                  console.log('capture', nToLaunch(squareToN(p.to)))
-                  output.send(NOTE_ON | 1, [nToLaunch(squareToN(p.to)), 21])
-                } else {
-                  console.log('regular move', p.to, squareToN(p.to), nToLaunch(squareToN(p.to)))
-                  output.send(NOTE_ON, [nToLaunch(squareToN(p.to)), 21])
-                }
-              })
-          }
         }
+        console.log('selecting piece')
+        console.log('checking', nToSquare(s), chess.get(nToSquare(s)))
+        if (chess.get(nToSquare(s)) && (chess.get(nToSquare(s)).color == chess.turn())) {
+          // select piece
+          square = nToSquare(s)
+          selected = chess.get(square)
+          console.log('selected', selected)
+          output.send(NOTE_ON | 1, [message[1], 21])
+          piece_moves = chess.moves({square: square, verbose:true})
+          console.log('possible moves', piece_moves)
+          piece_moves.forEach((p, i) => {
+            console.log(p)
+            if (chess.get(p.to)) {
+              // piece at square. flash green
+              console.log('capture', nToLaunch(squareToN(p.to)))
+              output.send(NOTE_ON | 1, [nToLaunch(squareToN(p.to)), 21])
+            } else {
+              console.log('regular move', p.to, squareToN(p.to), nToLaunch(squareToN(p.to)))
+              output.send(NOTE_ON, [nToLaunch(squareToN(p.to)), 21])
+            }
+          })
+        }
+      } else if (selected) {
+        // move selected to square
+        
+        const move = {from: square, to: nToSquare(s)}
+        if (selected.type == 'p' && (selected.color == 'w' && s >> 3 == 7 ) || (selected.color == 'b' && s >> 3 == 0 )) {
+          console.log('promotion! Auto promote to Queen')
+          move.promotion = 'q'
+        }
+        console.log('checking if ', move, ' is legal')
+        const squares = piece_moves.map(m => m.to)
+        if (squares.includes(move.to)) {
+          console.log('moving', move)
+          chess.move(move)
+          selected, square = null
+          lightBoard()
+          console.log(chess.board())
+          
+        } else {
+          console.log('illegal move', move)
+        }
+      }
     }
     
   }
@@ -223,31 +232,30 @@ export function Connect() {
       }
     }
   }
-    return {
-      oninit: vnode => {
-        init()
-      },
-      
-      view: vnode => {
-        return [
-          m('.status', {class: input && output ? 'connected' : 'disconnected'}, ''),
-          m('button.button', {
-            onclick: e => {
-              if (connected) {
-                console.log('disconnecting')
-                close()
-                m.redraw()
-              } else {
-                console.log('connecting')
-                connect()
-                toggleLive()
-                lightBoard()
-                m.redraw()
-              }
-            },
-          }, input && output ? 'disconnect' : 'connect')
-        ]
-      }
+  return {
+    oninit: vnode => {
+      init()
+    },
+    view: vnode => {
+      return [
+        m('.status', {class: input && output ? 'connected' : 'disconnected'}, ''),
+        m('button.button', {
+          onclick: e => {
+            if (connected) {
+              console.log('disconnecting')
+              close()
+              m.redraw()
+            } else {
+              console.log('connecting')
+              connect()
+              toggleLive()
+              lightBoard()
+              m.redraw()
+            }
+          },
+        }, input && output ? 'disconnect' : 'connect')
+      ]
     }
   }
-  
+}
+
