@@ -44,9 +44,7 @@ export function Connect() {
           } else {
             input = e.port
             console.log('input', input)
-            input.addListener('noteon', "all", e => {
-              console.log("Received 'noteon' message", e.note.name + e.note.octave, e)
-            })
+            input.addListener('noteon', "all", onInput)
           }
           m.redraw()
         }
@@ -135,6 +133,10 @@ export function Connect() {
       }
       
     }
+    function onInput(message) {
+      message = message.data
+      console.log('input', message)
+  }
     return {
       oninit: vnode => {
         init()
