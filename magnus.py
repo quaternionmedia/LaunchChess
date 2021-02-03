@@ -89,7 +89,25 @@ class Chess:
             # print('touched', s)
             legal_moves = [i.uci() for i in self.board.legal_moves]
             # print('legal moves', legal_moves)
-            if self.selected is not None:
+            if s == self.selected:
+                print('clearing selection')
+                self.selected = None
+                self.lightBoard()
+            elif self.board.piece_at(s) and self.board.piece_at(s).color == self.board.turn:
+                # select piece
+                if self.selected:
+                    # clear move if another piece is selected
+                    self.lightBoard()
+                self.selected = s
+                square = ascii_lowercase[s%8] + str(1+s//8)
+                print('selected square', square)
+                launchOut.send_message([NOTE_ON | 1, message[1], 21])
+                pieceMoves = [i[2:] for i in legal_moves if i[:2] == square]
+                print('possible moves:', pieceMoves)
+                for m in pieceMoves:
+                    sq = 8*(int(m[1])-1) + ord(m[0])-97
+                    launchOut.send_message([NOTE_ON | (1 if self.board.piece_at(sq) else 2), self.nToLaunch(sq), 21])
+            elif self.selected is not None:
                 # move selected to square
                 print('moving', chess.square_name(self.selected), chess.square_name(s))
                 if self.board.piece_at(self.selected).piece_type == chess.PAWN:
@@ -109,20 +127,7 @@ class Chess:
                     self.moved = True
                 else:
                     print('illegal move', move.uci())
-                    self.selected = None
-                    self.lightBoard()
-            else:
-                if self.board.piece_at(s) and self.board.piece_at(s).color == self.board.turn:
-                    # select piece
-                    self.selected = s
-                    square = ascii_lowercase[s%8] + str(1+s//8)
-                    print('selected square', square)
-                    launchOut.send_message([NOTE_ON | 1, message[1], 21])
-                    pieceMoves = [i[2:] for i in legal_moves if i[:2] == square]
-                    print('possible moves:', pieceMoves)
-                    for m in pieceMoves:
-                        sq = 8*(int(m[1])-1) + ord(m[0])-97
-                        launchOut.send_message([NOTE_ON | (1 if self.board.piece_at(sq) else 2), self.nToLaunch(sq), 21])
+                
         elif message[0] == CONTROL_CHANGE and message[2]:
             if message[1] == 93:
                 # undo move
