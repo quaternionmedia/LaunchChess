@@ -125,15 +125,16 @@ export function Connect() {
       output.send(NOTE_ON, [99, chess.turn() == 'w' ? 3 : 83])
     }
     function highlightMove(index=null) {
-      var lastMove = chess.history()[index ? index : chess.history().length-1]
+      var lastMove = chess.history({verbose:true})[index ? index : chess.history().length-1]
       if (lastMove) {
         var from_square = lastMove.from
         var to_square = lastMove.to
+        console.log('highlighting', lastMove, from_square, to_square)
         if (! chess.get(from_square)) {
-          output.send(NOTE_ON | 2, [nToLaunch(from_square), 70])
+          output.send(NOTE_ON | 2, [nToLaunch(squareToN(from_square)), 70])
         }
         if (chess.get(to_square)) {
-          output.send(NOTE_ON | 2, [nToLaunch(to_square), colors[chess.get(to_square).type]])
+          output.send(NOTE_ON | 2, [nToLaunch(squareToN(to_square)), colors[chess.get(to_square).type]])
         }
         
         if (chess.in_check()) {
