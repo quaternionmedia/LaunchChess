@@ -9,7 +9,7 @@ const NOTE_ON = 144
 const colors = {'': 0,'P': 13,'R': 9,'N': 45,'B': 37,'K': 49,'Q': 53,'p': 15,'r': 11,'n': 47,'b': 39,'q': 55,'k': 51}
 
 export function Connect() {
-  var input, output
+  var input, output, selected, piece_moves
   var connected, invert = false
   var chess = new Chess()
   
@@ -144,6 +144,38 @@ export function Connect() {
     function onInput(message) {
       message = message.data
       console.log('input', message)
+      if (message[0] == NOTE_ON && message[2]) {
+        const s = launchToN(message[1])
+        console.log('touched', s)
+        const legal_moves = chess.moves({verbose:true})
+        console.log('legal moves', legal_moves)
+        if (selected != null) {
+          // move selected to square
+          
+        } else {
+          console.log('checking', nToSquare(s), chess.get(nToSquare(s)))
+            if (chess.get(nToSquare(s)) && (chess.get(nToSquare(s)).color == chess.turn())) {
+              // select piece
+              selected = chess.get(nToSquare(s))
+              console.log('selected', selected)
+              output.send(NOTE_ON | 1, [message[1], 21])
+              piece_moves = chess.moves({square: nToSquare(s), verbose:true})
+              console.log('possible moves', piece_moves)
+              piece_moves.forEach((p, i) => {
+                console.log(p)
+                if (chess.get(p.to)) {
+                  // piece at square. flash green
+                  console.log('capture', nToLaunch(squareToN(p.to)))
+                  output.send(NOTE_ON | 1, [nToLaunch(squareToN(p.to)), 21])
+                } else {
+                  console.log('regular move', p.to, squareToN(p.to), nToLaunch(squareToN(p.to)))
+                  output.send(NOTE_ON, [nToLaunch(squareToN(p.to)), 21])
+                }
+              })
+              
+          }
+        }
+    }
   }
     return {
       oninit: vnode => {
