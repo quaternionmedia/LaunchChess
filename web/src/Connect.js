@@ -9,7 +9,7 @@ const NOTE_ON = 144
 const colors = {'': 0,'P': 13,'R': 9,'N': 45,'B': 37,'K': 49,'Q': 53,'p': 15,'r': 11,'n': 47,'b': 39,'q': 55,'k': 51}
 
 export function Connect() {
-  var input, output, selected, piece_moves
+  var input, output, selected, square, piece_moves
   var connected, invert = false
   var chess = new Chess()
   
@@ -156,14 +156,30 @@ export function Connect() {
         if (selected != null) {
           // move selected to square
           
+          const move = {from: square, to: nToSquare(s)}
+          if (selected.type == 'p' && (selected.color == 'w' && s >> 3 == 7 ) || (selected.color == 'b' && s >> 3 == 0 )) {
+            console.log('promotion! Auto promote to Queen')
+            move.promotion = 'q'
+          }
+          console.log('checking if ', move, ' is legal')
+          const squares = piece_moves.map(m => m.to)
+          if (squares.includes(move.to)) {
+            console.log('moving', move)
+            chess.move(move)
+            console.log(chess.board())
+            
+          }
+          lightBoard()
+          selected = null
         } else {
           console.log('checking', nToSquare(s), chess.get(nToSquare(s)))
             if (chess.get(nToSquare(s)) && (chess.get(nToSquare(s)).color == chess.turn())) {
               // select piece
-              selected = chess.get(nToSquare(s))
+              square = nToSquare(s)
+              selected = chess.get(square)
               console.log('selected', selected)
               output.send(NOTE_ON | 1, [message[1], 21])
-              piece_moves = chess.moves({square: nToSquare(s), verbose:true})
+              piece_moves = chess.moves({square: square, verbose:true})
               console.log('possible moves', piece_moves)
               piece_moves.forEach((p, i) => {
                 console.log(p)
@@ -176,7 +192,6 @@ export function Connect() {
                   output.send(NOTE_ON, [nToLaunch(squareToN(p.to)), 21])
                 }
               })
-              
           }
         }
     }
