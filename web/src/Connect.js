@@ -71,12 +71,16 @@ export function Connect() {
     }, true)
   }
   const find_piece = piece => {
-    const index = null
-    chess.board().map((p, i) => {
-      if (p !== null && p.type === piece.type && p.color === piece.color) {
-        index = i
-      }})
-      return index
+    var index = null
+    chess.board().map((rank, r) => {
+      rank.map((p, f) => {
+        if (p != null && p.type == piece.type && p.color == piece.color) {
+          console.log('found piece', p, r, f)
+          index = (7-r)*8+f
+        }
+      })
+    })  
+    return index
     }
     
     function nToLaunch(n) {
@@ -139,7 +143,8 @@ export function Connect() {
           output.send(NOTE_ON | 2, [nToLaunch(squareToN(to_square)), colors[chess.get(to_square).type]])
         }
         
-        if (chess.in_check()) {
+        if (chess.in_check() && ! index) {
+          console.log('check!', find_piece({type:'k', color: chess.turn() }))
           output.send(NOTE_ON | 1, [nToLaunch(find_piece({type:'k', color: chess.turn() })), 5])
         }
       }
