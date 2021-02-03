@@ -212,6 +212,14 @@ export function Connect() {
     message = message.data
     if (message[2]) {
       console.log('cc', message)
+      switch (message[1]) {
+        case 93: {
+          //undo move
+          chess.undo()
+          lightBoard()
+          break
+        }
+      }
     }
   }
     return {
