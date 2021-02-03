@@ -89,6 +89,12 @@ export function Connect() {
       const s = Math.floor((n-11)/ 10)*8 + (n-11) % 10
       return invert ? 63 - s : s
     }
+    function squareToN(sq) {
+      return (Number(sq[1]) - 1)*8 + sq.charCodeAt(0) - 97
+    }
+    function nToSquare(n) {
+      return String.fromCharCode(97+(n%8), 49+(n>>3))
+    }
     function grid() {
       for (var y=0; y<8; y++) {
         for (var x=0; x<8; x++) {
