@@ -3,7 +3,7 @@ import WebMidi from 'webmidi'
 import { Board } from './Board'
 import { Chess } from 'chess.js'
 import { fetcher } from './ndjson'
-
+import { endpoint, token } from './token'
 const deviceName = 'Launchpad X MIDI 2'
 const NOTE_ON = 144
 const CONTROL_CHANGE = 176
@@ -213,7 +213,17 @@ export function Connect() {
           selected, square = null
           lightBoard()
           console.log(chess.board())
-          
+          // send to lichess api
+          let uci = move.from + move.to
+          if (move.promotion) {
+            uci += move.promotion
+          }
+          fetch('https://lichess.org/api/board/game/Qphev6I5/move/' + uci, {
+            method: 'post',
+            headers: {Authorization: 'Bearer ' + token}
+          }).then(e => {
+            console.log('played move', uci, e)
+          })
         } else {
           console.log('illegal move', move)
         }
@@ -259,8 +269,8 @@ export function Connect() {
           },
         }, input && output ? 'disconnect' : 'connect'),
         m(fetcher, {
-          endpoint: '',
-          token: '',
+          endpoint: endpoint,
+          token: token,
           callback: v => {
             console.log('calling back', v)
             if (v.type == 'gameFull') {
