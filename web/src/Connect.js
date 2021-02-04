@@ -3,13 +3,19 @@ import WebMidi from 'webmidi'
 import { Board } from './Board'
 import { Chess } from 'chess.js'
 import { fetcher } from './ndjson'
-import { endpoint, token } from './token'
+import { endpoint, token, gameId } from './token'
 const deviceName = 'Launchpad X MIDI 2'
 const NOTE_ON = 144
 const CONTROL_CHANGE = 176
 
 const colors = {'p': 13,'r': 9,'n': 45,'b': 37,'q': 53,'k': 49}
-
+export const uci = move => {
+  let uci = move.from + move.to
+  if (move.promotion) {
+    uci += move.promotion
+  }
+  return uci
+}
 export function Connect() {
   var input, output, selected, square, piece_moves
   var connected, invert = false
@@ -214,15 +220,12 @@ export function Connect() {
           lightBoard()
           console.log(chess.board())
           // send to lichess api
-          let uci = move.from + move.to
-          if (move.promotion) {
-            uci += move.promotion
-          }
-          fetch('https://lichess.org/api/board/game/Qphev6I5/move/' + uci, {
+          let move_uci = uci(move)
+          fetch('https://lichess.org/api/board/game/' + gameId + '/move/' + move_uci, {
             method: 'post',
             headers: {Authorization: 'Bearer ' + token}
           }).then(e => {
-            console.log('played move', uci, e)
+            console.log('played move', move_uci, e)
           })
         } else {
           console.log('illegal move', move)
