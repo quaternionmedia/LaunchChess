@@ -146,7 +146,8 @@ export function Connect() {
         output.send(NOTE_ON | 2, [nToLaunch(squareToN(from_square)), 70])
       }
       if (chess.get(to_square)) {
-        output.send(NOTE_ON | 2, [nToLaunch(squareToN(to_square)), colors[chess.get(to_square).type]])
+        let c = colors[chess.get(to_square).type]
+        output.send(NOTE_ON | 2, [nToLaunch(squareToN(to_square)), chess.get(to_square).color == 'w' ? c : c + 2])
       }
       
       if (chess.in_check()) {
