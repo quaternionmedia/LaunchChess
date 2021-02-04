@@ -26,6 +26,7 @@ export function fetcher(endpoint, token) {
           console.log( result.value )
           nd = JSON.stringify(result.value)
           m.redraw()
+          vnode.attrs.callback(result.value)
           reader.read().then( read )
         })
       })

@@ -2,6 +2,7 @@ import m from 'mithril'
 import WebMidi from 'webmidi'
 import { Board } from './Board'
 import { Chess } from 'chess.js'
+import { fetcher } from './ndjson'
 
 const deviceName = 'Launchpad X MIDI 2'
 const NOTE_ON = 144
@@ -256,7 +257,14 @@ export function Connect() {
               m.redraw()
             }
           },
-        }, input && output ? 'disconnect' : 'connect')
+        }, input && output ? 'disconnect' : 'connect'),
+        m(fetcher, {
+          endpoint: '',
+          token: '',
+          callback: v => {
+            console.log('calling back', v)
+          }
+        }),
       ]
     }
   }
