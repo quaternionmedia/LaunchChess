@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
-
+from oauth import app as oauth
 app = FastAPI()
-
+app.mount('/login', oauth)
 
 app.mount("/", StaticFiles(directory='web/dist', html=True), name="dist")
 
