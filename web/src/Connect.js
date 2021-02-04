@@ -79,8 +79,8 @@ export function Connect() {
         close()
       }
     }, true)
-
-
+    
+    
   }
   const find_piece = piece => {
     var index = null
@@ -248,9 +248,17 @@ export function Connect() {
       console.log('cc', message)
       switch (message[1]) {
         case 93: {
-          //undo move
+          // left arrow
+          // undo move
           chess.undo()
           selected, square = null
+          lightBoard()
+          break
+        }
+        case 95: {
+          // Session button
+          // flip board
+          invert = !invert
           lightBoard()
           break
         }
@@ -280,7 +288,7 @@ export function Connect() {
           },
         }, input && output ? 'disconnect' : 'connect'),
         m(fetcher, {
-          endpoint: endpoint,
+          endpoint: endpoint + gameId,
           token: token,
           callback: v => {
             console.log('calling back', v)
