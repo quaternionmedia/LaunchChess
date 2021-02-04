@@ -79,6 +79,8 @@ export function Connect() {
         close()
       }
     }, true)
+
+
   }
   const find_piece = piece => {
     var index = null
@@ -158,8 +160,14 @@ export function Connect() {
       }
       
       if (chess.in_check()) {
-        console.log('check!', find_piece({type:'k', color: chess.turn() }))
-        output.send(NOTE_ON | 1, [nToLaunch(find_piece({type:'k', color: chess.turn() })), 5])
+        let k = find_piece({type:'k', color: chess.turn() })
+        console.log('check!', k)
+        output.send(NOTE_ON | 1, [nToLaunch(k), 5])
+      }
+      if (chess.in_checkmate()) {
+        let k = find_piece({type:'k', color: chess.turn() })
+        console.log('mate!', k)
+        output.send(NOTE_ON, [nToLaunch(k), 5])
       }
     }
     
