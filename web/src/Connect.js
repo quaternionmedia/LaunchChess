@@ -263,6 +263,15 @@ export function Connect() {
           token: '',
           callback: v => {
             console.log('calling back', v)
+            if (v.type == 'gameFull') {
+              console.log('loading game', v.state.moves)
+              console.log('loaded?', chess.load_pgn(v.state.moves, {sloppy: true}))
+              lightBoard()
+            } else if (v.type == 'gameState') {
+              console.log('move played', v.moves)
+              chess.load_pgn(v.moves, {sloppy: true})
+              lightBoard()
+            }
           }
         }),
       ]
