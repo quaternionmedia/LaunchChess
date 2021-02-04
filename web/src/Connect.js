@@ -127,15 +127,17 @@ export function Connect() {
       
       output.send(NOTE_ON, [l, piece ? (piece.color == 'w' ? c : c + 2) : c])
     }
-    if (chess.history().length) {
-      highlightMove()
-      if (chess.history().length > 1)
-      highlightMove(chess.history().length - 1)
+    let history = chess.history()
+    if (history.length) {
+      highlightMove(history.length-1)
+      if (history.length > 1) {
+        highlightMove(history.length-2)
+      }
     }
     output.send(NOTE_ON, [99, chess.turn() == 'w' ? 3 : 83])
   }
-  function highlightMove(index=null) {
-    var lastMove = chess.history({verbose:true})[index ? index : chess.history().length-1]
+  function highlightMove(index) {
+    var lastMove = chess.history({verbose:true})[index]
     if (lastMove) {
       var from_square = lastMove.from
       var to_square = lastMove.to
@@ -147,7 +149,7 @@ export function Connect() {
         output.send(NOTE_ON | 2, [nToLaunch(squareToN(to_square)), colors[chess.get(to_square).type]])
       }
       
-      if (chess.in_check() && ! index) {
+      if (chess.in_check()) {
         console.log('check!', find_piece({type:'k', color: chess.turn() }))
         output.send(NOTE_ON | 1, [nToLaunch(find_piece({type:'k', color: chess.turn() })), 5])
       }
