@@ -17,6 +17,7 @@ export function Links() {
       return [
         m(Link, {href:'/connect', id: 'connect'}, 'connect'),
         m(Link, {href:'/board', id: 'board'}, 'board'),
+        m(Link, {href:'/stream', id: 'stream'}, 'stream'),
       ]
     }
   }
