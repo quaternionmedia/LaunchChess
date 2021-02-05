@@ -130,15 +130,23 @@ class Chess:
                 
         elif message[0] == CONTROL_CHANGE and message[2]:
             if message[1] == 93:
+                # left arrow
                 # undo move
                 self.board.pop()
                 self.selected = None
                 self.lightBoard()
                 self.moved = False
+                
             elif message[1] == 94:
+                # right arrow
                 # force move
                 self.engineMove()
-
+                
+            elif message[1] == 95:
+                # Session button
+                # flip board
+                self.invert = not self.invert
+                self.lightBoard()
 
 
 if __name__ == '__main__':
