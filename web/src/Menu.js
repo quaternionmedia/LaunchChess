@@ -1,5 +1,5 @@
 import m from 'mithril'
-
+import { User } from './User'
 
 export function Link() {
   return {
@@ -15,8 +15,18 @@ export function Links() {
   return {
     view: vnode => {
       return [
-        m(Link, {href:'/connect', id: 'connect'}, 'connect'),
-        m(Link, {href:'/board', id: 'board'}, 'board'),
+        m(Link, {href:'/connect', id: 'connectButton'}, 'connect'),
+        m(Link, {href:'/board', id: 'boardButton'}, 'board'),
+        m(Link, {
+            href:'/login',
+            id: 'loginButton',
+            onclick: vnode => {
+              if (User.username) {
+                message(`${User.username} logged out`)
+                User.logout()
+              }
+            }
+          }, User.username ? 'logout' : 'login'),
       ]
     }
   }
