@@ -167,7 +167,9 @@ if __name__ == '__main__':
                 c.moved = False
             else:
                 sleep(.1)
-
+        print('good game!')
+        print([move.uci() for move in c.board.move_stack])
+        input('press any key to exit')
     except KeyboardInterrupt:
         print('')
     finally:
