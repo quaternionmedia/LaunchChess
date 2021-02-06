@@ -1,6 +1,5 @@
 import m from 'mithril'
-import { auth } from './Login'
-import { User } from './User'
+import { User, auth } from './User'
 import { LICHESS_API_URL } from './config'
 import { Chessground } from 'chessground'
 
@@ -19,7 +18,11 @@ export function Games() {
       return games.length ? games.map(g => {
         return m(Game, {
           viewOnly: true,
-          ...g
+          ...g,
+          onclick: e => {
+            console.log('game clicked', g)
+            m.route.set('/connect', {id: g.gameId})
+          }
         })
       }) : m('', {}, 'no games')
     }
@@ -34,6 +37,6 @@ export function Game() {
     },
     view: vnode => {
       return m('.game', vnode.attrs, vnode.children)
-    }
+    },
   }
 }

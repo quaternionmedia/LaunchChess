@@ -4,7 +4,7 @@ import { Board } from './Board'
 import { Chess } from 'chess.js'
 import { fetcher } from './ndjson'
 import { LICHESS_API_URL, gameId, deviceName } from './config'
-import { User } from './User'
+import { User, auth } from './User'
 
 const NOTE_ON = 144
 const CONTROL_CHANGE = 176
@@ -80,7 +80,6 @@ export function Connect() {
         close()
       }
     }, true)
-    
     
   }
   const find_piece = piece => {
@@ -230,7 +229,7 @@ export function Connect() {
           console.log(chess.board())
           // send to lichess api
           let move_uci = uci(move)
-          auth('https://lichess.org/api/board/game/' + gameId + '/move/' + move_uci, {
+          auth('https://lichess.org/api/board/game/' + m.route.param('id') + '/move/' + move_uci, {
             method: 'post',
           }).then(e => {
             console.log('played move', move_uci, e)
@@ -288,7 +287,7 @@ export function Connect() {
           },
         }, input && output ? 'disconnect' : 'connect'),
         User.token ? m(fetcher, {
-          endpoint: LICHESS_API_URL + 'board/game/stream/' + gameId,
+          endpoint: LICHESS_API_URL + 'board/game/stream/' + m.route.param('id'),
           token: User.token,
           callback: v => {
             console.log('calling back', v)
