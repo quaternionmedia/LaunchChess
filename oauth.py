@@ -8,8 +8,14 @@ from db import users
 from requests import get
 from tinydb import Query
 
+def getLiProfile(token):
+    return get(config.LICHESS_API_URL + '/account', headers={
+        'Authorization': token['token_type'] + ' ' + token['access_token']
+    }).json()
+
+
 app = FastAPI(root_path='/oauth', root_path_in_servers=False)
-app.add_middleware(SessionMiddleware, secret_key="secret-string")
+app.add_middleware(SessionMiddleware, secret_key=config.SESSION_SECRET, https_only=True)
 
 oauth = OAuth()
 oauth.register('lichess',
@@ -32,19 +38,23 @@ async def login(request: Request):
 async def authorize(request: Request):
     token = await oauth.lichess.authorize_access_token(request)
     print(token)
-    r = get(config.LICHESS_API_URL + '/account', headers={
-        'Authorization': token['token_type'] + ' ' + token['access_token']
-    }).json()
-    print(r)
+    r = getLiProfile(token)
     username = r['username']
-    users.upsert({'token': token, 'profile': r}, Query().username == username)
-    return RedirectResponse(request.url_for('success'))
+    request.session['user'] = username
+    users.upsert({'token': token , 'profile': r, 'username': username}, Query().username == username)
+    return RedirectResponse('/')
 
+@app.route('/logout')
+async def logout(request: Request):
+    del request.session['user']
+    return RedirectResponse('/')
 
-@app.get('/success')
-def success():
-    return 'success!'
-    
+@app.get('/token')
+def getToken(request: Request):
+    user = request.session.get('user')
+    if user:
+        return users.get(Query().username == user)['token']
+
 
 if __name__ == '__main__':
     from uvicorn import run
