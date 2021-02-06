@@ -55,6 +55,16 @@ def getToken(request: Request):
     if user:
         return users.get(Query().username == user)['token']
 
+@app.get('/profile')
+def getProfile(request: Request):
+    user = request.session.get('user')
+    if user:
+        q = Query().username == user
+        u = users.get(q)
+        print('got user', u)
+        r = getLiProfile(u['token'])
+        users.update({'profile': r}, q)
+        return r
 
 if __name__ == '__main__':
     from uvicorn import run

@@ -20,6 +20,11 @@ export var User = {
       m.route.set('/')
     }
     m.redraw()
+    auth('/oauth/profile').then(res => {
+      console.log('profile', res)
+      User.profile = res
+      User.username = res.username
+    })
   },
   logout: () => {
     console.log('logging out', User)
