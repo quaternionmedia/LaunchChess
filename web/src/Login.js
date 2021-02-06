@@ -14,7 +14,7 @@ export function auth(url, opts) {
   const req = new Promise((resolve, reject) => {
       m.request(url, {
         headers: {
-          Authorization: User.token,
+          Authorization: User.token.token_type + ' ' + User.token.access_token,
         },
         ...opts
       }).then(res => {

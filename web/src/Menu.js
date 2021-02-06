@@ -1,6 +1,6 @@
 import m from 'mithril'
 import { User } from './User'
-
+import { message } from 'alertifyjs'
 export function Link() {
   return {
     view: (vnode) => {
@@ -17,16 +17,11 @@ export function Links() {
       return [
         m(Link, {href:'/connect', id: 'connectButton'}, 'connect'),
         m(Link, {href:'/board', id: 'boardButton'}, 'board'),
+        m('.status', {class: User.username ? 'connected' : 'disconnected'}, ''),
         m(Link, {
             href:'/login',
             id: 'loginButton',
-            onclick: vnode => {
-              if (User.username) {
-                message(`${User.username} logged out`)
-                User.logout()
-              }
-            }
-          }, User.username ? 'logout' : 'login'),
+          }, User.username ? User.username : 'login'),
       ]
     }
   }

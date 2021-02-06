@@ -3,8 +3,9 @@ import WebMidi from 'webmidi'
 import { Board } from './Board'
 import { Chess } from 'chess.js'
 import { fetcher } from './ndjson'
-import { endpoint, token, gameId } from './token'
-const deviceName = 'Launchpad X MIDI 2'
+import { LICHESS_API_URL, gameId, deviceName } from './config'
+import { User } from './User'
+
 const NOTE_ON = 144
 const CONTROL_CHANGE = 176
 
@@ -229,9 +230,8 @@ export function Connect() {
           console.log(chess.board())
           // send to lichess api
           let move_uci = uci(move)
-          fetch('https://lichess.org/api/board/game/' + gameId + '/move/' + move_uci, {
+          auth('https://lichess.org/api/board/game/' + gameId + '/move/' + move_uci, {
             method: 'post',
-            headers: {Authorization: 'Bearer ' + token}
           }).then(e => {
             console.log('played move', move_uci, e)
           })
@@ -287,9 +287,9 @@ export function Connect() {
             }
           },
         }, input && output ? 'disconnect' : 'connect'),
-        m(fetcher, {
-          endpoint: endpoint + gameId,
-          token: token,
+        User.token ? m(fetcher, {
+          endpoint: LICHESS_API_URL + 'board/game/stream/' + gameId,
+          token: User.token,
           callback: v => {
             console.log('calling back', v)
             if (v.type == 'gameFull') {
@@ -302,7 +302,7 @@ export function Connect() {
               lightBoard()
             }
           }
-        }),
+        }) : null,
       ]
     }
   }

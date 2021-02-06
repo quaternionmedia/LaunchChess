@@ -11,11 +11,11 @@ export const ndj = (endpoint, config={}) => {
   } )
 }
 
-export function fetcher(endpoint, token) {
+export function fetcher() {
   var nd = ''
   return {
     oninit: vnode => {
-      ndj(vnode.attrs.endpoint, {headers:{Authorization: 'Bearer ' + vnode.attrs.token }}).then( ( exampleStream ) => {
+      ndj(vnode.attrs.endpoint, {headers:{Authorization: vnode.attrs.token.token_type + ' ' + vnode.attrs.token.access_token }}).then( ( exampleStream ) => {
         const reader = exampleStream.getReader()
         let read
         reader.read().then( read = result => {

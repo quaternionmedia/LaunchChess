@@ -1,17 +1,14 @@
 import m from 'mithril'
 import jwt_decode from 'jwt-decode'
+import { auth } from './Login'
 
 export var User = {
-  jwt: null,
   username: null,
   token: null,
   loggedIn: false,
+  profile: null,
   login: (token) => {
-    User.jwt = token
-    let decoded = jwt_decode(token['access_token'])
-    User.username = decoded['sub']
-    console.log('authenticated!', decoded)
-    User.token = token['token_type'] + ' ' + token['access_token']
+    User.token = token
     User.loggedIn = true
     console.log('logged in as: ', User)
     if (m.route.param('redirect')) {
@@ -19,14 +16,15 @@ export var User = {
     } else if (m.route.get() == '/login') {
       m.route.set('/')
     } else {
-      m.route.set(m.route.get())
+      // m.route.set(m.route.get())
+      m.route.set('/')
     }
     m.redraw()
   },
   logout: () => {
     console.log('logging out', User)
     m.request('/logout', {method: 'post'})
-    User.jwt = null
+    m.request('/oauth/logout')
     User.username = null
     User.token = null
     User.loggedIn = false
