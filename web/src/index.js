@@ -4,6 +4,7 @@ import { Board } from './Board'
 import { Connect } from './Connect'
 import { Login } from './Login'
 import './style.css'
+import { User } from './User'
 
 
 export function Home() {
@@ -22,3 +23,13 @@ m.route(document.body, '/', {
   '/login': { render: () => m(Layout, m(Login))},
 
 })
+
+// auto login
+if (!User.username) {
+  m.request('/oauth/token').then(res => {
+    if (res) {
+      console.log('session continued', res)
+      User.login(res)
+    }
+  })
+}
