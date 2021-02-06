@@ -134,7 +134,11 @@ export const Login = () => {
                 })
               }
             },
-          }, 'register')
+          }, 'register'),
+          m('a#liRegister', {
+            id: '#liRegister', 
+            href: '/oauth/',
+          }, 'login with lichess')
         ]
       )
     ]

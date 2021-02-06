@@ -1,14 +1,14 @@
 import config
-import os
 from fastapi import FastAPI
 from starlette.requests import Request
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import RedirectResponse
-
-import requests
-
 from authlib.integrations.starlette_client import OAuth
-app = FastAPI()
+from db import users
+from requests import get
+from tinydb import Query
+
+app = FastAPI(root_path='/oauth', root_path_in_servers=False)
 app.add_middleware(SessionMiddleware, secret_key="secret-string")
 
 oauth = OAuth()
@@ -23,8 +23,6 @@ oauth.register('lichess',
     }
 )
 
-session = {}
-
 @app.route('/')
 async def login(request: Request):
     redirect_uri = request.url_for('authorize')
@@ -32,10 +30,15 @@ async def login(request: Request):
 
 @app.route('/authorize')
 async def authorize(request: Request):
-
     token = await oauth.lichess.authorize_access_token(request)
     print(token)
-    return RedirectResponse('/success')
+    r = get(config.LICHESS_API_URL + '/account', headers={
+        'Authorization': token['token_type'] + ' ' + token['access_token']
+    }).json()
+    print(r)
+    username = r['username']
+    users.upsert({'token': token, 'profile': r}, Query().username == username)
+    return RedirectResponse(request.url_for('success'))
 
 
 @app.get('/success')

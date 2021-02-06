@@ -1,13 +1,13 @@
 from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
-from oauth import oauth
+from oauth import app as oauth_app
 from auth import auth
 from users import users
 
 app = FastAPI()
 
 app.include_router(auth)
-app.mount('/login', oauth)
+app.mount('/oauth', oauth_app)
 app.include_router(users)
 app.mount('/', StaticFiles(directory='web/dist', html=True), name='dist')
 
