@@ -5,6 +5,7 @@ import { Connect } from './Connect'
 import { Login } from './Login'
 import './style.css'
 import { User } from './User'
+import { Games } from './Games'
 
 
 export function Home() {
@@ -19,6 +20,7 @@ console.log('magnus started!')
 m.route(document.body, '/', {
   '/': { render: () => m(Layout, m(Home))},
   '/connect': { render: () => m(Layout, m(Connect))},
+  '/games': { render: () => m(Layout, m(Games))},
   '/board': { render: () => m(Layout, m(Board))},
   '/login': { render: () => m(Layout, m(Login))},
 
