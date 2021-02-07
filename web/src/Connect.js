@@ -1,10 +1,11 @@
 import m from 'mithril'
-import WebMidi from 'webmidi'
 import { Board } from './Board'
 import { Chess } from 'chess.js'
+import { Midi } from './Midi'
 import { fetcher } from './ndjson'
-import { LICHESS_API_URL, gameId, deviceName } from './config'
+import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
+import { Game } from './Games'
 
 const NOTE_ON = 144
 const CONTROL_CHANGE = 176
@@ -18,70 +19,12 @@ export const uci = move => {
   return uci
 }
 export function Connect() {
-  var input, output, selected, square, piece_moves
-  var connected, invert = false
+  var selected, square, piece_moves
+  var invert = false
   var chess = new Chess()
   
   
-  function toggleLive() {
-    connected = !connected
-    output.sendSysex([0, 32, 41], [2, 12, 14, connected ? 1 : 0])
-  }
-  function connect() {
-    input = WebMidi.getInputByName(deviceName)
-    input.addListener('noteon', "all", onInput)
-    input.addListener('controlchange', "all", onCC)
-    output = WebMidi.getOutputByName(deviceName)
-    console.log('connecting', input, output)
-  }
-  function close() {
-    if (connected) toggleLive()
-    input, output = null
-    input.removeListener()
-  }
-  function init() {
-    WebMidi.enable(function (err) {
-      console.log(WebMidi.inputs)
-      console.log(WebMidi.outputs)
-      WebMidi.addListener("connected", function(e) {
-        // console.log('midi connected', e, e.port.name)
-        if (e.port.name == deviceName) {
-          if (e.port.type == 'output') {
-            output = e.port
-            console.log('output', output)
-            // output.playNote('F4')
-            toggleLive()
-            lightBoard()
-            
-          } else {
-            input = e.port
-            console.log('input', input)
-            input.addListener('noteon', "all", onInput)
-            input.addListener('controlchange', "all", onCC)
-          }
-          m.redraw()
-        }
-      })
-      WebMidi.addListener("disconnected", function(e) {
-        console.log('midi disconnected', e)
-        if (e.port.name == deviceName) {
-          if (e.port.type == 'output') {
-            output = null
-            connected = false
-          } else {
-            input = null
-          }
-          m.redraw()
-        }
-      })
-      
-      window.onunload = e => {
-        console.log('unloading')
-        close()
-      }
-    }, true)
-    
-  }
+  
   const find_piece = piece => {
     var index = null
     chess.board().map((rank, r) => {
@@ -116,7 +59,7 @@ export function Connect() {
   function grid() {
     for (var y=0; y<8; y++) {
       for (var x=0; x<8; x++) {
-        output.send(NOTE_ON, [11+x+y*10, (x+y) % 2 == 0 ? 0 : 1])
+        Midi.output.send(NOTE_ON, [11+x+y*10, (x+y) % 2 == 0 ? 0 : 1])
       }
     }
   }
@@ -134,7 +77,7 @@ export function Connect() {
       const c = piece ? colors[piece.type] : (i + (i >> 3)) % 2 == 0 ? 0 : 1
       // console.log(NOTE_ON, l, c)
       
-      output.send(NOTE_ON, [l, piece ? (piece.color == 'w' ? c : c + 2) : c])
+      Midi.output.send(NOTE_ON, [l, piece ? (piece.color == 'w' ? c : c + 2) : c])
     }
     let history = chess.history()
     if (history.length) {
@@ -143,7 +86,7 @@ export function Connect() {
         highlightMove(history.length-2)
       }
     }
-    output.send(NOTE_ON, [99, chess.turn() == 'w' ? 3 : 83])
+    Midi.output.send(NOTE_ON, [99, chess.turn() == 'w' ? 3 : 83])
   }
   function highlightMove(index) {
     var lastMove = chess.history({verbose:true})[index]
@@ -152,22 +95,22 @@ export function Connect() {
       var to_square = lastMove.to
       console.log('highlighting', lastMove, from_square, to_square)
       if (! chess.get(from_square)) {
-        output.send(NOTE_ON | 2, [nToLaunch(squareToN(from_square)), 70])
+        Midi.output.send(NOTE_ON | 2, [nToLaunch(squareToN(from_square)), 70])
       }
       if (chess.get(to_square)) {
         let c = colors[chess.get(to_square).type]
-        output.send(NOTE_ON | 2, [nToLaunch(squareToN(to_square)), chess.get(to_square).color == 'w' ? c : c + 2])
+        Midi.output.send(NOTE_ON | 2, [nToLaunch(squareToN(to_square)), chess.get(to_square).color == 'w' ? c : c + 2])
       }
       
       if (chess.in_check()) {
         let k = find_piece({type:'k', color: chess.turn() })
         console.log('check!', k)
-        output.send(NOTE_ON | 1, [nToLaunch(k), 5])
+        Midi.output.send(NOTE_ON | 1, [nToLaunch(k), 5])
       }
       if (chess.in_checkmate()) {
         let k = find_piece({type:'k', color: chess.turn() })
         console.log('mate!', k)
-        output.send(NOTE_ON, [nToLaunch(k), 5])
+        Midi.output.send(NOTE_ON, [nToLaunch(k), 5])
       }
     }
     
@@ -196,7 +139,7 @@ export function Connect() {
           square = nToSquare(s)
           selected = chess.get(square)
           console.log('selected', selected)
-          output.send(NOTE_ON | 1, [message[1], 21])
+          Midi.output.send(NOTE_ON | 1, [message[1], 21])
           piece_moves = chess.moves({square: square, verbose:true})
           console.log('possible moves', piece_moves)
           piece_moves.forEach((p, i) => {
@@ -204,10 +147,10 @@ export function Connect() {
             if (chess.get(p.to)) {
               // piece at square. flash green
               console.log('capture', nToLaunch(squareToN(p.to)))
-              output.send(NOTE_ON | 1, [nToLaunch(squareToN(p.to)), 21])
+              Midi.output.send(NOTE_ON | 1, [nToLaunch(squareToN(p.to)), 21])
             } else {
               console.log('regular move', p.to, squareToN(p.to), nToLaunch(squareToN(p.to)))
-              output.send(NOTE_ON | 2, [nToLaunch(squareToN(p.to)), 21])
+              Midi.output.send(NOTE_ON | 2, [nToLaunch(squareToN(p.to)), 21])
             }
           })
         }
@@ -264,28 +207,40 @@ export function Connect() {
       }
     }
   }
+  function init() {
+    console.log('connecting')
+    Midi.init(onInput, onCC, () => {
+      Midi.toggleLive()
+      lightBoard()
+      m.redraw()
+    })
+  }
   return {
     oninit: vnode => {
       init()
     },
     view: vnode => {
       return [
-        m('.status', {class: input && output ? 'connected' : 'disconnected'}, ''),
+        m('.status', {class: Midi.input && Midi.output ? 'connected' : 'disconnected'}, ''),
         m('button.button', {
           onclick: e => {
-            if (connected) {
+            if (Midi.connected) {
               console.log('disconnecting')
-              close()
+              Midi.close()
               m.redraw()
             } else {
               console.log('connecting')
-              connect()
-              toggleLive()
-              lightBoard()
-              m.redraw()
+              Midi.connect(onInput, onCC, () => {
+                Midi.toggleLive()
+                lightBoard()
+                m.redraw()
+              })
+              // Midi.toggleLive()
+              // lightBoard()
+              // m.redraw()
             }
           },
-        }, input && output ? 'disconnect' : 'connect'),
+        }, Midi.input && Midi.output ? 'disconnect' : 'connect'),
         User.token ? m(fetcher, {
           endpoint: LICHESS_API_URL + 'board/game/stream/' + m.route.param('id'),
           token: User.token,
@@ -294,15 +249,24 @@ export function Connect() {
             if (v.type == 'gameFull') {
               console.log('loading game', v.state.moves)
               console.log('loaded?', chess.load_pgn(v.state.moves, {sloppy: true}))
+              if (v.black.id == 'mr_harpo') {
+                invert = true
+              }
               lightBoard()
+              m.redraw()
             } else if (v.type == 'gameState') {
               console.log('move played', v.moves)
               chess.load_pgn(v.moves, {sloppy: true})
               lightBoard()
+              m.redraw()
             }
           }
         }) : null,
+        m(Game, {fen: chess.fen(), viewOnly: true}),
       ]
+    },
+    onremove: vnode => {
+      Midi.close()
     }
   }
 }
