@@ -19,10 +19,10 @@ export function Links() {
         m(Link, {href:'/games', id: 'gamesButton'}, 'games'),
         m(Link, {href:'/board', id: 'boardButton'}, 'board'),
         m('.status', {class: User.username ? 'connected' : 'disconnected'}, ''),
-        m(Link, {
+        User.username ? m('', {}, User.username) : m(Link, {
             href:'/login',
             id: 'loginButton',
-          }, User.username ? User.username : 'login'),
+          }, 'login'),
       ]
     }
   }
@@ -31,7 +31,7 @@ export function Links() {
 export function Menu() {
   return {
     view: vnode => {
-      return [m(Link, {href: '/'}, 'magnus'),
+      return [m(Link, {href: '/'}, m('img.logo#logo', {src: '/static/logo.svg'})),
       m(Links),]
     }
   }

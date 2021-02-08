@@ -45,3 +45,6 @@ a {
 .disconnected {
   background-color: red;
 }
+.logo {
+  width: 4em;
+}

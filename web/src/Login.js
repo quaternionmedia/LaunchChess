@@ -10,41 +10,6 @@ defaults.theme.ok = "ui positive button"
 defaults.theme.cancel = "ui black button"
 defaults.notifier.delay = 10
 
-export function auth(url, opts) {
-  const req = new Promise((resolve, reject) => {
-      m.request(url, {
-        headers: {
-          Authorization: User.token.token_type + ' ' + User.token.access_token,
-        },
-        ...opts
-      }).then(res => {
-        console.log('auth success')
-        resolve(res)
-        // return res
-      }).catch( e => {
-        if (e.code == 401) {
-          m.request('/refresh', {
-            method: 'post'
-        }).then(token => {
-            User.login(token)
-            auth(url, opts).then(res => {
-              console.log('resolved refresh')
-              resolve(res)
-            })
-          }).catch(err => {
-            console.log('error making auth request', url, opts, err)
-            error('Not authorized')
-            m.route.set('/login', {
-                redirect: m.route.get()
-              })
-            reject(err)
-          })
-        }
-      })
-    })
-    return req
-}
-
 export const Login = () => {
   function login() {
     let form = new FormData(document.getElementById('login'))
