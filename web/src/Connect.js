@@ -278,6 +278,12 @@ export function Connect() {
           onupdate: v => {
             console.log('updating board', v)
             ground.set({fen:chess.fen()})
+            if (chess.history().length) {
+              let hist = chess.history({verbose: true})
+              let last = hist.pop()
+              console.log('highlighting chessground last move', hist, last, [last.from, last.to])
+              ground.set({lastMove: [last.from, last.to]})
+            }
           }
         }),
       ]
