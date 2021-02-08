@@ -6,6 +6,7 @@ import { fetcher } from './ndjson'
 import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
 import { Game } from './Games'
+import { Chessground } from 'chessground'
 
 const NOTE_ON = 144
 const CONTROL_CHANGE = 176
@@ -22,7 +23,7 @@ export function Connect() {
   var selected, square, piece_moves
   var invert = false
   var chess = new Chess()
-  
+  var ground
   
   
   const find_piece = piece => {
@@ -252,6 +253,7 @@ export function Connect() {
               if (v.black.id == 'mr_harpo') {
                 invert = true
               }
+              // ground.set({fen:chess.fen()})
               lightBoard()
               m.redraw()
             } else if (v.type == 'gameState') {
@@ -262,7 +264,22 @@ export function Connect() {
             }
           }
         }) : null,
-        m(Game, {fen: chess.fen(), viewOnly: true}),
+        m('.game', {
+          // fen: chess.fen(), 
+          viewOnly: true,
+          highlight: {
+            lastMove: true,
+            check: true,
+          },
+          oncreate: v => {
+            ground = Chessground(v.dom, v.attrs)
+            ground.set({fen:chess.fen()})
+          },
+          onupdate: v => {
+            console.log('updating board', v)
+            ground.set({fen:chess.fen()})
+          }
+        }),
       ]
     },
     onremove: vnode => {
