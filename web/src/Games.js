@@ -24,7 +24,7 @@ export function Games() {
             m.route.set('/connect', {id: g.gameId})
           }
         })
-      }) : m('', {}, 'no games')
+      }) : m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, 'create game on lichess')
     }
   }
 }
