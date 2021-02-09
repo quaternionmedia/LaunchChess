@@ -33,7 +33,7 @@ export function fetcher() {
       console.log('nd', nd)
     },
     view: vnode => {
-      return m('', {}, nd)
+      return m('', vnode.attrs, vnode.children)
     }
   }
 }

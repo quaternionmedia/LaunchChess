@@ -243,6 +243,7 @@ export function Connect() {
           },
         }, Midi.input && Midi.output ? 'disconnect' : 'connect'),
         User.token ? m(fetcher, {
+          style: {display: 'none',},
           endpoint: LICHESS_API_URL + 'board/game/stream/' + m.route.param('id'),
           token: User.token,
           callback: v => {
