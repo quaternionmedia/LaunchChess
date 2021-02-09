@@ -23,7 +23,7 @@ export function Connect() {
   var selected, square, piece_moves
   var invert = false
   var chess = new Chess()
-  var ground
+  var game, ground
 
   
   const find_piece = piece => {
@@ -244,6 +244,7 @@ export function Connect() {
             }
           },
         }, Midi.input && Midi.output ? 'disconnect' : 'connect'),
+        game ? m('', {}, JSON.stringify(invert ? game.white : game.black)) : null,
         User.token ? m(fetcher, {
           style: {display: 'none',},
           endpoint: LICHESS_API_URL + 'board/game/stream/' + m.route.param('id'),
@@ -251,6 +252,7 @@ export function Connect() {
           callback: v => {
             console.log('calling back', v)
             if (v.type == 'gameFull') {
+              game = v
               console.log('loading game', v.state.moves)
               console.log('loaded?', chess.load_pgn(v.state.moves, {sloppy: true}))
               if (v.black.id == 'mr_harpo') {
@@ -289,6 +291,8 @@ export function Connect() {
             }
           }
         }),
+        game ? m('', {}, JSON.stringify(invert ? game.black : game.white)) : null,
+
       ]
     },
     onremove: vnode => {
