@@ -19,7 +19,7 @@ export function Links() {
         m(Link, {href:'/games', id: 'gamesButton'}, 'games'),
         // m(Link, {href:'/board', id: 'boardButton'}, 'board'),
         // m('.status', {class: User.username ? 'connected' : 'disconnected'}, ''),
-        User.username ? m('', {}, User.username) : m(Link, {
+        User.username ? m(Link, {href: '/profile'}, User.username) : m(Link, {
             href:'/login',
             id: 'loginButton',
           }, 'login'),
