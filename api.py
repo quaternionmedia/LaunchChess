@@ -9,7 +9,9 @@ app = FastAPI()
 app.include_router(auth)
 app.mount('/oauth', oauth_app)
 app.include_router(users)
+app.mount('/static', StaticFiles(directory='web/static', html=True), name='static')
 app.mount('/', StaticFiles(directory='web/dist', html=True), name='dist')
+
 
 if __name__ == '__main__':
     from uvicorn import run
