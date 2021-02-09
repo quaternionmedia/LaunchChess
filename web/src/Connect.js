@@ -203,6 +203,8 @@ export function Connect() {
           // flip board
           invert = !invert
           lightBoard()
+          ground.toggleOrientation()
+          m.redraw()
           break
         }
       }
