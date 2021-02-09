@@ -2,6 +2,7 @@ import m from 'mithril'
 import { User, auth } from './User'
 import { LICHESS_API_URL } from './config'
 import { Chessground } from 'chessground'
+import { fetcher } from './ndjson'
 
 export function Games() {
   var games = []
@@ -16,15 +17,17 @@ export function Games() {
     },
     view: vnode => {
       return games.length ? games.map(g => {
-        return m(Game, {
+        return [g.opponent.username, 
+          m(Game, {
           viewOnly: true,
           ...g,
           onclick: e => {
             console.log('game clicked', g)
             m.route.set('/connect', {id: g.gameId})
           }
-        })
-      }) : m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, 'create game on lichess')
+        })]
+      }) : [m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, 'create game on lichess'),
+    ]
     }
   }
 }
@@ -36,7 +39,7 @@ export function Game() {
       ground = Chessground(vnode.dom, vnode.attrs)
     },
     view: vnode => {
-      return m('.game', vnode.attrs, vnode.children)
+      return m('.board', vnode.attrs, vnode.children)
     },
   }
 }

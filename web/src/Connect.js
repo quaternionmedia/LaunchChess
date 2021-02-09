@@ -24,7 +24,7 @@ export function Connect() {
   var invert = false
   var chess = new Chess()
   var ground
-  
+
   
   const find_piece = piece => {
     var index = null
@@ -264,7 +264,7 @@ export function Connect() {
             }
           }
         }) : null,
-        m('.game', {
+        m('.board', {
           // fen: chess.fen(), 
           viewOnly: true,
           highlight: {

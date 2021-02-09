@@ -18,7 +18,7 @@ export function Links() {
         // m(Link, {href:'/connect', id: 'connectButton'}, 'connect'),
         m(Link, {href:'/games', id: 'gamesButton'}, 'games'),
         // m(Link, {href:'/board', id: 'boardButton'}, 'board'),
-        m('.status', {class: User.username ? 'connected' : 'disconnected'}, ''),
+        // m('.status', {class: User.username ? 'connected' : 'disconnected'}, ''),
         User.username ? m('', {}, User.username) : m(Link, {
             href:'/login',
             id: 'loginButton',
