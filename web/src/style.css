@@ -51,3 +51,20 @@ a {
 .logo {
   width: 4em;
 }
+i {
+  border-style: solid;
+  border-color: #393939;
+  border-radius: 10px;
+  padding: 6px;
+  margin: 2px;
+  width: 1em;
+  height: 1em;
+  text-align: center;
+  font-style: normal;
+}
+i:hover {
+  background-color: #393939;
+}
+i:active {
+  animation: blinker .2s 1;
+}

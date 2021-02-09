@@ -8,6 +8,8 @@ import { User, auth } from './User'
 import { Game } from './Games'
 import { Chessground } from 'chessground'
 
+import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
+
 const NOTE_ON = 144
 const CONTROL_CHANGE = 176
 
@@ -116,6 +118,12 @@ export function Connect() {
     }
     
   }
+  function flipBoard() {
+    invert = !invert
+    lightBoard()
+    ground.toggleOrientation()
+    m.redraw()
+  }
   function onInput(message) {
     message = message.data
     console.log('input', message)
@@ -201,10 +209,7 @@ export function Connect() {
         case 95: {
           // Session button
           // flip board
-          invert = !invert
-          lightBoard()
-          ground.toggleOrientation()
-          m.redraw()
+          flipBoard()
           break
         }
       }
@@ -238,12 +243,15 @@ export function Connect() {
                 lightBoard()
                 m.redraw()
               })
-              // Midi.toggleLive()
-              // lightBoard()
-              // m.redraw()
             }
           },
         }, Midi.input && Midi.output ? 'disconnect' : 'connect'),
+        m('i.material-icons', {
+          title: 'flip board',
+          onclick: e => {
+            flipBoard()
+          }
+        }, 'wifi_protected_setup'),
         game ? m('', {}, JSON.stringify(invert ? game.white : game.black)) : null,
         User.token ? m(fetcher, {
           style: {display: 'none',},
