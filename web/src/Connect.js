@@ -263,8 +263,9 @@ export function Connect() {
               game = v
               console.log('loading game', v.state.moves)
               console.log('loaded?', chess.load_pgn(v.state.moves, {sloppy: true}))
-              if (v.black.id == 'mr_harpo') {
-                invert = true
+              if (v.black.id == User.profile.id) {
+                // if playing black, flip board
+                flipBoard()
               }
               // ground.set({fen:chess.fen()})
               lightBoard()
