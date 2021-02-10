@@ -17,16 +17,19 @@ export function Games() {
     },
     view: vnode => {
       return games.length ? games.map(g => {
-        return [g.opponent.username, 
+        return [
+          g.opponent.username, 
           m(Game, {
-          viewOnly: true,
-          class: 'thumb',
-          ...g,
-          onclick: e => {
-            console.log('game clicked', g)
-            m.route.set('/connect', {id: g.gameId})
-          }
-        })]
+            viewOnly: true,
+            class: 'thumb',
+            ...g,
+            orientation: g.color,
+            onclick: e => {
+              console.log('game clicked', g)
+              m.route.set('/connect', {id: g.gameId})
+            }
+          })
+        ]
       }) : [m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, 'create game on lichess'),
     ]
     }
