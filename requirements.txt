@@ -1,2 +1,12 @@
 chess
 python-rtmidi
+uvicorn
+fastapi
+aiofiles
+itsdangerous
+authlib
+httpx
+tinydb
+pyjwt
+passlib
+python-multipart
