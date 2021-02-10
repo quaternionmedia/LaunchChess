@@ -100,12 +100,12 @@ export const Login = () => {
               }
             },
           }, 'register'),
-          m('button#liRegister', {
-            id: '#liRegister', 
-            href: '/oauth/',
-          }, 'login with lichess')
         ]
-      )
+      ),
+      m('a#liRegister', {
+        id: '#liRegister', 
+        href: '/oauth/',
+      }, 'login with lichess'),
     ]
   }
 }
