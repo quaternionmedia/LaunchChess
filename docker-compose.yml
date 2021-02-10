@@ -16,4 +16,6 @@ services:
       - web
     labels:
       - traefik.http.routers.magnus.rule=Host(`magnus.quaternion.media`)
-      - traefik.http.routers.magnus.entryPoints=web
+      - traefik.http.routers.magnus.entryPoints=websecure
+      - traefik.http.routers.magnus.tls=true
+      - traefik.http.routers.magnus.tls.certresolver=le
