@@ -5,5 +5,6 @@ RUN pip install -U pip
 RUN pip install wheel
 COPY requirements.txt api.py /app/
 RUN pip install --no-cache-dir -r requirements.txt
-EXPOSE 80
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "80"]
+EXPOSE 80 443
+# CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "api:app", "--host", "magnus.quaternion.media", "--port", "443", "--ssl-certfile=/app/magnus.quaternion.media.pem"]
