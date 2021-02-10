@@ -20,6 +20,7 @@ export function Games() {
         return [g.opponent.username, 
           m(Game, {
           viewOnly: true,
+          class: 'thumb',
           ...g,
           onclick: e => {
             console.log('game clicked', g)

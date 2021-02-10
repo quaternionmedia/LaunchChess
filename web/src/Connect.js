@@ -278,7 +278,7 @@ export function Connect() {
             }
           }
         }) : null,
-        m('.board', {
+        m('.board.fullscreen', {
           // fen: chess.fen(), 
           viewOnly: true,
           highlight: {

@@ -1,5 +1,4 @@
 body {
-  width: 100vw;
   background: #222;
   color: #ddd;
 }
@@ -23,11 +22,16 @@ a {
 
 .board {
   position: relative;
+  margin: auto auto;
+}
+.fullscreen {
   width: 85%;
   max-width: 80vh;
   height: 80vh;
-  margin: auto auto;
-  
+}
+.thumb {
+  max-width: 20vh;
+  height: 20vh;
 }
 .button {
   display: inline-flex;
