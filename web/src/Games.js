@@ -24,6 +24,7 @@ export function Games() {
             class: 'thumb',
             ...g,
             orientation: g.color,
+            lastMove: [g.lastMove.slice(0,2), g.lastMove.slice(2)],
             onclick: e => {
               console.log('game clicked', g)
               m.route.set('/connect', {id: g.gameId})
