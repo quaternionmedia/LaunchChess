@@ -1,0 +1,19 @@
+version: '3'
+
+networks:
+  web:
+    external:
+      name: web
+
+
+services:
+  magnus:
+    image: magnus-server
+    build: ./
+    volumes:
+      - ./:/app/
+    networks:
+      - web
+    labels:
+      - traefik.http.routers.magnus.rule=Host(`magnus.quaternion.media`)
+      - traefik.http.routers.magnus.entryPoints=web
