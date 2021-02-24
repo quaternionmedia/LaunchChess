@@ -12,6 +12,10 @@ import { SQUARES, calculateInfluence, fenForOtherSide } from './ChessMaths'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 
 
+let GREEN = [ 123, 23, 64, 22, 76, 87, 21, 122 ]
+let RED = [121, 7, 106, 6, 120, 5]
+// let BLUE = [47, 46, 45, ]
+let COLORS = [5, 121, 9, 11, 15, 1, 23, 37, 45, 49, 69]
 const NOTE_ON = 144
 const CONTROL_CHANGE = 176
 
@@ -28,6 +32,7 @@ export function Connect() {
   var invert = false
   var chess = new Chess()
   var game, ground
+  var influence = false
 
   
   const find_piece = piece => {
@@ -136,19 +141,18 @@ export function Connect() {
   function showInfluence() {
     // let defenders = SQUARES.map(s => {countSquareDefenders(fen, s)})
     // var oppositeColor = chess.turn() == 'w' ? 'b' : 'w'
-    var moves = chess.moves({verbose: true})//, legal: false})
-    let defenders = Array(64).fill(0)
-    moves.forEach((move, i) => {
-      let index = SQUARES.indexOf(move.to)
-      defenders[index] += 1
-    })
-    SQUARES.forEach((square, i) => {
-      if (chess.get(square) && chess.get(square).color == chess.turn()) {
-        defenders[SQUARES.indexOf(square)] += 1
-      }
-    })
+    let fen = chess.fen()
+    let defenders = calculateInfluence(fen)
+    let attackers = calculateInfluence(fenForOtherSide(fen))
     
-    console.log(defenders, moves)
+    console.log(fen, fenForOtherSide(fen), defenders, attackers)
+    let colorMap = defenders.map((s, i) => {
+      let v = s - attackers[i]
+      // return v == 0 ? 0 : v > 0 ? GREEN[v] : RED[-v]
+      return COLORS[Math.min(v+5, 9)]
+    })
+    if (invert) colorMap.reverse()
+    lightMatrix(colorMap)
   }
   
   
@@ -240,10 +244,17 @@ export function Connect() {
           flipBoard()
           break
         }
-        case 96: {
-          // Note Button
-          // show square influence
-          showInfluence()
+        case 98: {
+          // Custom Midi
+          // toggle square influence / game
+          influence = !influence
+          Midi.output.send(NOTE_ON, [98, influence ? 5 : 0])
+          if (influence) {
+            showInfluence()
+          } else {
+            lightBoard()
+          }
+          break
         }
       }
     }
