@@ -68,6 +68,13 @@ export function Connect() {
       }
     }
   }
+  function lightMatrix(m) {
+    for (var y=0; y<8; y++) {
+      for (var x=0; x<8; x++) {
+        Midi.output.send(NOTE_ON, [11+x+y*10, m[x+y*8]])
+      }
+    }
+  }
   function lightBoard() {
     const board = chess.board()
     for (let i=0; i<64; i++) {
