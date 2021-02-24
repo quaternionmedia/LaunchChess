@@ -10,6 +10,15 @@ import { Chessground } from 'chessground'
 
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 
+let SQUARES = []
+let files = [...'abcdefgh']
+for (let i=1; i<=8; i++) {
+  files.forEach(file => {
+      SQUARES.push(file + String(i))
+    })
+  }
+console.log(SQUARES)
+
 const NOTE_ON = 144
 const CONTROL_CHANGE = 176
 
