@@ -33,6 +33,7 @@ export function Connect() {
   var chess = new Chess()
   var game, ground
   var influence = false
+  var color
 
   
   const find_piece = piece => {
@@ -156,7 +157,8 @@ export function Connect() {
     let colorMap = defenders.map((s, i) => {
       let v = s - attackers[i]
       // return v == 0 ? 0 : v > 0 ? GREEN[v] : RED[-v]
-      return COLORS[Math.min(v+5, 9)]
+      let c = Math.min(v+5, 9)
+      return COLORS[chess.turn() == color ? c : 10 - c]
     })
     if (invert) colorMap.reverse()
     lightMatrix(colorMap)
@@ -313,6 +315,9 @@ export function Connect() {
               if (v.black.id == User.profile.id) {
                 // if playing black, flip board
                 flipBoard()
+                color = 'b'
+              } else {
+                color = 'w'
               }
               // ground.set({fen:chess.fen()})
               lightBoard()
