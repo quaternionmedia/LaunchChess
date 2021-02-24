@@ -7,17 +7,10 @@ import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
 import { Game } from './Games'
 import { Chessground } from 'chessground'
+import { SQUARES, calculateInfluence, fenForOtherSide } from './ChessMaths'
 
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 
-let SQUARES = []
-let files = [...'abcdefgh']
-for (let i=1; i<=8; i++) {
-  files.forEach(file => {
-      SQUARES.push(file + String(i))
-    })
-  }
-console.log(SQUARES)
 
 const NOTE_ON = 144
 const CONTROL_CHANGE = 176
@@ -133,6 +126,25 @@ export function Connect() {
     ground.toggleOrientation()
     m.redraw()
   }
+  function showInfluence() {
+    // let defenders = SQUARES.map(s => {countSquareDefenders(fen, s)})
+    // var oppositeColor = chess.turn() == 'w' ? 'b' : 'w'
+    var moves = chess.moves({verbose: true})//, legal: false})
+    let defenders = Array(64).fill(0)
+    moves.forEach((move, i) => {
+      let index = SQUARES.indexOf(move.to)
+      defenders[index] += 1
+    })
+    SQUARES.forEach((square, i) => {
+      if (chess.get(square) && chess.get(square).color == chess.turn()) {
+        defenders[SQUARES.indexOf(square)] += 1
+      }
+    })
+    
+    console.log(defenders, moves)
+  }
+  
+  
   function onInput(message) {
     message = message.data
     console.log('input', message)
@@ -220,6 +232,11 @@ export function Connect() {
           // flip board
           flipBoard()
           break
+        }
+        case 96: {
+          // Note Button
+          // show square influence
+          showInfluence()
         }
       }
     }
