@@ -81,6 +81,13 @@ export function Connect() {
     }
   }
   function lightBoard() {
+    if (influence) {
+      showInfluence()
+    } else {
+      lightGame()
+    }
+  }
+  function lightGame() {
     const board = chess.board()
     for (let i=0; i<64; i++) {
       if (board[(63-i) >> 3][i % 8]) {
@@ -249,11 +256,7 @@ export function Connect() {
           // toggle square influence / game
           influence = !influence
           Midi.output.send(NOTE_ON, [98, influence ? 5 : 0])
-          if (influence) {
-            showInfluence()
-          } else {
-            lightBoard()
-          }
+          lightBoard()
           break
         }
       }
