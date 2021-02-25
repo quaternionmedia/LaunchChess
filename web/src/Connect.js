@@ -357,9 +357,6 @@ export function Connect() {
         game ? m('', {}, JSON.stringify(invert ? game.black : game.white)) : null,
 
       ]
-    },
-    onremove: vnode => {
-      Midi.close()
     }
   }
 }
