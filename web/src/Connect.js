@@ -266,11 +266,13 @@ export function Connect() {
   }
   function init() {
     console.log('connecting')
-    Midi.init(onInput, onCC, () => {
-      Midi.toggleLive()
-      lightBoard()
-      m.redraw()
-    })
+    if (!Midi.connected) {
+      Midi.init(onInput, onCC, () => {
+        Midi.toggleLive()
+        lightBoard()
+        m.redraw()
+      })
+    }
   }
   return {
     oninit: vnode => {
@@ -344,8 +346,8 @@ export function Connect() {
           onupdate: v => {
             console.log('updating board', v)
             ground.set({fen:chess.fen()})
-            if (chess.history().length) {
-              let hist = chess.history({verbose: true})
+            let hist = chess.history({verbose: true})
+            if (hist.length) {
               let last = hist.pop()
               console.log('highlighting chessground last move', hist, last, [last.from, last.to])
               ground.set({lastMove: [last.from, last.to]})
