@@ -160,7 +160,7 @@ export function Connect() {
       let c = Math.min(v+5, 9)
       return COLORS[chess.turn() == color ? c : 10 - c]
     })
-    if (invert) colorMap.reverse()
+    if (invert == (color == 'b')) colorMap.reverse()
     lightMatrix(colorMap)
   }
   
