@@ -6,14 +6,15 @@ import { fetcher } from './ndjson'
 
 export function Games() {
   var games = []
+  function getGames() {
+    auth(LICHESS_API_URL + 'account/playing').then(res => {
+      games = res.nowPlaying
+      console.log('current games', games)
+    })
+  }
   return {
     oninit: vnode => {
-      if (User.token) {
-        auth(LICHESS_API_URL + 'account/playing').then(res => {
-          games = res.nowPlaying
-          console.log('current games', games)
-        })
-      }
+      getGames()
     },
     view: vnode => {
       return games.length ? games.map(g => {
