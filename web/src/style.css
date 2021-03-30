@@ -24,6 +24,15 @@ a {
   position: relative;
   margin: auto auto;
 }
+.gamecontainer {
+  border: wheat;
+  border-style: outset;
+  width: fit-content;
+  padding: 1em;
+}
+.gamecontainer:hover {
+  background-color: #aaa;
+}
 .fullscreen {
   width: 85%;
   max-width: 80vh;
@@ -35,6 +44,7 @@ a {
 }
 .button {
   display: inline-flex;
+  /* background-color: #d652bb; */
 }
 .status {
   display: inline-flex;

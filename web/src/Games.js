@@ -3,6 +3,7 @@ import { User, auth } from './User'
 import { LICHESS_API_URL } from './config'
 import { Chessground } from 'chessground'
 import { fetcher } from './ndjson'
+import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 
 export function Games() {
   var games = []
@@ -17,23 +18,26 @@ export function Games() {
       getGames()
     },
     view: vnode => {
-      return games.length ? games.map(g => {
-        return [
-          g.opponent.username, 
-          m(Game, {
-            viewOnly: true,
-            class: 'thumb',
-            ...g,
-            orientation: g.color,
-            lastMove: [g.lastMove.slice(0,2), g.lastMove.slice(2)],
-            onclick: e => {
-              console.log('game clicked', g)
-              m.route.set('/connect', {id: g.gameId})
-            }
-          })
-        ]
-      }) : [m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, 'create game on lichess'),
-    ]
+      return [
+        m('i.material-icons', {onclick: getGames}, 'refresh'),
+        m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, m('i', {}, 'create game on lichess')),
+        games.map(g => {
+          return m('.gamecontainer', {}, [
+            g.opponent.username,
+            m(Game, {
+              viewOnly: true,
+              class: 'thumb',
+              ...g,
+              orientation: g.color,
+              lastMove: [g.lastMove.slice(0,2), g.lastMove.slice(2)],
+              onclick: e => {
+                console.log('game clicked', g)
+                m.route.set('/connect', {id: g.gameId})
+              }
+            })
+          ])
+      })
+  ]
     }
   }
 }
