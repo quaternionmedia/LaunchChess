@@ -279,9 +279,11 @@ export function Connect() {
       init()
     },
     view: vnode => {
+      let status = Midi.input && Midi.output ? 'connected' : 'disconnected'
       return [
-        m('.status', {class: Midi.input && Midi.output ? 'connected' : 'disconnected'}, ''),
-        m('button.button', {
+        m('.status', {class: status, title: status}, ''),
+        m('i.material-icons', {
+          title: status == 'connected' ? 'disconnect' : 'connect',
           onclick: e => {
             if (Midi.connected) {
               console.log('disconnecting')
@@ -296,7 +298,7 @@ export function Connect() {
               })
             }
           },
-        }, Midi.input && Midi.output ? 'disconnect' : 'connect'),
+        }, Midi.input && Midi.output ? 'power_off' : 'power'),
         m('i.material-icons', {
           title: 'flip board',
           onclick: e => {
