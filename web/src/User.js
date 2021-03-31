@@ -1,6 +1,7 @@
 import m from 'mithril'
 import jwt_decode from 'jwt-decode'
 
+
 export function auth(url, opts) {
   const req = new Promise((resolve, reject) => {
       m.request(url, {
@@ -62,6 +63,7 @@ export var User = {
   },
   logout: () => {
     console.log('logging out', User)
+    // don't need to use auth() because cookie is enough here
     m.request('/logout', {method: 'post'})
     m.request('/oauth/logout')
     User.username = null
