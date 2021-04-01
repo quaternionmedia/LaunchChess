@@ -50,10 +50,7 @@ export var User = {
       m.route.set(m.route.param('redirect'))
     } else if (m.route.get() == '/login') {
       m.route.set('/')
-    } else {
-      // m.route.set(m.route.get())
-      m.route.set('/')
-    }
+    } 
     m.redraw()
     auth('/oauth/profile').then(res => {
       console.log('profile', res)

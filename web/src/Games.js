@@ -15,11 +15,7 @@ export function Games() {
   }
   return {
     oninit: vnode => {
-      if (!User.username) {
-        m.route.set('/login')
-      } else {
         getGames()
-      }
     },
     view: vnode => {
       return [
