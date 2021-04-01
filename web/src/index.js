@@ -6,7 +6,7 @@ import { Login } from './Login'
 import './style.css'
 import { User } from './User'
 import { Games } from './Games'
-import { Profile } from './Profile'
+import { ProfilePage } from './Profile'
 
 export function Home() {
   return {
@@ -23,7 +23,7 @@ m.route(document.body, '/', {
   '/games': { render: () => m(Layout, m(Games))},
   '/board': { render: () => m(Layout, m(Board))},
   '/login': { render: () => m(Layout, m(Login))},
-  '/profile': { render: () => m(Layout, m(Profile))},
+  '/profile': { render: () => m(Layout, m(ProfilePage))},
 
 })
 

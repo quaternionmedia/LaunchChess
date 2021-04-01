@@ -42,22 +42,20 @@ form select {
   vertical-align: middle;
 }
 .button {
-  font-size: 1.5em;
-  padding: .5em;
+  font-size: 1.3em;
+  padding: .4em;
   border-radius: 1em;
-  color: #aaa;
-  background-color: #46346E;
+  color: #fff;
+  background-color: #d652bb;
   opacity: .8;
-  box-shadow: -2px 2px #222;
+  box-shadow: -2px 2px #aaa;
 }
 .button:hover {
-  /* background-color: #7059A2; */
   transition: 0.3s;
   opacity: 1;
 
 }
 .button:active {
-  background-color: #4F1FB8;
-  box-shadow: 0 4px #393939;
+  box-shadow: 0 4px #555;
   transform: translateY(4px);
 }

@@ -33,6 +33,12 @@ a {
 .gamecontainer:hover {
   background-color: #aaa;
 }
+.profile {
+  padding-bottom: 1em;
+}
+section {
+  padding: 1em;
+}
 .fullscreen {
   width: 85%;
   max-width: 80vh;
@@ -41,10 +47,6 @@ a {
 .thumb {
   max-width: 20vh;
   height: 20vh;
-}
-.button {
-  display: inline-flex;
-  /* background-color: #d652bb; */
 }
 .status {
   display: inline-flex;
@@ -70,7 +72,7 @@ i {
   border-color: #393939;
   border-radius: 10px;
   padding: 6px;
-  margin: 2px;
+  margin-right: .5em;
   width: 1em;
   height: 1em;
   text-align: center;

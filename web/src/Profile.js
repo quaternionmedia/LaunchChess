@@ -1,6 +1,15 @@
 import m from 'mithril'
 import { User } from './User'
-import { confirm, message } from 'alertifyjs'
+import { defaults, confirm, message } from 'alertifyjs'
+import '../node_modules/alertifyjs/build/css/alertify.min.css'
+import '../node_modules/alertifyjs/build/css/themes/semantic.css'
+import './forms.css'
+
+defaults.glossary.title = 'magnus'
+defaults.transition = "zoom"
+defaults.theme.ok = "ui positive button"
+defaults.theme.cancel = "ui black button"
+defaults.notifier.delay = 10
 
 export function ProfilePage() {
   return {
