@@ -1,11 +1,10 @@
 import m from 'mithril'
 import { Layout } from './Menu'
-import { Board } from './Board'
 import { Connect } from './Connect'
 import { Login } from './Login'
 import './style.css'
 import { User } from './User'
-import { Games } from './Games'
+import { Game, Games } from './Games'
 import { ProfilePage } from './Profile'
 
 export function Home() {
@@ -21,7 +20,7 @@ m.route(document.body, '/', {
   '/': { render: () => m(Layout, m(Home))},
   '/connect': { render: () => m(Layout, m(Connect))},
   '/games': { render: () => m(Layout, m(Games))},
-  '/board': { render: () => m(Layout, m(Board))},
+  '/board': { render: () => m(Layout, m(Game))},
   '/login': { render: () => m(Layout, m(Login))},
   '/profile': { render: () => m(Layout, m(ProfilePage))},
 
