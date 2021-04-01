@@ -56,3 +56,18 @@ export function makeDests(fen) {
   console.log('all possible moves', dests)
   return dests
 }
+
+
+export function getPieceLocations(chess, piece) {
+  let res = []
+  chess.board().map((rank, r) => {
+    rank.map((p, f) => {
+      if (p && p.type == piece.type && p.color == piece.color) {
+        console.log('found piece', p, r, f)
+        res.push( RANKS[r] + f )
+      }
+    })
+  })  
+  return res
+}
+

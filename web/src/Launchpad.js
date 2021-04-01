@@ -2,18 +2,6 @@ import { Midi, NOTE_ON } from './Midi'
 
 const colors = {'p': 13,'r': 9,'n': 45,'b': 37,'q': 53,'k': 49}
 
-export function getPieceIndex(chess, piece) {
-  let index = null
-  chess.board().map((rank, r) => {
-    rank.map((p, f) => {
-      if (p != null && p.type == piece.type && p.color == piece.color) {
-        console.log('found piece', p, r, f)
-        index = (7-r)*8+f
-      }
-    })
-  })  
-  return index
-}
 
 export function nToLaunch(n, invert=false) {
   // 0-63 mapped to launchpad notes
