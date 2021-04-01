@@ -22,8 +22,6 @@ a {
 
 .board {
   position: relative;
-  max-width: 80vh;
-  bottom: -80vh;
 }
 .gamecontainer {
   border: wheat;
@@ -41,9 +39,12 @@ section {
   padding: 1em;
 }
 .fullscreen {
-  width: 85%;
+  /* width: 85%;
   max-width: 80vh;
-  height: 80vh;
+  height: 80vh; */
+  
+  max-width: 75vh;
+  margin-top: 75vh;
 }
 .thumb {
   max-width: 20vh;

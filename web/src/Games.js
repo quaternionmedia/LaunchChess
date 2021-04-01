@@ -39,12 +39,11 @@ export function Games() {
               }
             })
           ])
-      })
-  ]
+        })
+      ]
     }
   }
 }
-
 
 export function Game() {
   let chess = null
@@ -60,15 +59,12 @@ export function Game() {
     oninit: vnode => {
       chess = new Chess(vnode.attrs.fen)
     },
-    // onupdate: vnode => {
-    //   console.log('updating board')
-    // },
     view: vnode => {
       return m(Board, {
+        class: 'fullscreen',
         oncreate: vnode => {
           ground = Chessground(vnode.dom, {
             fen: vnode.attrs.fen, 
-            orientation: vnode.attrs.invert, 
             ...config
           })
           ground.set({
