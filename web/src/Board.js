@@ -3,31 +3,32 @@ import { Chessground } from 'chessground'
 import './chessground.css'
 import './chessground-brown.css'
 import { Chess } from 'chess.js'
+import { toDests, toColor, playOtherSide } from './utils'
 
 export function Board() {
-  const chess = new Chess()
-  var ground = null
-  var config = {
+  let chess = new Chess()
+  let ground = null
+  let config = {
     movable: {
-      showDests: true,
+      color: 'white',
+      free: false,
+      dests: toDests(chess),
     },
-    events: {
-      select: key => {
-        console.log('selected', key)
-        const moves = chess.moves({'square': key})
-        console.log('legal moves', moves)
-        
-      }
-    }
+    draggable: {
+        showGhost: true
+      },
   }
 
   return {
     oncreate: vnode => {
       ground = Chessground(vnode.dom, config)
+      ground.set({
+        movable: { events: { after: playOtherSide(chess, ground) } }
+      })
       
     },
     view: vnode => {
-      return m('.board')
+      return m('.board', vnode.attrs)
     }
   }
 }
