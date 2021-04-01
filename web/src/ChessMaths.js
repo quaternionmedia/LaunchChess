@@ -1,12 +1,14 @@
 import { Chess } from 'chess.js'
 
+export const RANKS = 'abcdefgh'
+
 let squares = []
-let files = [...'abcdefgh']
-for (let i=1; i<=8; i++) {
-  files.forEach(file => {
-      squares.push(file + String(i))
-    })
-  }
+let ranks = [...RANKS]
+ranks.forEach(rank => {
+  for (let f=1; f<=8; f++) {
+      squares.push(rank + f)
+    }
+  })
 
 export const SQUARES = squares
 
