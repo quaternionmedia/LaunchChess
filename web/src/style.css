@@ -22,7 +22,8 @@ a {
 
 .board {
   position: relative;
-  margin: auto auto;
+  max-width: 80vh;
+  bottom: -80vh;
 }
 .gamecontainer {
   border: wheat;
