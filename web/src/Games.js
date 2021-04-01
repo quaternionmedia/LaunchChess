@@ -2,6 +2,8 @@ import m from 'mithril'
 import { User, auth } from './User'
 import { LICHESS_API_URL } from './config'
 import { Chessground } from 'chessground'
+import { Chess } from 'chess.js'
+import { Board } from './Board'
 import { fetcher } from './ndjson'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 import { toDests, toColor, playOtherSide } from './utils'
@@ -25,11 +27,11 @@ export function Games() {
         games.map(g => {
           return m('.gamecontainer', {}, [
             g.opponent.username,
-            m(Game, {
+            m(Board, {
               viewOnly: true,
               class: 'thumb',
               ...g,
-              orientation: g.color,
+              orientation: g.color == 'w' ? 'white' : 'black',
               lastMove: [g.lastMove.slice(0,2), g.lastMove.slice(2)],
               onclick: e => {
                 console.log('game clicked', g)
@@ -43,14 +45,38 @@ export function Games() {
   }
 }
 
+
 export function Game() {
-  var ground = null
+  let chess = null
+  let ground = null
+  let config = {
+    movable: {
+      color: 'white',
+      free: false,
+    },
+  }
+
   return {
-    oncreate: vnode => {
-      ground = Chessground(vnode.dom, vnode.attrs)
+    oninit: vnode => {
+      chess = new Chess(vnode.attrs.fen)
     },
+    // onupdate: vnode => {
+    //   console.log('updating board')
+    // },
     view: vnode => {
-      return m('.board', vnode.attrs, vnode.children)
-    },
+      return m(Board, {
+        oncreate: vnode => {
+          ground = Chessground(vnode.dom, {
+            fen: vnode.attrs.fen, 
+            orientation: vnode.attrs.invert, 
+            ...config
+          })
+          ground.set({
+            movable: { dests: toDests(chess), events: { after: playOtherSide(chess, ground) } }
+          })
+        },
+        ...vnode.attrs
+      })
+    }
   }
 }

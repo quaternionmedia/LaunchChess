@@ -1,11 +1,10 @@
 import m from 'mithril'
-import { Board } from './Board'
+import { Game } from './Games'
 import { Chess } from 'chess.js'
 import { Midi, NOTE_ON, CONTROL_CHANGE } from './Midi'
 import { fetcher } from './ndjson'
 import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
-import { Game } from './Games'
 import { Chessground } from 'chessground'
 import { SQUARES, calculateInfluence, fenForOtherSide, makeDests, uci } from './ChessMaths'
 import { nToLaunch, launchToN, squareToN, nToSquare, grid, lightMatrix, lightGame, highlightMove } from './Launchpad'
@@ -22,7 +21,7 @@ export function Connect() {
   var selected, square, piece_moves
   var invert = false
   var chess = new Chess()
-  var game, ground
+  var game
   var influence = false
   var color
   
@@ -217,60 +216,15 @@ export function Connect() {
               } else {
                 color = 'w'
               }
-              // ground.set({fen:chess.fen()})
-              lightBoard()
-              m.redraw()
             } else if (v.type == 'gameState') {
               console.log('move played', v.moves)
               chess.load_pgn(v.moves, {sloppy: true})
-              lightBoard()
-              m.redraw()
             }
+            lightBoard()
+            m.redraw()
           }
         }) : null,
-        m('.board.fullscreen', {
-          oncreate: v => {
-            ground = Chessground(v.dom, {
-              fen: chess.fen(), 
-              // highlight: {
-              //   lastMove: true,
-              //   check: true,
-              // },
-              movable: {
-                free: false,
-                color: 'white'
-              //   showDests: true,
-            },
-            events: {
-              after: e => {
-                console.log('dropped piece', e)
-              }
-            }
-            })
-            // ground.set({fen:chess.fen()}, v.attrs)
-          },
-          onupdate: v => {
-            console.log('updating board', v)
-            ground.set({
-              fen:chess.fen(),
-              draggable: {
-                enabled: true,
-                showGhost: true,
-                
-              },
-              movable: {
-                color: chess.turn() == 'w' ? 'white' : 'black',
-                dests: makeDests(chess.fen()),
-              }
-            })
-            let hist = chess.history({verbose: true})
-            if (hist.length) {
-              let last = hist.pop()
-              console.log('highlighting chessground last move', hist, last, [last.from, last.to])
-              ground.set({lastMove: [last.from, last.to]})
-            }
-          }
-        }),
+        m(Game, {fen: chess.fen(), invert: invert ? 'white' : 'black'}),
         game ? m('', {}, JSON.stringify(invert ? game.black : game.white)) : null,
 
       ]
