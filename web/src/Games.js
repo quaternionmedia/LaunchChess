@@ -4,6 +4,7 @@ import { LICHESS_API_URL } from './config'
 import { Chessground } from 'chessground'
 import { fetcher } from './ndjson'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
+import { toDests, toColor, playOtherSide } from './utils'
 
 export function Games() {
   var games = []
