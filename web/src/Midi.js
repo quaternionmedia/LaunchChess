@@ -1,6 +1,9 @@
 import WebMidi from 'webmidi'
 import { deviceName } from './config'
 
+export const NOTE_ON = 144
+export const CONTROL_CHANGE = 176
+
 export var Midi = {
   input: null, 
   output: null,

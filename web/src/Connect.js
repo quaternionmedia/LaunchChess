@@ -1,32 +1,23 @@
 import m from 'mithril'
 import { Board } from './Board'
 import { Chess } from 'chess.js'
-import { Midi } from './Midi'
+import { Midi, NOTE_ON, CONTROL_CHANGE } from './Midi'
 import { fetcher } from './ndjson'
 import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
 import { Game } from './Games'
 import { Chessground } from 'chessground'
-import { SQUARES, calculateInfluence, fenForOtherSide } from './ChessMaths'
+import { SQUARES, calculateInfluence, fenForOtherSide, makeDests, uci } from './ChessMaths'
+import { nToLaunch, launchToN, squareToN, nToSquare, grid, lightMatrix, lightGame, highlightMove } from './Launchpad'
 
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 
 
-let GREEN = [ 123, 23, 64, 22, 76, 87, 21, 122 ]
-let RED = [121, 7, 106, 6, 120, 5]
+// let GREEN = [ 123, 23, 64, 22, 76, 87, 21, 122 ]
+// let RED = [121, 7, 106, 6, 120, 5]
 // let BLUE = [47, 46, 45, ]
-let COLORS = [5, 121, 9, 11, 15, 1, 23, 37, 45, 49, 69]
-const NOTE_ON = 144
-const CONTROL_CHANGE = 176
+export const COLORS = [5, 121, 9, 11, 15, 1, 23, 37, 45, 49, 69]
 
-const colors = {'p': 13,'r': 9,'n': 45,'b': 37,'q': 53,'k': 49}
-export const uci = move => {
-  let uci = move.from + move.to
-  if (move.promotion) {
-    uci += move.promotion
-  }
-  return uci
-}
 export function Connect() {
   var selected, square, piece_moves
   var invert = false
@@ -34,112 +25,15 @@ export function Connect() {
   var game, ground
   var influence = false
   var color
-
   
-  const find_piece = piece => {
-    var index = null
-    chess.board().map((rank, r) => {
-      rank.map((p, f) => {
-        if (p != null && p.type == piece.type && p.color == piece.color) {
-          console.log('found piece', p, r, f)
-          index = (7-r)*8+f
-        }
-      })
-    })  
-    return index
-  }
-  
-  function nToLaunch(n) {
-    // 0-63 mapped to launchpad notes
-    if (invert) {
-      n = 63 - n
-    }
-    return 11 + (n>>3)*10 + n%8
-  }
-  function launchToN(n) {
-    // launchpad note mapped to 0-63
-    const s = Math.floor((n-11)/ 10)*8 + (n-11) % 10
-    return invert ? 63 - s : s
-  }
-  function squareToN(sq) {
-    return (Number(sq[1]) - 1)*8 + sq.charCodeAt(0) - 97
-  }
-  function nToSquare(n) {
-    return String.fromCharCode(97+(n%8), 49+(n>>3))
-  }
-  function grid() {
-    for (var y=0; y<8; y++) {
-      for (var x=0; x<8; x++) {
-        Midi.output.send(NOTE_ON, [11+x+y*10, (x+y) % 2 == 0 ? 0 : 1])
-      }
-    }
-  }
-  function lightMatrix(m) {
-    for (var y=0; y<8; y++) {
-      for (var x=0; x<8; x++) {
-        Midi.output.send(NOTE_ON, [11+x+y*10, m[x+y*8]])
-      }
-    }
-  }
   function lightBoard() {
     if (influence) {
       showInfluence()
     } else {
-      lightGame()
+      lightGame(chess, invert)
     }
   }
-  function lightGame() {
-    const board = chess.board()
-    for (let i=0; i<64; i++) {
-      if (board[(63-i) >> 3][i % 8]) {
-        var piece = board[(63-i) >> 3][i % 8]
-        // console.log('piece at i', i, piece)
-      } else {
-        var piece = null
-      }
-      const l = nToLaunch(i)
-      // console.log(i, piece, l)
-      const c = piece ? colors[piece.type] : (i + (i >> 3)) % 2 == 0 ? 0 : 1
-      // console.log(NOTE_ON, l, c)
-      
-      Midi.output.send(NOTE_ON, [l, piece ? (piece.color == 'w' ? c : c + 2) : c])
-    }
-    let history = chess.history()
-    if (history.length) {
-      highlightMove(history.length-1)
-      if (history.length > 1) {
-        highlightMove(history.length-2)
-      }
-    }
-    Midi.output.send(NOTE_ON, [99, chess.turn() == 'w' ? 3 : 83])
-  }
-  function highlightMove(index) {
-    var lastMove = chess.history({verbose:true})[index]
-    if (lastMove) {
-      var from_square = lastMove.from
-      var to_square = lastMove.to
-      console.log('highlighting', lastMove, from_square, to_square)
-      if (! chess.get(from_square)) {
-        Midi.output.send(NOTE_ON | 2, [nToLaunch(squareToN(from_square)), 70])
-      }
-      if (chess.get(to_square)) {
-        let c = colors[chess.get(to_square).type]
-        Midi.output.send(NOTE_ON | 2, [nToLaunch(squareToN(to_square)), chess.get(to_square).color == 'w' ? c : c + 2])
-      }
-      
-      if (chess.in_check()) {
-        let k = find_piece({type:'k', color: chess.turn() })
-        console.log('check!', k)
-        Midi.output.send(NOTE_ON | 1, [nToLaunch(k), 5])
-      }
-      if (chess.in_checkmate()) {
-        let k = find_piece({type:'k', color: chess.turn() })
-        console.log('mate!', k)
-        Midi.output.send(NOTE_ON, [nToLaunch(k), 5])
-      }
-    }
-    
-  }
+  
   function flipBoard() {
     invert = !invert
     lightBoard()
@@ -169,7 +63,7 @@ export function Connect() {
     message = message.data
     console.log('input', message)
     if (message[2]) {
-      const s = launchToN(message[1])
+      const s = launchToN(message[1], invert)
       console.log('touched', s)
       const legal_moves = chess.moves({verbose:true})
       console.log('legal moves', legal_moves)
@@ -196,10 +90,10 @@ export function Connect() {
             console.log(p)
             if (chess.get(p.to)) {
               // piece at square. flash green
-              console.log('capture', nToLaunch(squareToN(p.to)))
-              Midi.output.send(NOTE_ON | 1, [nToLaunch(squareToN(p.to)), 21])
+              console.log('capture', nToLaunch(squareToN(p.to, invert)))
+              Midi.output.send(NOTE_ON | 1, [nToLaunch(squareToN(p.to, invert)), 21])
             } else {
-              console.log('regular move', p.to, squareToN(p.to), nToLaunch(squareToN(p.to)))
+              console.log('regular move', p.to, squareToN(p.to), nToLaunch(squareToN(p.to, invert)))
               Midi.output.send(NOTE_ON | 2, [nToLaunch(squareToN(p.to)), 21])
             }
           })
@@ -335,19 +229,40 @@ export function Connect() {
           }
         }) : null,
         m('.board.fullscreen', {
-          // fen: chess.fen(), 
-          viewOnly: true,
-          highlight: {
-            lastMove: true,
-            check: true,
-          },
           oncreate: v => {
-            ground = Chessground(v.dom, v.attrs)
-            ground.set({fen:chess.fen()})
+            ground = Chessground(v.dom, {
+              fen: chess.fen(), 
+              // highlight: {
+              //   lastMove: true,
+              //   check: true,
+              // },
+              movable: {
+                free: false,
+                color: 'white'
+              //   showDests: true,
+            },
+            events: {
+              after: e => {
+                console.log('dropped piece', e)
+              }
+            }
+            })
+            // ground.set({fen:chess.fen()}, v.attrs)
           },
           onupdate: v => {
             console.log('updating board', v)
-            ground.set({fen:chess.fen()})
+            ground.set({
+              fen:chess.fen(),
+              draggable: {
+                enabled: true,
+                showGhost: true,
+                
+              },
+              movable: {
+                color: chess.turn() == 'w' ? 'white' : 'black',
+                dests: makeDests(chess.fen()),
+              }
+            })
             let hist = chess.history({verbose: true})
             if (hist.length) {
               let last = hist.pop()
