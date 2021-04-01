@@ -1,5 +1,5 @@
 import m from 'mithril'
-import { Game } from './Games'
+import { Game, game } from './Games'
 import { Chess } from 'chess.js'
 import { Midi, NOTE_ON, CONTROL_CHANGE } from './Midi'
 import { fetcher } from './ndjson'
@@ -8,6 +8,7 @@ import { User, auth } from './User'
 import { Chessground } from 'chessground'
 import { SQUARES, calculateInfluence, fenForOtherSide, makeDests, uci } from './ChessMaths'
 import { nToLaunch, launchToN, squareToN, nToSquare, grid, lightMatrix, lightGame, highlightMove } from './Launchpad'
+import { toDests, toColor, playOtherSide } from './utils'
 
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 
@@ -18,12 +19,12 @@ import '../node_modules/material-design-icons-iconfont/dist/material-design-icon
 export const COLORS = [5, 121, 9, 11, 15, 1, 23, 37, 45, 49, 69]
 
 export function Connect() {
-  var selected, square, piece_moves
-  var invert = false
-  var chess = new Chess()
-  var game
-  var influence = false
-  var color
+  let selected, square, piece_moves
+  let invert = false
+  let chess = new Chess()
+  let ground
+  let influence = false
+  let color
   
   function lightBoard() {
     if (influence) {
@@ -36,7 +37,7 @@ export function Connect() {
   function flipBoard() {
     invert = !invert
     lightBoard()
-    ground.toggleOrientation()
+    if (ground) ground.toggleOrientation()
     m.redraw()
   }
   function showInfluence() {
@@ -198,7 +199,23 @@ export function Connect() {
             flipBoard()
           }
         }, 'wifi_protected_setup'),
-        game ? m('', {}, JSON.stringify(invert ? game.white : game.black)) : null,
+        game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.white : game.gameFull.black)) : null,
+        game.gameFull ? m(Game, {
+          fen: chess.fen(),
+          config: {
+            orientation: invert ? 'black' : 'white', 
+            movable: {
+              color: chess.turn() == 'w' ? 'white' : 'black',
+               free: false}},
+          oncreate: v => {
+            ground = Chessground(v.dom, {fen: v.attrs.fen, ...v.attrs.config})
+            ground.set({
+              movable: { dests: toDests(chess), events: { after: playOtherSide(chess, ground) } }
+            })
+          },
+             }) : null,
+        game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.black : game.gameFull.white)) : null,
+        
         User.token ? m(fetcher, {
           style: {display: 'none',},
           endpoint: LICHESS_API_URL + 'board/game/stream/' + m.route.param('id'),
@@ -206,7 +223,7 @@ export function Connect() {
           callback: v => {
             console.log('calling back', v)
             if (v.type == 'gameFull') {
-              game = v
+              game.gameFull = v
               console.log('loading game', v.state.moves)
               console.log('loaded?', chess.load_pgn(v.state.moves, {sloppy: true}))
               if (v.black.id == User.profile.id) {
@@ -224,9 +241,6 @@ export function Connect() {
             m.redraw()
           }
         }) : null,
-        m(Game, {fen: chess.fen(), invert: invert ? 'white' : 'black'}),
-        game ? m('', {}, JSON.stringify(invert ? game.black : game.white)) : null,
-
       ]
     }
   }

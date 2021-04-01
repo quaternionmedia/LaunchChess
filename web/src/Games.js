@@ -8,6 +8,8 @@ import { fetcher } from './ndjson'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 import { toDests, toColor, playOtherSide } from './utils'
 
+export var game = {}
+
 export function Games() {
   var games = []
   function getGames() {
@@ -27,17 +29,20 @@ export function Games() {
         games.map(g => {
           return m('.gamecontainer', {}, [
             g.opponent.username,
-            m(Board, {
-              viewOnly: true,
-              class: 'thumb',
-              ...g,
-              orientation: g.color == 'w' ? 'white' : 'black',
-              lastMove: [g.lastMove.slice(0,2), g.lastMove.slice(2)],
+            m(Board, { 
+              config: {
+                fen: g.fen,
+                viewOnly: true,
+                class: 'thumb',
+                orientation: g.color == 'w' ? 'white' : 'black',
+                lastMove: [g.lastMove.slice(0,2), g.lastMove.slice(2)],
+                },
               onclick: e => {
                 console.log('game clicked', g)
+                game = g
                 m.route.set('/connect', {id: g.gameId})
-              }
-            })
+              },
+          })
           ])
         })
       ]
@@ -62,11 +67,8 @@ export function Game() {
     view: vnode => {
       return m(Board, {
         class: 'fullscreen',
-        oncreate: vnode => {
-          ground = Chessground(vnode.dom, {
-            fen: vnode.attrs.fen, 
-            ...config
-          })
+        oncreate: v => {
+          ground = Chessground(vnode.dom, {fen: vnode.attrs.fen, ...config, ...vnode.attrs.config})
           ground.set({
             movable: { dests: toDests(chess), events: { after: playOtherSide(chess, ground) } }
           })
