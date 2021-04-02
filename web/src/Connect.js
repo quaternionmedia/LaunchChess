@@ -158,12 +158,13 @@ export function Connect() {
   }
   function streamGame() {
     streamJson(LICHESS_API_URL + 'board/game/stream/' + m.route.param('id'),
-    User.token, v => {
+      User.token, 
+      v => {
       console.log('calling back', v)
       if (v.type == 'gameFull') {
         game.gameFull = v
         // TODO: change to Stream()
-        m.redraw()
+        // m.redraw()
         console.log('loading game', v.state.moves)
         console.log('loaded?', chess.load_pgn(v.state.moves, {sloppy: true}))
         if (v.black.id == User.profile.id) {
@@ -178,10 +179,12 @@ export function Connect() {
         console.log('loaded?', chess.load_pgn(v.moves, {sloppy: true}))
 
       }
+      let turn = chess.turn() == 'w' ? 'white' : 'black'
+      console.log('updated. turn is', turn)
       ground.set({
         fen: chess.fen(),
+        turnColor: toColor(chess),
         movable: {
-          color: chess.turn() == 'w' ? 'white' : 'black',
           dests: toDests(chess),
           events: { after: playOtherSide(chess, ground) }
         }
@@ -235,23 +238,31 @@ export function Connect() {
           }
         }, 'wifi_protected_setup'),
         game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.white : game.gameFull.black)) : null,
-        m(Game, {
-          fen: chess.fen(),
-          config: {
-            orientation: invert ? 'black' : 'white', 
-            movable: {
-              color: chess.turn() == 'w' ? 'white' : 'black',
-               free: false}},
+        m('.board.fullscreen', {
+          // fen: chess.fen(),
+          // config: ,
           oncreate: v => {
-            ground = Chessground(v.dom, {fen: v.attrs.fen, ...v.attrs.config})
+            ground = Chessground(v.dom, {fen: v.attrs.fen,
+              orientation: invert ? 'black' : 'white',
+              premovable: {
+                enabled: false
+              },
+              movable: {
+                 free: false}})
+            
+            let c = game.isMyTurn ? game.color : game.color == 'white' ? 'black' : 'white'
+            console.log('my color', c)
             ground.set({
-              movable: { dests: toDests(chess), events: { after: playOtherSide(chess, ground) } }
+              movable: { 
+                dests: toDests(chess), events: { after: playOtherSide(chess, ground) },
+                color: c,
+              }
             })
             streamGame()
 
           },
              }),
-        game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.black : game.gameFull.white)) : null,
+        // game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.black : game.gameFull.white)) : null,
         
       ]
     }

@@ -58,6 +58,7 @@ export function makeDests(fen) {
       dests[m.from] = [m.to]
     }
   })
+  // console.log('all possible moves', dests)
   return dests
 }
 

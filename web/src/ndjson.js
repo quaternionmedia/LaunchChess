@@ -40,7 +40,7 @@ export function fetcher() {
       
           console.log( result.value )
           nd = JSON.stringify(result.value)
-          m.redraw()
+          // m.redraw()
           vnode.attrs.callback(result.value)
           reader.read().then( read )
         })
