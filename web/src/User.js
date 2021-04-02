@@ -51,7 +51,7 @@ export var User = {
     } else if (m.route.get() == '/login') {
       m.route.set('/')
     } 
-    m.redraw()
+    // m.redraw()
     auth('/oauth/profile').then(res => {
       console.log('profile', res)
       User.profile = res
@@ -68,6 +68,6 @@ export var User = {
     User.loggedIn = false
     window.localStorage.setItem('CREDENTIALS_FLUSH', Date.now().toString())
     window.localStorage.removeItem('CREDENTIALS_FLUSH')
-    m.redraw()
+    // m.redraw()
   }
 }

@@ -1,5 +1,6 @@
 import WebMidi from 'webmidi'
 import { deviceName } from './config'
+var Stream = require("mithril/stream")
 
 export const NOTE_ON = 144
 export const CONTROL_CHANGE = 176
@@ -7,10 +8,10 @@ export const CONTROL_CHANGE = 176
 export var Midi = {
   input: null, 
   output: null,
-  connected: false,
+  connected: Stream(false),
   toggleLive: () => {
-    Midi.connected = !Midi.connected
-    Midi.output.sendSysex([0, 32, 41], [2, 12, 14, Midi.connected ? 1 : 0])
+    Midi.connected(!Midi.connected())
+    Midi.output.sendSysex([0, 32, 41], [2, 12, 14, Midi.connected() ? 1 : 0])
   },
   connect: (noteCallback, ccCallback, afterInit) => {
     Midi.input = WebMidi.getInputByName(deviceName)
@@ -21,12 +22,13 @@ export var Midi = {
     afterInit()
   },
   close: () => {
-    if (Midi.connected) Midi.toggleLive()
+    if (Midi.connected()) Midi.toggleLive()
     if (Midi.input) {
       Midi.input.removeListener()
       Midi.input = null
     }
     if (Midi.output) Midi.output = null
+    Midi.connected(false)
   },
   init: (noteCallback, ccCallback, afterInit) => {
     WebMidi.enable(function (err) {
@@ -54,10 +56,10 @@ export var Midi = {
         if (e.port.name == deviceName) {
           if (e.port.type == 'output') {
             Midi.output = null
-            Midi.connected = false
           } else {
             Midi.input = null
           }
+          Midi.connected(false)
         }
       })
       

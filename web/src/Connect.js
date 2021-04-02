@@ -38,7 +38,7 @@ export function Connect() {
     invert = !invert
     lightBoard()
     if (ground) ground.toggleOrientation()
-    m.redraw()
+    // m.redraw()
   }
   function showInfluence() {
     // let defenders = SQUARES.map(s => {countSquareDefenders(fen, s)})
@@ -164,6 +164,8 @@ export function Connect() {
       console.log('calling back', v)
       if (v.type == 'gameFull') {
         game.gameFull = v
+        // TODO: change to Stream()
+        m.redraw()
         console.log('loading game', v.state.moves)
         if (v.black.id == User.profile.id) {
           // if playing black, flip board
@@ -192,16 +194,14 @@ export function Connect() {
         })
       }
       lightBoard()
-      // m.redraw()
     })
   }
   function init() {
     console.log('connecting')
-    if (!Midi.connected) {
+    if (!Midi.connected()) {
       Midi.init(onInput, onCC, () => {
         Midi.toggleLive()
         lightBoard()
-        // m.redraw()
       })
     }
   }
@@ -210,26 +210,24 @@ export function Connect() {
       init()
     },
     view: vnode => {
-      let status = Midi.input && Midi.output ? 'connected' : 'disconnected'
+      let status = Midi.connected() ? 'connected' : 'disconnected'
       return [
         m('.status', {class: status, title: status}, ''),
         m('i.material-icons', {
           title: status == 'connected' ? 'disconnect' : 'connect',
           onclick: e => {
-            if (Midi.connected) {
+            if (Midi.connected()) {
               console.log('disconnecting')
               Midi.close()
-              m.redraw()
             } else {
               console.log('connecting')
               Midi.connect(onInput, onCC, () => {
                 Midi.toggleLive()
                 lightBoard()
-                // m.redraw()
               })
             }
           },
-        }, Midi.input && Midi.output ? 'power_off' : 'power'),
+        }, Midi.connected() ? 'power_off' : 'power'),
         m('i.material-icons', {
           title: 'flip board',
           onclick: e => {
@@ -259,4 +257,3 @@ export function Connect() {
     }
   }
 }
-
