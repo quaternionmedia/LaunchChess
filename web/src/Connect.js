@@ -88,11 +88,11 @@ export function Connect() {
             console.log(p)
             if (chess.get(p.to)) {
               // piece at square. flash green
-              console.log('capture', nToLaunch(squareToN(p.to, invert)))
-              Midi.output.send(NOTE_ON | 1, [nToLaunch(squareToN(p.to, invert)), 21])
+              console.log('capture', nToLaunch(squareToN(p.to), invert))
+              Midi.output.send(NOTE_ON | 1, [nToLaunch(squareToN(p.to), invert), 21])
             } else {
-              console.log('regular move', p.to, squareToN(p.to), nToLaunch(squareToN(p.to, invert)))
-              Midi.output.send(NOTE_ON | 2, [nToLaunch(squareToN(p.to)), 21])
+              console.log('regular move', p.to, squareToN(p.to), nToLaunch(squareToN(p.to), invert))
+              Midi.output.send(NOTE_ON | 2, [nToLaunch(squareToN(p.to), invert), 21])
             }
           })
         }
@@ -262,7 +262,7 @@ export function Connect() {
 
           },
              }),
-        // game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.black : game.gameFull.white)) : null,
+        game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.black : game.gameFull.white)) : null,
         
       ]
     }
