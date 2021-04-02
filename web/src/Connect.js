@@ -2,7 +2,7 @@ import m from 'mithril'
 import { Game, game } from './Games'
 import { Chess } from 'chess.js'
 import { Midi, NOTE_ON, CONTROL_CHANGE } from './Midi'
-import { fetcher } from './ndjson'
+import { streamJson } from './ndjson'
 import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
 import { Chessground } from 'chessground'
@@ -158,13 +158,50 @@ export function Connect() {
       }
     }
   }
+  function streamGame() {
+    streamJson(LICHESS_API_URL + 'board/game/stream/' + m.route.param('id'),
+    User.token, v => {
+      console.log('calling back', v)
+      if (v.type == 'gameFull') {
+        game.gameFull = v
+        console.log('loading game', v.state.moves)
+        if (v.black.id == User.profile.id) {
+          // if playing black, flip board
+          flipBoard()
+          color = 'b'
+        } else {
+          color = 'w'
+        }
+      } else if (v.type == 'gameState') {
+        console.log('move played', v.moves)
+      }
+      console.log('loaded?', chess.load_pgn(v.state.moves, {sloppy: true}))
+      ground.set({
+        fen: chess.fen(),
+        movable: {
+          color: chess.turn() == 'w' ? 'white' : 'black',
+          dests: toDests(chess),
+          events: { after: playOtherSide(chess, ground) }
+        }
+      })
+      if (chess.history().length) {
+        let hist = chess.history({verbose: true})
+        let last = hist.pop()
+        ground.set({
+          lastMove: [last.from, last.to]
+        })
+      }
+      lightBoard()
+      // m.redraw()
+    })
+  }
   function init() {
     console.log('connecting')
     if (!Midi.connected) {
       Midi.init(onInput, onCC, () => {
         Midi.toggleLive()
         lightBoard()
-        m.redraw()
+        // m.redraw()
       })
     }
   }
@@ -188,7 +225,7 @@ export function Connect() {
               Midi.connect(onInput, onCC, () => {
                 Midi.toggleLive()
                 lightBoard()
-                m.redraw()
+                // m.redraw()
               })
             }
           },
@@ -200,7 +237,7 @@ export function Connect() {
           }
         }, 'wifi_protected_setup'),
         game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.white : game.gameFull.black)) : null,
-        game.gameFull ? m(Game, {
+        m(Game, {
           fen: chess.fen(),
           config: {
             orientation: invert ? 'black' : 'white', 
@@ -212,35 +249,12 @@ export function Connect() {
             ground.set({
               movable: { dests: toDests(chess), events: { after: playOtherSide(chess, ground) } }
             })
+            streamGame()
+
           },
-             }) : null,
+             }),
         game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.black : game.gameFull.white)) : null,
         
-        User.token ? m(fetcher, {
-          style: {display: 'none',},
-          endpoint: LICHESS_API_URL + 'board/game/stream/' + m.route.param('id'),
-          token: User.token,
-          callback: v => {
-            console.log('calling back', v)
-            if (v.type == 'gameFull') {
-              game.gameFull = v
-              console.log('loading game', v.state.moves)
-              console.log('loaded?', chess.load_pgn(v.state.moves, {sloppy: true}))
-              if (v.black.id == User.profile.id) {
-                // if playing black, flip board
-                flipBoard()
-                color = 'b'
-              } else {
-                color = 'w'
-              }
-            } else if (v.type == 'gameState') {
-              console.log('move played', v.moves)
-              chess.load_pgn(v.moves, {sloppy: true})
-            }
-            lightBoard()
-            m.redraw()
-          }
-        }) : null,
       ]
     }
   }

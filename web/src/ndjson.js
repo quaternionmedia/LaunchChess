@@ -11,6 +11,21 @@ export const ndj = (endpoint, config={}) => {
   } )
 }
 
+export function streamJson(endpoint, token, callback) {
+  ndj(endpoint, {headers:{Authorization: token.token_type + ' ' + token.access_token }}).then( ( exampleStream ) => {
+    const reader = exampleStream.getReader()
+    let read
+    reader.read().then( read = result => {
+      if ( result.done ) {
+        return
+      }
+      // console.log( result.value )
+      callback(result.value)
+      reader.read().then( read )
+    })
+  })
+}
+
 export function fetcher() {
   var nd = ''
   return {
