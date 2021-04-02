@@ -37,12 +37,11 @@ export function Connect() {
   function flipBoard() {
     invert = !invert
     lightBoard()
-    if (ground) ground.toggleOrientation()
+    // if (ground) 
+    ground.toggleOrientation()
     // m.redraw()
   }
   function showInfluence() {
-    // let defenders = SQUARES.map(s => {countSquareDefenders(fen, s)})
-    // var oppositeColor = chess.turn() == 'w' ? 'b' : 'w'
     let fen = chess.fen()
     let defenders = calculateInfluence(fen)
     let attackers = calculateInfluence(fenForOtherSide(fen))
@@ -50,11 +49,10 @@ export function Connect() {
     console.log(fen, fenForOtherSide(fen), defenders, attackers)
     let colorMap = defenders.map((s, i) => {
       let v = s - attackers[i]
-      // return v == 0 ? 0 : v > 0 ? GREEN[v] : RED[-v]
       let c = Math.min(v+5, 9)
       return COLORS[chess.turn() == color ? c : 10 - c]
     })
-    if (invert == (color == 'b')) colorMap.reverse()
+    if (invert == (color == 'w')) colorMap.reverse()
     lightMatrix(colorMap)
   }
   
