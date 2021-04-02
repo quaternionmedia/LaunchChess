@@ -95,18 +95,7 @@ export function Connect() {
         console.log('checking if ', move, ' is legal')
         const squares = piece_moves.map(m => m.to)
         if (squares.includes(move.to)) {
-          console.log('moving', move)
-          chess.move(move)
-          selected, selectedSquare = null
-          lightBoard()
-          console.log(chess.board())
-          // send to lichess api
-          let move_uci = uci(move)
-          auth('https://lichess.org/api/board/game/' + m.route.param('id') + '/move/' + move_uci, {
-            method: 'post',
-          }).then(e => {
-            console.log('played move', move_uci, e)
-          })
+          makeMove(move)
         } else {
           console.log('illegal move', move)
         }
@@ -187,6 +176,20 @@ export function Connect() {
       lightBoard()
     })
   }
+  function makeMove(move) {
+      console.log('moving', move)
+      chess.move(move)
+      selected, selectedSquare = null
+      lightBoard()
+      console.log(chess.board())
+      // send to lichess api
+      let move_uci = uci(move)
+      auth('https://lichess.org/api/board/game/' + m.route.param('id') + '/move/' + move_uci, {
+        method: 'post',
+      }).then(e => {
+        console.log('played move', move_uci, e)
+      })
+  }
   function init() {
     console.log('connecting')
     if (!Midi.connected()) {
@@ -245,6 +248,10 @@ export function Connect() {
                   lightBoard()
                   highlightAvailableMoves(chess, key, invert)
                 },
+                move: (orig, dest, captured) => {
+                  console.log('chessground moved', orig, dest, captured)
+                  makeMove({from: orig, to: dest})
+                }
               }
             })
             
