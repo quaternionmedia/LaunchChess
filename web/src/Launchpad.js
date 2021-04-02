@@ -87,3 +87,20 @@ export function highlightMove(chess, index, invert=false) {
   }
   
 }
+
+export function highlightAvailableMoves(chess, square, invert=false) {
+  Midi.output.send(NOTE_ON | 1, [nToLaunch(squareToN(square), invert), 21])
+  let piece_moves = chess.moves({square: square, verbose:true})
+  console.log('possible moves', piece_moves)
+  piece_moves.forEach((p, i) => {
+    console.log(p)
+    if (chess.get(p.to)) {
+      // piece at square. flash green
+      console.log('capture', nToLaunch(squareToN(p.to), invert))
+      Midi.output.send(NOTE_ON | 1, [nToLaunch(squareToN(p.to), invert), 21])
+    } else {
+      console.log('regular move', p.to, squareToN(p.to), nToLaunch(squareToN(p.to), invert))
+      Midi.output.send(NOTE_ON | 2, [nToLaunch(squareToN(p.to), invert), 21])
+    }
+  })
+}

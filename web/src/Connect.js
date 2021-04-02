@@ -7,7 +7,7 @@ import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
 import { Chessground } from 'chessground'
 import { SQUARES, calculateInfluence, fenForOtherSide, makeDests, uci } from './ChessMaths'
-import { nToLaunch, launchToN, squareToN, nToSquare, grid, lightMatrix, lightGame, highlightMove } from './Launchpad'
+import { nToLaunch, launchToN, squareToN, nToSquare, grid, lightMatrix, lightGame, highlightMove, highlightAvailableMoves } from './Launchpad'
 import { toDests, toColor, playOtherSide } from './utils'
 
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
@@ -19,7 +19,7 @@ import '../node_modules/material-design-icons-iconfont/dist/material-design-icon
 export const COLORS = [5, 121, 9, 11, 15, 1, 23, 37, 45, 49, 69]
 
 export function Connect() {
-  let selected, square, piece_moves
+  let selected, selectedSquare
   let invert = false
   let chess = new Chess()
   let ground
@@ -65,9 +65,9 @@ export function Connect() {
       console.log('touched', s)
       const legal_moves = chess.moves({verbose:true})
       console.log('legal moves', legal_moves)
-      if (square && squareToN(square) == s) {
+      if (selectedSquare && squareToN(selectedSquare) == s) {
         // clear selected piece
-        selected, square = null
+        selected, selectedSquare = null
         lightBoard()
         ground.selectSquare(null)
       } else if (chess.get(nToSquare(s)) && chess.get(nToSquare(s)).color == chess.turn()) {
@@ -79,30 +79,15 @@ export function Connect() {
         console.log('checking', nToSquare(s), chess.get(nToSquare(s)))
         if (chess.get(nToSquare(s)) && (chess.get(nToSquare(s)).color == chess.turn())) {
           // select piece
-
-          square = nToSquare(s)
-          ground.selectSquare(square)//[0] + Number(square[1]) - 1)
-          selected = chess.get(square)
-          console.log('selected', square, selected)
-          Midi.output.send(NOTE_ON | 1, [message[1], 21])
-          piece_moves = chess.moves({square: square, verbose:true})
-          console.log('possible moves', piece_moves)
-          piece_moves.forEach((p, i) => {
-            console.log(p)
-            if (chess.get(p.to)) {
-              // piece at square. flash green
-              console.log('capture', nToLaunch(squareToN(p.to), invert))
-              Midi.output.send(NOTE_ON | 1, [nToLaunch(squareToN(p.to), invert), 21])
-            } else {
-              console.log('regular move', p.to, squareToN(p.to), nToLaunch(squareToN(p.to), invert))
-              Midi.output.send(NOTE_ON | 2, [nToLaunch(squareToN(p.to), invert), 21])
-            }
-          })
+          
+          selectedSquare = nToSquare(s)
+          ground.selectSquare(selectedSquare)
+          highlightAvailableMoves(chess, selectedSquare, invert)
         }
       } else if (selected) {
         // move selected to square
         
-        const move = {from: square, to: nToSquare(s)}
+        const move = {from: selectedSquare, to: nToSquare(s)}
         if (selected.type == 'p' && (selected.color == 'w' && s >> 3 == 7 ) || (selected.color == 'b' && s >> 3 == 0 )) {
           console.log('promotion! Auto promote to Queen')
           move.promotion = 'q'
@@ -112,7 +97,7 @@ export function Connect() {
         if (squares.includes(move.to)) {
           console.log('moving', move)
           chess.move(move)
-          selected, square = null
+          selected, selectedSquare = null
           lightBoard()
           console.log(chess.board())
           // send to lichess api
@@ -138,7 +123,7 @@ export function Connect() {
           // left arrow
           // undo move
           chess.undo()
-          selected, square = null
+          selected, selectedSquare = null
           lightBoard()
           break
         }
@@ -251,7 +236,17 @@ export function Connect() {
                 enabled: false
               },
               movable: {
-                 free: false}})
+                 free: false
+              },
+              events: {
+                select: key => {
+                  console.log('chessground selected', key)
+                  //clear previous selection
+                  lightBoard()
+                  highlightAvailableMoves(chess, key, invert)
+                },
+              }
+            })
             
             let c = game.isMyTurn ? game.color : game.color == 'white' ? 'black' : 'white'
             console.log('my color', c)
