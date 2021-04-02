@@ -69,18 +69,21 @@ export function Connect() {
         // clear selected piece
         selected, square = null
         lightBoard()
+        ground.selectSquare(null)
       } else if (chess.get(nToSquare(s)) && chess.get(nToSquare(s)).color == chess.turn()) {
         if (selected) {
           // clear other selected piece
           lightBoard()
+          ground.selectSquare(null)
         }
-        console.log('selecting piece')
         console.log('checking', nToSquare(s), chess.get(nToSquare(s)))
         if (chess.get(nToSquare(s)) && (chess.get(nToSquare(s)).color == chess.turn())) {
           // select piece
+
           square = nToSquare(s)
+          ground.selectSquare(square)//[0] + Number(square[1]) - 1)
           selected = chess.get(square)
-          console.log('selected', selected)
+          console.log('selected', square, selected)
           Midi.output.send(NOTE_ON | 1, [message[1], 21])
           piece_moves = chess.moves({square: square, verbose:true})
           console.log('possible moves', piece_moves)
