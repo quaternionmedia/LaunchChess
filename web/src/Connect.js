@@ -167,6 +167,7 @@ export function Connect() {
         // TODO: change to Stream()
         m.redraw()
         console.log('loading game', v.state.moves)
+        console.log('loaded?', chess.load_pgn(v.state.moves, {sloppy: true}))
         if (v.black.id == User.profile.id) {
           // if playing black, flip board
           flipBoard()
@@ -176,8 +177,9 @@ export function Connect() {
         }
       } else if (v.type == 'gameState') {
         console.log('move played', v.moves)
+        console.log('loaded?', chess.load_pgn(v.moves, {sloppy: true}))
+
       }
-      console.log('loaded?', chess.load_pgn(v.state.moves, {sloppy: true}))
       ground.set({
         fen: chess.fen(),
         movable: {
