@@ -25,21 +25,26 @@ export function calculateInfluence(fen) {
   let moves = chess.moves({verbose: true})//, legal: false})
   let defenders = Array(64).fill(0)
   moves.forEach((move, i) => {
-    let index = SQUARES.indexOf(move.to)
+    let index = chess.SQUARES.indexOf(move.to)
     defenders[index] += 1
   })
-  SQUARES.forEach((square, i) => {
+  chess.SQUARES.forEach((square, i) => {
     if (chess.get(square) && chess.get(square).color == chess.turn()) {
-      defenders[SQUARES.indexOf(square)] += 1
+      defenders[i] += 1
     }
   })
   return defenders
 }
 
 export function fenForOtherSide(fen) {
-    return fen.search(" w ") >= 0 ?
+    let newFen = fen.search(" w ") >= 0 ?
         fen.replace(' w ' , " b ") :
         fen.replace(' b ', " w ")
+    let index = newFen.search(/w|b/g)
+    if (newFen[index + 2] != '-') {
+      // fix for en passant
+      newFen.replace( newFen.substr(index + 2, 2) , '-')
+    }
 }
 
 export function makeDests(fen) {
