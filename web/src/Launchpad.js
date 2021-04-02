@@ -53,36 +53,36 @@ export function lightGame(chess, invert=false) {
   }
   let history = chess.history()
   if (history.length) {
-    highlightMove(chess, history.length-1)
+    highlightMove(chess, history.length-1, invert=invert)
     if (history.length > 1) {
-      highlightMove(chess, history.length-2)
+      highlightMove(chess, history.length-2, invert=invert)
     }
   }
   Midi.output.send(NOTE_ON, [99, chess.turn() == 'w' ? 3 : 83])
 }
-export function highlightMove(chess, index) {
+export function highlightMove(chess, index, invert=false) {
   var lastMove = chess.history({verbose:true})[index]
   if (lastMove) {
     var from_square = lastMove.from
     var to_square = lastMove.to
     console.log('highlighting', lastMove, from_square, to_square)
     if (! chess.get(from_square)) {
-      Midi.output.send(NOTE_ON | 2, [nToLaunch(squareToN(from_square)), 70])
+      Midi.output.send(NOTE_ON | 2, [nToLaunch(squareToN(from_square), invert=invert), 70])
     }
     if (chess.get(to_square)) {
       let c = colors[chess.get(to_square).type]
-      Midi.output.send(NOTE_ON | 2, [nToLaunch(squareToN(to_square)), chess.get(to_square).color == 'w' ? c : c + 2])
+      Midi.output.send(NOTE_ON | 2, [nToLaunch(squareToN(to_square), invert=invert), chess.get(to_square).color == 'w' ? c : c + 2])
     }
     
     if (chess.in_check()) {
       let k = getPieceIndex(chess, {type:'k', color: chess.turn() })
       console.log('check!', k)
-      Midi.output.send(NOTE_ON | 1, [nToLaunch(k), 5])
+      Midi.output.send(NOTE_ON | 1, [nToLaunch(k, invert=invert), 5])
     }
     if (chess.in_checkmate()) {
       let k = getPieceIndex(chess, {type:'k', color: chess.turn() })
       console.log('mate!', k)
-      Midi.output.send(NOTE_ON, [nToLaunch(k), 5])
+      Midi.output.send(NOTE_ON, [nToLaunch(k, invert=invert), 5])
     }
   }
   
