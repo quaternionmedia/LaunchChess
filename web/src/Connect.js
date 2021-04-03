@@ -74,12 +74,12 @@ export function Connect() {
         if (selected) {
           // clear other selected piece
           lightBoard()
-          ground.selectSquare(null)
+          // ground.selectSquare(null)
         }
         console.log('checking', nToSquare(s), chess.get(nToSquare(s)))
         if (chess.get(nToSquare(s)) && (chess.get(nToSquare(s)).color == chess.turn())) {
           // select piece
-          
+          selected = true
           selectedSquare = nToSquare(s)
           ground.selectSquare(selectedSquare)
           highlightAvailableMoves(chess, selectedSquare, invert)
@@ -93,7 +93,7 @@ export function Connect() {
           move.promotion = 'q'
         }
         console.log('checking if ', move, ' is legal')
-        const squares = piece_moves.map(m => m.to)
+        const squares = chess.moves({square: selectedSquare, verbose: true}).map(m => m.to)
         if (squares.includes(move.to)) {
           makeMove(move)
         } else {
@@ -246,10 +246,13 @@ export function Connect() {
                   console.log('chessground selected', key)
                   //clear previous selection
                   lightBoard()
+                  selected = true
+                  selectedSquare = key
                   highlightAvailableMoves(chess, key, invert)
                 },
                 move: (orig, dest, captured) => {
                   console.log('chessground moved', orig, dest, captured)
+                  ground.move(orig, dest)
                   makeMove({from: orig, to: dest})
                 }
               }
