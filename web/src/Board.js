@@ -1,7 +1,9 @@
 import m from 'mithril'
 import { Chessground } from 'chessground'
-import './chessground.css'
-import './chessground-brown.css'
+import '../node_modules/chessground/assets/chessground.base.css'
+import '../node_modules/chessground/assets/chessground.brown.css'
+import '../node_modules/chessground/assets/chessground.cburnett.css'
+
 
 
 export function Board() {
