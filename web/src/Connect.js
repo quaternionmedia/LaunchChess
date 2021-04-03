@@ -206,6 +206,9 @@ export function Connect() {
     oninit: vnode => {
       init()
     },
+    onbeforeremove: vnode => {
+      Midi.close()
+    },
     view: vnode => {
       let status = Midi.connected() ? 'connected' : 'disconnected'
       return [
