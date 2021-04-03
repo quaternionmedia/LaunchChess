@@ -125,13 +125,16 @@ export function Connect() {
         case 98: {
           // Custom Midi
           // toggle square influence / game
-          influence = !influence
-          Midi.output.send(NOTE_ON, [98, influence ? 5 : 0])
-          lightBoard()
+          toggleInfluence()
           break
         }
       }
     }
+  }
+  function toggleInfluence() {
+    influence = !influence
+    Midi.output.send(NOTE_ON, [98, influence ? 5 : 0])
+    lightBoard()
   }
   function streamGame() {
     streamJson(LICHESS_API_URL + 'board/game/stream/' + m.route.param('id'),
@@ -228,6 +231,12 @@ export function Connect() {
             flipBoard()
           }
         }, 'wifi_protected_setup'),
+        m('i.material-icons', {
+          title: influence ? 'hide influence' : 'show influence',
+          onclick: e => {
+            toggleInfluence()
+          }
+        }, 'compare_arrows'),
         game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.white : game.gameFull.black)) : null,
         m('.board.fullscreen', {
           // fen: chess.fen(),
