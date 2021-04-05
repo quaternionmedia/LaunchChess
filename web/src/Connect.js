@@ -212,34 +212,35 @@ export function Connect() {
     view: vnode => {
       let status = Midi.connected() ? 'connected' : 'disconnected'
       return [
-        m('.status', {class: status, title: status}, ''),
-        m('i.material-icons', {
-          title: status == 'connected' ? 'disconnect' : 'connect',
-          onclick: e => {
-            if (Midi.connected()) {
-              console.log('disconnecting')
-              Midi.close()
-            } else {
-              console.log('connecting')
-              Midi.connect(onInput, onCC, () => {
-                Midi.toggleLive()
-                lightBoard()
-              })
+        m('.toolbar', {}, [m('.status', {class: status, title: status}, ''),
+          m('i.material-icons', {
+            title: status == 'connected' ? 'disconnect' : 'connect',
+            onclick: e => {
+              if (Midi.connected()) {
+                console.log('disconnecting')
+                Midi.close()
+              } else {
+                console.log('connecting')
+                Midi.connect(onInput, onCC, () => {
+                  Midi.toggleLive()
+                  lightBoard()
+                })
+              }
+            },
+          }, Midi.connected() ? 'power_off' : 'power'),
+          m('i.material-icons', {
+            title: 'flip board',
+            onclick: e => {
+              flipBoard()
             }
-          },
-        }, Midi.connected() ? 'power_off' : 'power'),
-        m('i.material-icons', {
-          title: 'flip board',
-          onclick: e => {
-            flipBoard()
-          }
-        }, 'wifi_protected_setup'),
-        m('i.material-icons', {
-          title: influence ? 'hide influence' : 'show influence',
-          onclick: e => {
-            toggleInfluence()
-          }
-        }, 'compare_arrows'),
+          }, 'wifi_protected_setup'),
+          m('i.material-icons', {
+            title: influence ? 'hide influence' : 'show influence',
+            onclick: e => {
+              toggleInfluence()
+            }
+          }, 'compare_arrows')
+        ]),
         game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.white : game.gameFull.black)) : null,
         m('.board.fullscreen', {
           // fen: chess.fen(),
