@@ -23,8 +23,10 @@ export function Games() {
     },
     view: vnode => {
       return [
-        m('i.material-icons', {onclick: getGames}, 'refresh'),
-        m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, m('i', {}, 'create game on lichess')),
+        m('.toolbar', {}, [
+          m('i.material-icons', {onclick: getGames}, 'refresh'),
+          m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, m('i', {}, 'create game on lichess')),
+        ]),
         games.map(g => {
           return m('.gamecontainer', {}, [
             g.opponent.username,

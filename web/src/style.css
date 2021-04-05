@@ -96,3 +96,6 @@ i:active {
   border-radius: 1em;
   overflow: auto;
 }
+.toolbar {
+  margin-bottom: 1em;
+}
