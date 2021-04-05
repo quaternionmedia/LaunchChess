@@ -87,3 +87,12 @@ i:hover {
 i:active {
   animation: blinker .2s 1;
 }
+
+.profile {
+  display: grid;
+  background: #444;
+  margin: 1em;
+  padding: 1em;
+  border-radius: 1em;
+  overflow: auto;
+}

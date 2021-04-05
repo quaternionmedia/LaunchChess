@@ -28,11 +28,11 @@ export function Games() {
         games.map(g => {
           return m('.gamecontainer', {}, [
             g.opponent.username,
-            m(Board, { 
+            m(Board, {
+              class: 'thumb',
               config: {
                 fen: g.fen,
                 viewOnly: true,
-                class: 'thumb',
                 orientation: g.color == 'w' ? 'white' : 'black',
                 lastMove: [g.lastMove.slice(0,2), g.lastMove.slice(2)],
                 },
