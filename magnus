@@ -3,6 +3,10 @@ VERSION=0.1.0
 if [ $1 = "version" -o $1 = "v" -o $1 = "-v" ]; then
   echo $VERSION
 
+elif [ $1 = "init" ]; then
+  shift
+  docker run -it -v $(pwd)/web:/app -w /app node:current-alpine yarn install "$@"
+
 elif [ $1 = "install" -o $1 = "i" ]; then
   shift
   pip install -r requirements.txt
