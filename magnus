@@ -17,6 +17,6 @@ elif [[ $1 = "run" || $1 =~ "serve" ]]; then
 
 elif [[ $1 = "prod" || $1 = "production" ]]; then
   docker run -it -v $(pwd)/web:/app -w /app node:current-alpine yarn parcel build --no-cache src/index.html
-  docker run -it --network host -v $(pwd):/app/ magnus-server
-  
+  # docker run -it --network host -v $(pwd):/app/ magnus-server
+  docker-compose up -d "$@"
 fi
