@@ -15,7 +15,7 @@ services:
     networks:
       - web
     labels:
-      - traefik.http.routers.magnus.rule=Host(`magnus.quaternion.media`)
-      - traefik.http.routers.magnus.entryPoints=websecure
-      - traefik.http.routers.magnus.tls=true
-      - traefik.http.routers.magnus.tls.certresolver=le
+      - traefik.tcp.routers.magnus.service=magnus
+      - traefik.tcp.routers.magnus.rule=HostSNI(`magnus.quaternion.media`)
+      - traefik.tcp.routers.maguns.tls.passthrough=true
+      - traefik.tcp.services.magnus.loadbalancer.server.port=443
