@@ -156,14 +156,14 @@ if __name__ == '__main__':
     from random import choice
     c = Chess(invert=choice([True, False]))
     launchIn.set_callback(c, 0)
-    if c.invert:
-        # if playing as black, engine move first
-        c.engineMove()
+    # if c.invert:
+    #     # if playing as black, engine move first
+    #     c.engineMove()
     try:
         while not c.board.is_game_over():
             if c.moved:
                 sleep(1)
-                c.engineMove()
+                # c.engineMove()
                 c.moved = False
             else:
                 sleep(.1)

@@ -10,11 +10,11 @@ import { ProfilePage } from './Profile'
 export function Home() {
   return {
     view: vnode => {
-      return m('#home', {}, 'magnus')
+      return m('#home', {}, 'LaunchChess')
     }
   }
 }
-console.log('magnus started!')
+console.log('launchchess started!')
 
 m.route(document.body, '/', {
   '/': { render: () => m(Layout, m(Home))},

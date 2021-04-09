@@ -7,15 +7,15 @@ networks:
 
 
 services:
-  magnus:
-    image: magnus-server
+  launchchess:
+    image: launchchess-server
     build: ./
     volumes:
       - ./:/app/
     networks:
       - web
     labels:
-      - traefik.tcp.routers.magnus.service=magnus
-      - traefik.tcp.routers.magnus.rule=HostSNI(`magnus.quaternion.media`)
-      - traefik.tcp.routers.magnus.tls.passthrough=true
-      - traefik.tcp.services.magnus.loadbalancer.server.port=443
+      - traefik.tcp.routers.launchchess.service=launchchess
+      - traefik.tcp.routers.launchchess.rule=HostSNI(`launchchess.com`)
+      - traefik.tcp.routers.launchchess.tls.passthrough=true
+      - traefik.tcp.services.launchchess.loadbalancer.server.port=443

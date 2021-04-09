@@ -1,11 +1,15 @@
-# magnus
+# launchchess
 
-chess scripts
+Play checss with your Novation Launchpad, or other compatible device!
 
-## install
+[launchchess.com](launchchess.com)
+
+## development
 Clone this repository
 
 [download a stockfish engine](https://stockfishchess.org/download/)
+
+### init
 
 `pip install -r requirements.txt`
 
@@ -18,22 +22,22 @@ Generate a `SECRET_KEY` and `AUTH_SECRET_KEY` and  paste it into config.py
 `openssl rand -hex 32`
 
 
-## run
+### run
 
 #### standalone
 connect a launchpad, and run:
 
-`python3 magnus.py`
+`python3 launchchess.py`
 
 #### web
 install npm dependencies
 
-`./magnus install`
+`./launchchess install`
 
 build web files
 
-`./magnus build`
+`./launchchess build`
 
 run dev server
 
-`./magnus run`
+`./launchchess run`
