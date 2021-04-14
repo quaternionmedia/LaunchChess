@@ -20,7 +20,7 @@ export function playOtherSide(chess, cg) {
   return (orig, dest) => {
     chess.move({from: orig, to: dest});
     cg.set({
-      check: chess.in_check() ? getPieceLocations(chess, {type: 'k', color: chess.turn()})[0] : null,
+      check: chess.in_check(),
       turnColor: toColor(chess),
       movable: {
         color: toColor(chess),
