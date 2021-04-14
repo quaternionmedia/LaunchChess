@@ -5,7 +5,7 @@ import '../node_modules/alertifyjs/build/css/alertify.min.css'
 import '../node_modules/alertifyjs/build/css/themes/semantic.css'
 import './forms.css'
 
-defaults.glossary.title = 'magnus'
+defaults.glossary.title = 'LaunchChess'
 defaults.transition = "zoom"
 defaults.theme.ok = "ui positive button"
 defaults.theme.cancel = "ui black button"

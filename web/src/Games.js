@@ -51,9 +51,7 @@ export function Games() {
   }
 }
 
-export function Game() {
-  let chess = null
-  let ground = null
+export const Game = (state, actions) => {
   let config = {
     movable: {
       color: 'white',
@@ -63,19 +61,18 @@ export function Game() {
 
   return {
     oninit: vnode => {
-      chess = new Chess(vnode.attrs.fen)
+      state.chess = new Chess(vnode.attrs.fen)
+      console.log('game loading', vnode.attrs.fen, state.chess.ascii())
+    },
+    oncreate: vnode => {
+      state.ground = Chessground(vnode.dom, {fen: vnode.attrs.fen, ...config, ...vnode.attrs.config})
+      state.ground.set({
+        movable: { dests: toDests(state.chess), events: { after: playOtherSide(state.chess, state.ground) } }
+      })
+      console.log('game loaded', state.ground)
     },
     view: vnode => {
-      return m(Board, {
-        class: 'fullscreen',
-        oncreate: v => {
-          ground = Chessground(vnode.dom, {fen: vnode.attrs.fen, ...config, ...vnode.attrs.config})
-          ground.set({
-            movable: { dests: toDests(chess), events: { after: playOtherSide(chess, ground) } }
-          })
-        },
-        ...vnode.attrs
-      })
+      return m(Board(state, actions), {class: 'fullscreen', ...vnode.attrs})
     }
   }
 }
