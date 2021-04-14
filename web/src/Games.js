@@ -30,7 +30,7 @@ export function Games() {
         games.map(g => {
           return m('.gamecontainer', {}, [
             g.opponent.username,
-            m(Board, {
+            m(Board(), {
               class: 'thumb',
               config: {
                 fen: g.fen,
@@ -58,21 +58,23 @@ export const Game = (state, actions) => {
       free: false,
     },
   }
-
+  function init(vnode) {
+    state.ground = Chessground(vnode.dom, {fen: vnode.attrs.fen, ...config, ...vnode.attrs.config})
+    state.ground.set({
+      movable: { dests: toDests(state.chess), events: { after: playOtherSide(state.chess, state.ground) } }
+    })
+    console.log('game loaded', state.ground)
+  }
   return {
     oninit: vnode => {
       state.chess = new Chess(vnode.attrs.fen)
       console.log('game loading', vnode.attrs.fen, state.chess.ascii())
     },
-    oncreate: vnode => {
-      state.ground = Chessground(vnode.dom, {fen: vnode.attrs.fen, ...config, ...vnode.attrs.config})
-      state.ground.set({
-        movable: { dests: toDests(state.chess), events: { after: playOtherSide(state.chess, state.ground) } }
-      })
-      console.log('game loaded', state.ground)
-    },
     view: vnode => {
-      return m(Board(state, actions), {class: 'fullscreen', ...vnode.attrs})
+      return m(Board(state, actions), {
+        class: 'fullscreen',
+        oncreate: init,
+         ...vnode.attrs})
     }
   }
 }
