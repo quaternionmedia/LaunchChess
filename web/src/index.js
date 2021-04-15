@@ -7,7 +7,6 @@ import { User } from './User'
 import { Game, Games } from './Games'
 import { ProfilePage } from './Profile'
 import { Connector } from './Connector'
-import { State } from './Midi'
 
 export function Home() {
   return {
@@ -19,7 +18,17 @@ export function Home() {
 console.log('launchchess started!')
 
 
+export const State = () => ({
+  input: null,
+  output: null,
+  inputs: Stream([]),
+  outputs: [],
+  connected: Stream(false),
+  games: Stream([]),
+})
+
 let state = State()
+let actions = {}
 
 m.mount(document.body, Layout())
 let main = document.getElementById('main')
@@ -27,8 +36,9 @@ let main = document.getElementById('main')
 m.route(main, '/', {
   '/': Home,
   '/connect': Connect,
-  '/connector': Connector(state),
   '/games': Games,
+  '/connector': Connector(state, actions),
+  '/games': Games(state, actions),
   '/board': Game(state),
   '/login': Login,
   '/profile': ProfilePage,
