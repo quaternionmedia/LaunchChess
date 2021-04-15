@@ -6,6 +6,8 @@ import './style.css'
 import { User } from './User'
 import { Game, Games } from './Games'
 import { ProfilePage } from './Profile'
+import { Connector } from './Connector'
+import { State } from './Midi'
 
 export function Home() {
   return {
@@ -25,6 +27,7 @@ let main = document.getElementById('main')
 m.route(main, '/', {
   '/': Home,
   '/connect': Connect,
+  '/connector': Connector(state),
   '/games': Games,
   '/board': Game(state),
   '/login': Login,
