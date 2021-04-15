@@ -37,13 +37,11 @@ export function Menu() {
   }
 }
 
-export function Layout() {
-  return {
+export const Layout = () => ({
     view: vnode => {
       return m('main.layout', {}, [
         m('nav.menu', {}, m(Menu)),
-        m('section', vnode.attrs, vnode.children)
+        m('section#main', vnode.attrs),
       ])
     }
-  }
-}
+})

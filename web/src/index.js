@@ -16,13 +16,19 @@ export function Home() {
 }
 console.log('launchchess started!')
 
-m.route(document.body, '/', {
-  '/': { render: () => m(Layout, m(Home))},
-  '/connect': { render: () => m(Layout, m(Connect))},
-  '/games': { render: () => m(Layout, m(Games))},
-  '/board': { render: () => m(Layout, m(Game))},
-  '/login': { render: () => m(Layout, m(Login))},
-  '/profile': { render: () => m(Layout, m(ProfilePage))},
+
+let state = State()
+
+m.mount(document.body, Layout())
+let main = document.getElementById('main')
+
+m.route(main, '/', {
+  '/': Home,
+  '/connect': Connect,
+  '/games': Games,
+  '/board': Game(state),
+  '/login': Login,
+  '/profile': ProfilePage,
 
 })
 
