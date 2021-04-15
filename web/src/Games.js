@@ -9,13 +9,12 @@ import { toDests, toColor, playOtherSide } from './utils'
 
 export var game = {}
 
-export function Games() {
-  var games = []
+export const Games = (state, actions) => {
+  // var games = []
   function getGames() {
-    auth(LICHESS_API_URL + 'account/playing').then(res => {
-      games = res.nowPlaying
-      console.log('current games', games)
-    })
+    auth(LICHESS_API_URL + 'account/playing').then(res => res.nowPlaying).then(state.games)
+      console.log('current games', state.games())
+    // })
   }
   return {
     oninit: vnode => {
@@ -27,7 +26,7 @@ export function Games() {
           m('i.material-icons', {onclick: getGames}, 'refresh'),
           m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, m('i', {}, 'create game on lichess')),
         ]),
-        games.map(g => {
+        state.games().map(g => {
           return m('.gamecontainer', {}, [
             g.opponent.username,
             m(Board(), {
@@ -45,6 +44,9 @@ export function Games() {
               },
           })
           ])
+        }),
+        state.games().map(g => {
+          return m('', {}, JSON.stringify(g))
         })
       ]
     }
