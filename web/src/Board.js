@@ -8,7 +8,7 @@ import '../node_modules/chessground/assets/chessground.cburnett.css'
 
 export const Board = (state, actions) => ({
   oncreate: vnode => {
-    state.ground = new Chessground(vnode.dom, {fen: vnode.attrs.fen})
+    let ground = new Chessground(vnode.dom, vnode.attrs.config)
   },
   view: vnode => {
     return m('.board', vnode.attrs)
