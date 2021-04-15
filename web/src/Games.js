@@ -35,7 +35,7 @@ export function Games() {
               config: {
                 fen: g.fen,
                 viewOnly: true,
-                orientation: g.color == 'w' ? 'white' : 'black',
+                orientation: g.color,
                 lastMove: [g.lastMove.slice(0,2), g.lastMove.slice(2)],
                 },
               onclick: e => {
