@@ -2,6 +2,7 @@ import m from 'mithril'
 import WebMidi from 'webmidi'
 import { Launchpads } from './Launchpad'
 import { Midi } from './Midi'
+import { Statusbar } from './Statusbar'
 var Stream = require("mithril/stream")
 
 
@@ -57,7 +58,7 @@ export const Connector = (state, actions) => {
     },
     view: vnode => {
       return [
-        
+        m(Statusbar(state)),
         m('h1', 'connector'),
         midiInputs().map(c => { 
           console.log('button', c)
@@ -68,7 +69,6 @@ export const Connector = (state, actions) => {
           
         // ]),
         // m(List(), {}, inputs),
-        // m(Statusbar(state))
         // m('button', {onclick: e => console.log(e)}, 'connect'),
       // ]
         
