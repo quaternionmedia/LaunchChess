@@ -5,8 +5,10 @@ import { Login } from './Login'
 import './style.css'
 import { User } from './User'
 import { Game, Games } from './Games'
+import { GameBoard } from './GameBoard'
 import { ProfilePage } from './Profile'
 import { Connector } from './Connector'
+var Stream = require("mithril/stream")
 
 export function Home() {
   return {
@@ -19,24 +21,27 @@ console.log('launchchess started!')
 
 
 export const State = () => ({
-  input: null,
+  input: null, 
   output: null,
   inputs: Stream([]),
   outputs: [],
   connected: Stream(false),
+  game: null,
   games: Stream([]),
+})
+export const Actions = (state) => ({
+  
 })
 
 let state = State()
-let actions = {}
+let actions = Actions(state)
 
 m.mount(document.body, Layout())
 let main = document.getElementById('main')
 
 m.route(main, '/', {
   '/': Home,
-  '/connect': Connect,
-  '/games': Games,
+  '/connect': GameBoard(state, actions),
   '/connector': Connector(state, actions),
   '/games': Games(state, actions),
   '/board': Game(state),
