@@ -28,6 +28,8 @@ export const State = () => ({
   connected: Stream(false),
   game: null,
   games: Stream([]),
+  chess: null,
+  ground: null,
 })
 export const Actions = (state) => ({
   

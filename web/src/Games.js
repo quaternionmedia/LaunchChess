@@ -39,7 +39,7 @@ export const Games = (state, actions) => {
                 },
               onclick: e => {
                 console.log('game clicked', g)
-                game = g
+                state.game = g
                 m.route.set('/connect', {id: g.gameId})
               },
           })
@@ -56,12 +56,12 @@ export const Games = (state, actions) => {
 export const Game = (state, actions) => {
   let config = {
     movable: {
-      color: 'white',
+      color: 'both',
       free: false,
     },
   }
   function init(vnode) {
-    state.ground = Chessground(vnode.dom, {fen: vnode.attrs.fen, ...config, ...vnode.attrs.config})
+    state.ground = Chessground(vnode.dom, {...config, ...vnode.attrs.config})
     state.ground.set({
       movable: { dests: toDests(state.chess), events: { after: playOtherSide(state.chess, state.ground) } }
     })
@@ -69,8 +69,7 @@ export const Game = (state, actions) => {
   }
   return {
     oninit: vnode => {
-      state.chess = new Chess(vnode.attrs.fen)
-      console.log('game loading', vnode.attrs.fen, state.chess.ascii())
+      state.chess = new Chess()
     },
     view: vnode => {
       return m(Board(state, actions), {
