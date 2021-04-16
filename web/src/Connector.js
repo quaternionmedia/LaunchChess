@@ -8,73 +8,50 @@ var Stream = require("mithril/stream")
 
 
 export const Connector = (state, actions) => {
-  // let inputs = ['a', 'b', 'c']
-  var midiInputs = Stream([])
-  let outputs = []
-  function connect(name) {
-    WebMidi.addListener("connected", function(e) {
-      // console.log('midi connected', e, e.port.name)
-      
-      
-      if (e.port.name in Launchpads) {
-        if (e.port.type == 'output') {
-          state.output = e.port
-          console.log('output', state.output)
-        } else {
-          state.input = e.port
-          console.log('input', state.input)
-        }
-      }
-    })
-    WebMidi.addListener("disconnected", function(e) {
-      console.log('midi disconnected', e)
-      if (e.port.name in Launchpads) {
-        if (e.port.type == 'output') {
-          state.output = null
-        } else {
-          state.input = null
-        }
-        // state.connected(false)
-      }
-    })
+  actions.connect = (name) => {
+    state.output = WebMidi.getOutputByName(name)
+    state.input = WebMidi.getInputByName(name)
+    state.connected = true
+    state.deviceName = name
+    console.log('connected', state.input)
+  }
+  actions.disconnect = () => {
+    state.output = null
+    state.input.removeListener()
+    state.input = null
+    state.connected = false
     
-    // window.onunload = e => {
-    //   console.log('unloading')
-    //   // close()
-  //   }
-  // }, true)
   }
   return {
-    oncreate: vnode => {
+    oninit: vnode => {
       WebMidi.enable(function (err) {
         console.log(WebMidi.inputs)
         console.log(WebMidi.outputs)
-        let ins = WebMidi.inputs.map(i => {
-          return i.name // in Launchpads ? i.name : null
-        })
-        console.log('inputs', ins)
-        midiInputs(ins)
+        state.inputs(WebMidi.inputs.map(i => {
+          return i.name in Launchpads ? i.name : null
+        }).filter(Boolean)
+        // console.log('inputs', state.inputs
+      )
       })
     },
     view: vnode => {
       return [
         m(Statusbar(state)),
         m('h1', 'connector'),
-        midiInputs().map(c => { 
-          console.log('button', c)
-          return m('', c)
+        state.inputs().map(c => { 
+          // console.log('button', c)
+          return m('button.button', {onclick: e => actions.connect(c)}, c)
         }),
       // [
         // m('.connector', {}, [
           
         // ]),
-        // m(List(), {}, inputs),
+        // m(List(), {}, state.inputs()),
         // m('button', {onclick: e => console.log(e)}, 'connect'),
-      // ]
+      ]
         
-    ]
-  }
-  }
+  //   ]
+}}
 }
 
 export const List = () => ({

@@ -15,7 +15,7 @@ export function Links() {
   return {
     view: vnode => {
       return [
-        // m(Link, {href:'/connect', id: 'connectButton'}, 'connect'),
+        m(Link, {href:'/connector', id: 'connectButton'}, 'connector'),
         m(Link, {href:'/board', id: 'boardButton'}, 'board'),
         m(Link, {href:'/games', id: 'gamesButton'}, 'games'),
         // m('.status', {class: User.username ? 'connected' : 'disconnected'}, ''),
