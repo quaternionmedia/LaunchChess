@@ -26,7 +26,7 @@ export const State = () => ({
   output: null,
   inputs: Stream([]),
   outputs: [],
-  connected: Stream(false),
+  connected: false,
   game: null,
   games: Stream([]),
   chess: null,

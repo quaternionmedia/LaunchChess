@@ -45,17 +45,19 @@ export const GameBoard = (state, actions) => {
   }
   return {
     oninit: init,
-    view: vnode => state.game ? m(Game(state, actions), {
+    view: vnode => m(Game(state, actions), {
       config: { 
         fen: state.game.fen,
         orientation: state.game.color,
-        movable: { 
+        movable: {
           color: state.game.color,
           free: false,
         },
       },
-      
-    }) : null
+      oninit: () => {
+        return
+      },
+    })
   }
 }
 
@@ -63,6 +65,8 @@ export const GamePage = (state, actions) => ({
   view: vnode => [
     m(Statusbar(state, actions)),
     m(Toolbar(state, actions)),
+    m('', {}, JSON.stringify(state.invert ? User.username : state.game.opponent)),
     m(GameBoard(state, actions)),
+    m('', {}, JSON.stringify(state.invert ? state.game.opponent : User.username)),
   ]
 })

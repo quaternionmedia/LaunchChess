@@ -1,11 +1,11 @@
 import m from 'mithril'
 
 export const Toolbar = (state, actions) => ({view: vnode => m('.toolbar', {}, [
-  m('.status', {class: status, title: status}, ''),
+  m('.status', {class: state.connected ? 'connected' : 'disconnected', title: state.connected ? 'connected' : 'disconnected'}, ''),
   m('i.material-icons', {
-    title: status == 'connected' ? 'disconnect' : 'connect',
+    title: state.connected ? 'disconnect' : 'connect',
     onclick: e => {
-      if (state.connected()) {
+      if (state.connected) {
         console.log('disconnecting')
         actions.close()
       } else {
@@ -16,7 +16,7 @@ export const Toolbar = (state, actions) => ({view: vnode => m('.toolbar', {}, [
         // })
       }
     },
-  }, state.connected() ? 'power_off' : 'power'),
+  }, state.connected ? 'power_off' : 'power'),
   m('i.material-icons', {
     title: 'flip board',
     onclick: e => {
