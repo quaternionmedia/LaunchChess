@@ -10,10 +10,10 @@ export const Toolbar = (state, actions) => ({view: vnode => m('.toolbar', {}, [
         actions.close()
       } else {
         console.log('connecting')
-        // state.connect(onInput, onCC, () => {
-        //   actions.toggleLive()
-        //   lightBoard()
-        // })
+        actions.connect(actions.noteCallback, actions.ccCallback, () => {
+          actions.toggleLive()
+          actions.lightBoard()
+        })
       }
     },
   }, state.connected ? 'power_off' : 'power'),

@@ -9,6 +9,8 @@ import { GamePage } from './GameBoard'
 import { ProfilePage } from './Profile'
 import { Connector } from './Connector'
 import { CounterPage } from './Counter'
+import { Launchpad } from './Launchpad'
+import { Midi } from './Midi'
 var Stream = require("mithril/stream")
 
 export function Home() {
@@ -26,6 +28,7 @@ export const State = () => ({
   output: null,
   inputs: Stream([]),
   outputs: [],
+  deviceName: null,
   connected: false,
   game: null,
   games: Stream([]),
@@ -37,7 +40,9 @@ export const Actions = (state) => ({
 })
 
 let state = State()
-let actions = Actions(state)
+let actions = Launchpad(state)
+Object.assign(actions, Midi(state, actions))
+console.log(state, actions)
 
 m.mount(document.body, Layout())
 let main = document.getElementById('main')
