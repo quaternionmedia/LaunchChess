@@ -1,6 +1,6 @@
 import m from 'mithril'
 import { Layout } from './Menu'
-import { Connect } from './Connect'
+import { LaunchGame } from './Connect'
 import { Login } from './Login'
 import './style.css'
 import { User } from './User'
@@ -42,6 +42,7 @@ export const Actions = (state) => ({
 let state = State()
 let actions = Launchpad(state)
 Object.assign(actions, Midi(state, actions))
+Object.assign(actions, LaunchGame(state, actions))
 console.log(state, actions)
 
 m.mount(document.body, Layout())
