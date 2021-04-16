@@ -44,8 +44,8 @@ export const GameBoard = (state, actions) => {
     streamGame()
   }
   return {
-    view: vnode => m(Game(state, actions), state.game ? {
-      oninit: init,
+    oninit: init,
+    view: vnode => state.game ? m(Game(state, actions), {
       config: { 
         fen: state.game.fen,
         orientation: state.game.color,
@@ -55,7 +55,7 @@ export const GameBoard = (state, actions) => {
         },
       },
       
-    } : {})
+    }) : null
   }
 }
 
