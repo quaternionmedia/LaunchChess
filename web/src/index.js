@@ -5,9 +5,10 @@ import { Login } from './Login'
 import './style.css'
 import { User } from './User'
 import { Game, Games } from './Games'
-import { GameBoard } from './GameBoard'
+import { GamePage } from './GameBoard'
 import { ProfilePage } from './Profile'
 import { Connector } from './Connector'
+import { CounterPage } from './Counter'
 var Stream = require("mithril/stream")
 
 export function Home() {
@@ -43,7 +44,8 @@ let main = document.getElementById('main')
 
 m.route(main, '/', {
   '/': Home,
-  '/connect': GameBoard(state, actions),
+  '/connect': GamePage(state, actions),
+  '/counter': CounterPage({count:5}),
   '/connector': Connector(state, actions),
   '/games': Games(state, actions),
   '/board': Game(state),

@@ -5,6 +5,8 @@ import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
 import { toDests, toColor, playOtherSide } from './utils'
 import { Chess } from 'chess.js'
+import { Statusbar } from './Statusbar'
+import { Toolbar } from './Toolbar'
 
 export const GameBoard = (state, actions) => {
   function streamGame() {
@@ -27,6 +29,9 @@ export const GameBoard = (state, actions) => {
             move: (orig, dest, captured) => {
               console.log('moved', orig, dest, captured)
             },
+            change: () => {
+              console.log('changed')
+            },
             select: key => {
               console.log('selected', key)
             }
@@ -39,8 +44,9 @@ export const GameBoard = (state, actions) => {
     streamGame()
   }
   return {
-    oninit: init,
-    view: vnode => m(Game(state, actions), state.game ? {config: { 
+    view: vnode => m(Game(state, actions), state.game ? {
+      oninit: init,
+      config: { 
         fen: state.game.fen,
         orientation: state.game.color,
         movable: { 
@@ -52,3 +58,11 @@ export const GameBoard = (state, actions) => {
     } : {})
   }
 }
+
+export const GamePage = (state, actions) => ({
+  view: vnode => [
+    m(Statusbar(state, actions)),
+    m(Toolbar(state, actions)),
+    m(GameBoard(state, actions)),
+  ]
+})
