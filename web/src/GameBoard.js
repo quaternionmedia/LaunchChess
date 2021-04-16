@@ -22,7 +22,15 @@ export const GameBoard = (state, actions) => {
           movable: {
             dests: toDests(state.chess),
             events: { after: playOtherSide(state.chess, state.ground) }
-          }
+          },
+          events: {
+            move: (orig, dest, captured) => {
+              console.log('moved', orig, dest, captured)
+            },
+            select: key => {
+              console.log('selected', key)
+            }
+          },
         })
       }
     })} 
@@ -35,6 +43,10 @@ export const GameBoard = (state, actions) => {
     view: vnode => m(Game(state, actions), state.game ? {config: { 
         fen: state.game.fen,
         orientation: state.game.color,
+        movable: { 
+          color: state.game.color,
+          free: false,
+        },
       },
       
     } : {})
