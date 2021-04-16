@@ -7,9 +7,9 @@ import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
 import { Chessground } from 'chessground'
 import { SQUARES, calculateInfluence, fenForOtherSide, makeDests, uci } from './ChessMaths'
-import { nToLaunch, launchToN, squareToN, nToSquare, grid, lightMatrix, lightGame, highlightMove, highlightAvailableMoves } from './Launchpad'
+import { LaunchpadX } from './Launchpad'
 import { toDests, toColor, playOtherSide } from './utils'
-
+import { Toolbar } from './Toolbar'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 
 
@@ -18,83 +18,87 @@ import '../node_modules/material-design-icons-iconfont/dist/material-design-icon
 // let BLUE = [47, 46, 45, ]
 export const COLORS = [5, 121, 9, 11, 15, 1, 23, 37, 45, 49, 69]
 
-export function Connect() {
-  let selected, selectedSquare
-  let invert = false
-  let chess = new Chess()
-  let ground
-  let influence = false
-  let color
+export const LaunchGame = (state, actions) => ({
+  // let launchpad
+  // let selected, selectedSquare
+  // let invert = false
+  // let chess = new Chess()
+  // let ground
+  // let influence = false
+  // let color
   
-  function lightBoard() {
-    if (influence) {
-      showInfluence()
+  lightBoard: () => {
+    if (state.influence) {
+      actions.showInfluence()
     } else {
-      lightGame(chess, invert)
+      actions.lightGame()
     }
-  }
+  },
   
-  function flipBoard() {
-    invert = !invert
-    lightBoard()
+  flipBoard: () => {
+    state.invert = !state.invert
+    actions.lightBoard()
     // if (ground) 
-    ground.toggleOrientation()
+    state.ground.toggleOrientation()
     // m.redraw()
-  }
-  function showInfluence() {
-    let fen = chess.fen()
+  },
+  showInfluence: () => {
+    let fen = state.chess.fen()
     let defenders = calculateInfluence(fen)
     let attackers = calculateInfluence(fenForOtherSide(fen))
     
-    console.log(fen, fenForOtherSide(fen), defenders, attackers)
+    console.log(fen, defenders, attackers)
     let colorMap = defenders.map((s, i) => {
       let v = s - attackers[i]
       let c = Math.min(v+5, 9)
-      return COLORS[chess.turn() == color ? c : 10 - c]
+      return COLORS[toColor(state.chess) == state.game.color ? c : 10 - c]
     })
-    if (invert == (color == 'b')) colorMap.reverse()
-    lightMatrix(colorMap)
-  }
+    if (state.invert == (state.game.color == 'black')) colorMap.reverse()
+    console.log(colorMap)
+    actions.lightMatrix(colorMap)
+  },
   
   
-  function onInput(message) {
+  onInput: message => {
     message = message.data
     console.log('input', message)
     if (message[2]) {
-      const s = launchToN(message[1], invert)
+      const s = actions.launchToN(message[1])
       console.log('touched', s)
-      const legal_moves = chess.moves({verbose:true})
+      const legal_moves = state.chess.moves({verbose:true})
       console.log('legal moves', legal_moves)
-      if (selectedSquare && squareToN(selectedSquare) == s) {
+      if (state.selectedSquare && actions.squareToN(selectedSquare) == s) {
         // clear selected piece
-        selected, selectedSquare = null
+        selectedSquare = null
         lightBoard()
-        ground.selectSquare(null)
-      } else if (chess.get(nToSquare(s)) && chess.get(nToSquare(s)).color == chess.turn()) {
-        if (selected) {
+        state.ground.selectSquare(null)
+      } else if (state.chess.get(actions.nToSquare(s)) && state.chess.get(actions.nToSquare(s)).color == state.chess.turn()) {
+        if (selectedSquare) {
           // clear other selected piece
           lightBoard()
           // ground.selectSquare(null)
         }
-        console.log('checking', nToSquare(s), chess.get(nToSquare(s)))
-        if (chess.get(nToSquare(s)) && (chess.get(nToSquare(s)).color == chess.turn())) {
+        console.log('checking', actions.nToSquare(s), state.chess.get(actions.nToSquare(s)))
+        if (state.chess.get(actions.nToSquare(s)) && (state.chess.get(actions.nToSquare(s)).color == state.chess.turn())) {
           // select piece
-          selected = true
-          selectedSquare = nToSquare(s)
-          ground.selectSquare(selectedSquare)
-          highlightAvailableMoves(chess, selectedSquare, invert)
+          selectedPiece = true
+          selectedSquare = actions.nToSquare(s)
+          state.ground.selectSquare(selectedSquare)
+          actions.highlightAvailableMoves(selectedSquare, invert)
         }
       } else if (selected) {
         // move selected to square
         
-        const move = {from: selectedSquare, to: nToSquare(s)}
+        const move = {from: selectedSquare, to: actions.nToSquare(s)}
         if (selected.type == 'p' && (selected.color == 'w' && s >> 3 == 7 ) || (selected.color == 'b' && s >> 3 == 0 )) {
           console.log('promotion! Auto promote to Queen')
           move.promotion = 'q'
         }
         console.log('checking if ', move, ' is legal')
-        const squares = chess.moves({square: selectedSquare, verbose: true}).map(m => m.to)
+        const squares = state.chess.moves({square: selectedSquare, verbose: true}).map(m => m.to)
         if (squares.includes(move.to)) {
+          state.ground.move(move.from, move.to)
+          state.ground.selectSquare(null)
           makeMove(move)
         } else {
           console.log('illegal move', move)
@@ -102,8 +106,8 @@ export function Connect() {
       }
     }
     
-  }
-  function onCC(message) {
+  },
+  onCC: message => {
     message = message.data
     if (message[2]) {
       console.log('cc', message)
@@ -111,7 +115,7 @@ export function Connect() {
         case 93: {
           // left arrow
           // undo move
-          chess.undo()
+          state.chess.undo()
           selected, selectedSquare = null
           lightBoard()
           break
@@ -130,13 +134,13 @@ export function Connect() {
         }
       }
     }
-  }
-  function toggleInfluence() {
+  },
+  toggleInfluence: () => {
     influence = !influence
     Midi.output.send(NOTE_ON, [98, influence ? 5 : 0])
     lightBoard()
-  }
-  function streamGame() {
+  },
+  streamGame: () => {
     streamJson(LICHESS_API_URL + 'board/game/stream/' + m.route.param('id'),
       User.token, 
       v => {
@@ -146,7 +150,7 @@ export function Connect() {
         // TODO: change to Stream()
         // m.redraw()
         console.log('loading game', v.state.moves)
-        console.log('loaded?', chess.load_pgn(v.state.moves, {sloppy: true}))
+        console.log('loaded?', state.chess.load_pgn(v.state.moves, {sloppy: true}))
         if (v.black.id == User.profile.id) {
           // if playing black, flip board
           flipBoard()
@@ -156,35 +160,35 @@ export function Connect() {
         }
       } else if (v.type == 'gameState') {
         console.log('move played', v.moves)
-        console.log('loaded?', chess.load_pgn(v.moves, {sloppy: true}))
+        console.log('loaded?', state.chess.load_pgn(v.moves, {sloppy: true}))
 
       }
-      let turn = chess.turn() == 'w' ? 'white' : 'black'
+      let turn = state.chess.turn() == 'w' ? 'white' : 'black'
       console.log('updated. turn is', turn)
-      ground.set({
-        fen: chess.fen(),
-        turnColor: toColor(chess),
+      state.ground.set({
+        fen: state.chess.fen(),
+        turnColor: toColor(state.chess),
         movable: {
-          dests: toDests(chess),
-          events: { after: playOtherSide(chess, ground) }
+          dests: toDests(state.chess),
+          events: { after: playOtherSide(state.chess, state.ground) }
         }
       })
-      if (chess.history().length) {
-        let hist = chess.history({verbose: true})
+      if (state.chess.history().length) {
+        let hist = state.chess.history({verbose: true})
         let last = hist.pop()
-        ground.set({
+        state.ground.set({
           lastMove: [last.from, last.to]
         })
       }
       lightBoard()
     })
-  }
-  function makeMove(move) {
+  },
+  makeMove: move => {
       console.log('moving', move)
-      chess.move(move)
+      state.chess.move(move)
       selected, selectedSquare = null
       lightBoard()
-      console.log(chess.board())
+      console.log(state.chess.board())
       // send to lichess api
       let move_uci = uci(move)
       auth('https://lichess.org/api/board/game/' + m.route.param('id') + '/move/' + move_uci, {
@@ -192,100 +196,71 @@ export function Connect() {
       }).then(e => {
         console.log('played move', move_uci, e)
       })
-  }
-  function init() {
+  },
+  initLaunchGame: () => {
     console.log('connecting')
-    if (!Midi.connected()) {
-      Midi.init(onInput, onCC, () => {
-        Midi.toggleLive()
-        lightBoard()
-      })
-    }
+    launchpad = new LaunchpadX()
+    Midi.init(onInput, onCC, () => {
+      Midi.toggleLive()
+      lightBoard()
+    })
   }
-  return {
-    oninit: vnode => {
-      init()
-    },
-    onbeforeremove: vnode => {
-      Midi.close()
-    },
-    view: vnode => {
-      let status = Midi.connected() ? 'connected' : 'disconnected'
-      return [
-        m('.toolbar', {}, [m('.status', {class: status, title: status}, ''),
-          m('i.material-icons', {
-            title: status == 'connected' ? 'disconnect' : 'connect',
-            onclick: e => {
-              if (Midi.connected()) {
-                console.log('disconnecting')
-                Midi.close()
-              } else {
-                console.log('connecting')
-                Midi.connect(onInput, onCC, () => {
-                  Midi.toggleLive()
-                  lightBoard()
-                })
-              }
-            },
-          }, Midi.connected() ? 'power_off' : 'power'),
-          m('i.material-icons', {
-            title: 'flip board',
-            onclick: e => {
-              flipBoard()
-            }
-          }, 'wifi_protected_setup'),
-          m('i.material-icons', {
-            title: influence ? 'hide influence' : 'show influence',
-            onclick: e => {
-              toggleInfluence()
-            }
-          }, 'compare_arrows')
-        ]),
-        game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.white : game.gameFull.black)) : null,
-        m('.board.fullscreen', {
-          // fen: chess.fen(),
-          // config: ,
-          oncreate: v => {
-            ground = Chessground(v.dom, {fen: v.attrs.fen,
-              orientation: invert ? 'black' : 'white',
-              premovable: {
-                enabled: false
-              },
-              movable: {
-                 free: false
-              },
-              events: {
-                select: key => {
-                  console.log('chessground selected', key)
-                  //clear previous selection
-                  lightBoard()
-                  selected = true
-                  selectedSquare = key
-                  highlightAvailableMoves(chess, key, invert)
-                },
-                move: (orig, dest, captured) => {
-                  console.log('chessground moved', orig, dest, captured)
-                  ground.move(orig, dest)
-                  makeMove({from: orig, to: dest})
-                }
-              }
-            })
-            
-            let c = game.isMyTurn ? game.color : game.color == 'white' ? 'black' : 'white'
-            console.log('my color', c)
-            ground.set({
-              movable: { 
-                dests: toDests(chess), events: { after: playOtherSide(chess, ground) },
-                color: c,
-              }
-            })
-            streamGame()
-
-          },
-             }),
-        game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.black : game.gameFull.white)) : null,
-        
-      ]
-    }
-  }
-}
+  // return {
+  //   onremove: vnode => {
+  //     Midi.close()
+  //   },
+  //   view: vnode => {
+  //     let status = Midi.connected() ? 'connected' : 'disconnected'
+  //     return [
+  //       m(Toolbar()),
+  //       game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.white : game.gameFull.black)) : null,
+  //       m(Game()),
+        // m('.board.fullscreen', {
+        // 
+        //     oninit: vnode => {
+        //       init()
+        //     },
+        //   oncreate: v => {
+        //     ground = Chessground(v.dom, {fen: v.attrs.fen,
+        //       orientation: invert ? 'black' : 'white',
+        //       premovable: {
+        //         enabled: false
+        //       },
+        //       movable: {
+        //          free: false
+        //       },
+        //       events: {
+        //         select: key => {
+        //           console.log('chessground selected', key)
+        //           //clear previous selection
+        //           lightBoard()
+        //           selected = true
+        //           selectedSquare = key
+        //           actions.highlightAvailableMoves(chess, key, invert)
+        //         },
+        //         move: (orig, dest, captured) => {
+        //           console.log('chessground moved', orig, dest, captured)
+        //           ground.move(orig, dest)
+        //           makeMove({from: orig, to: dest})
+        //         }
+        //       }
+        //     })
+        // 
+        //     let c = game.isMyTurn ? game.color : game.color == 'white' ? 'black' : 'white'
+        //     console.log('my color', c)
+        //     ground.set({
+        //       movable: { 
+        //         dests: toDests(chess), events: { after: playOtherSide(chess, ground) },
+        //         color: c,
+        //       }
+        //     })
+        //     streamGame()
+        // 
+        //   },
+        //      }),
+  //       game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.black : game.gameFull.white)) : null,
+  // 
+  //     ]
+  //   }
+  // }
+})

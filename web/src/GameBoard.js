@@ -40,8 +40,11 @@ export const GameBoard = (state, actions) => {
       }
     })} 
   function init(vnode) {
-    state.chess = new Chess()
     streamGame()
+    actions.initMidi(actions.onInput, actions.onCC, () => {
+      actions.toggleLive()
+      actions.lightBoard()
+    })
   }
   return {
     oninit: init,
