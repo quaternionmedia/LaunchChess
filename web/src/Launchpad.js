@@ -78,12 +78,12 @@ export function highlightMove(chess, index, invert=false) {
     if (chess.in_check()) {
       let k = getPieceLocations(chess, {type:'k', color: chess.turn() })[0]
       console.log('check!', k)
-      Midi.output.send(NOTE_ON | 1, [nToLaunch(k, invert=invert), 5])
+      Midi.output.send(NOTE_ON | 1, [nToLaunch(squareToN(k), invert=invert), 5])
     }
     if (chess.in_checkmate()) {
       let k = getPieceLocations(chess, {type:'k', color: chess.turn() })[0]
       console.log('mate!', k)
-      Midi.output.send(NOTE_ON, [nToLaunch(k, invert=invert), 5])
+      Midi.output.send(NOTE_ON, [nToLaunch(squareToN(k), invert=invert), 5])
     }
   }
   
