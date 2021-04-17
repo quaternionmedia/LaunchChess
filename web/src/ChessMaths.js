@@ -69,7 +69,7 @@ export function getPieceLocations(chess, piece) {
   chess.board().map((rank, r) => {
     rank.map((p, f) => {
       if (p && p.type == piece.type && p.color == piece.color) {
-        res.push( RANKS[r] + f )
+        res.push( RANKS[7-r] + String(f+1) )
       }
     })
   })  
