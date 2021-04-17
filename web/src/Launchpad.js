@@ -1,4 +1,5 @@
 import { Midi, NOTE_ON } from './Midi'
+import { getPieceLocations } from './ChessMaths'
 
 const colors = {'p': 13,'r': 9,'n': 45,'b': 37,'q': 53,'k': 49}
 
@@ -77,31 +78,33 @@ export const Launchpad = (state, actions) => ({
       }
       
       if (state.chess.in_check()) {
-        let k = getPieceIndex({type:'k', color: state.chess.turn() })
+        let k = getPieceLocations(state.chess, {type:'k', color: state.chess.turn() })[0]
         console.log('check!', k)
-        state.output.send(NOTE_ON | 1, [actions.nToLaunch(k), 5])
+        state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(k)), 5])
       }
       if (state.chess.in_checkmate()) {
-        let k = getPieceIndex({type:'k', color: state.chess.turn() })
+        let k = getPieceLocations(state.chess, {type:'k', color: state.chess.turn() })[0]
         console.log('mate!', k)
-        state.output.send(NOTE_ON, [actions.nToLaunch(k), 5])
+        state.output.send(NOTE_ON, [actions.nToLaunch(actions.squareToN(k)), 5])
       }
     }
     
   },
   highlightAvailableMoves: square => {
-    state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(square), state.invert), 21])
+    let s = actions.nToLaunch(actions.squareToN(square))
+    console.log('highlighting', square, s, actions.squareToN(square))
+    state.output.send(NOTE_ON | 1, [s, 21])
     let piece_moves = state.chess.moves({square: square, verbose:true})
     console.log('possible moves', piece_moves)
     piece_moves.forEach((p, i) => {
       console.log(p)
       if (state.chess.get(p.to)) {
         // piece at square. flash green
-        console.log('capture', actions.nToLaunch(actions.squareToN(p.to), state.invert))
-        state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(p.to), state.invert), 21])
+        console.log('capture', actions.nToLaunch(actions.squareToN(p.to)))
+        state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(p.to)), 21])
       } else {
-        console.log('regular move', p.to, actions.squareToN(p.to), actions.nToLaunch(actions.squareToN(p.to), state.invert))
-        state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(p.to), state.invert), 21])
+        console.log('regular move', p.to, actions.squareToN(p.to), actions.nToLaunch(actions.squareToN(p.to)))
+        state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(p.to)), 21])
       }
     })
   }

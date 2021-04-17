@@ -35,6 +35,7 @@ export const State = () => ({
   ground: null,
   selectedSquare: null,
   selectedPiece: null,
+  influence: false,
 })
 export const Actions = (state) => ({
   
