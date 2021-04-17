@@ -1,12 +1,12 @@
 import { Chess } from 'chess.js'
 
-export const RANKS = 'abcdefgh'
+export const FILES = 'abcdefgh'
 
 let squares = []
-let ranks = [...RANKS]
-ranks.forEach(rank => {
-  for (let f=1; f<=8; f++) {
-      squares.push(rank + f)
+let files = [...FILES]
+files.forEach(f => {
+  for (let i=1; i<=8; i++) {
+      squares.push(f + i)
     }
   })
 
@@ -69,7 +69,7 @@ export function getPieceLocations(chess, piece) {
   chess.board().map((rank, r) => {
     rank.map((p, f) => {
       if (p && p.type == piece.type && p.color == piece.color) {
-        res.push( RANKS[r] + f )
+        res.push( FILES[f] + (8-r) )
       }
     })
   })  
