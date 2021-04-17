@@ -39,7 +39,8 @@ export const Actions = (state) => ({
 })
 
 let state = State()
-let actions = Launchpad(state)
+let actions = Actions(state)
+Object.assign(actions, Launchpad(state, actions))
 Object.assign(actions, Midi(state, actions))
 Object.assign(actions, LaunchGame(state, actions))
 console.log(state, actions)

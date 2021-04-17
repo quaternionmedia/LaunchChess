@@ -2,7 +2,7 @@ import { Midi, NOTE_ON } from './Midi'
 
 const colors = {'p': 13,'r': 9,'n': 45,'b': 37,'q': 53,'k': 49}
 
-export const Launchpad = (state) => ({
+export const Launchpad = (state, actions) => ({
 
   nToLaunch: n => {
     // 0-63 mapped to launchpad notes
@@ -38,14 +38,15 @@ export const Launchpad = (state) => ({
   },
   lightGame: () => {
     const board = state.chess.board()
+    let piece
     for (let i=0; i<64; i++) {
       if (board[(63-i) >> 3][i % 8]) {
-        let piece = board[(63-i) >> 3][i % 8]
+        piece = board[(63-i) >> 3][i % 8]
         // console.log('piece at i', i, piece)
       } else {
-        let piece = null
+        piece = null
       }
-      const l = nToLaunch(i)
+      const l = actions.nToLaunch(i)
       // console.log(i, piece, l)
       const c = piece ? colors[piece.type] : (i + (i >> 3)) % 2 == 0 ? 0 : 1
       // console.log(NOTE_ON, l, c)
@@ -54,9 +55,9 @@ export const Launchpad = (state) => ({
     }
     let history = state.chess.history()
     if (history.length) {
-      highlightMove(history.length-1)
+      actions.highlightMove(history.length-1)
       if (history.length > 1) {
-        highlightMove(history.length-2)
+        actions.highlightMove(history.length-2)
       }
     }
     state.output.send(NOTE_ON, [99, state.chess.turn() == 'w' ? 3 : 83])
@@ -68,39 +69,39 @@ export const Launchpad = (state) => ({
       let to_square = lastMove.to
       console.log('highlighting', lastMove, from_square, to_square)
       if (! state.chess.get(from_square)) {
-        state.output.send(NOTE_ON | 2, [nToLaunch(squareToN(from_square)), 70])
+        state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(from_square)), 70])
       }
       if (state.chess.get(to_square)) {
         let c = colors[state.chess.get(to_square).type]
-        state.output.send(NOTE_ON | 2, [nToLaunch(squareToN(to_square)), state.chess.get(to_square).color == 'w' ? c : c + 2])
+        state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(to_square)), state.chess.get(to_square).color == 'w' ? c : c + 2])
       }
       
       if (state.chess.in_check()) {
         let k = getPieceIndex({type:'k', color: state.chess.turn() })
         console.log('check!', k)
-        state.output.send(NOTE_ON | 1, [nToLaunch(k), 5])
+        state.output.send(NOTE_ON | 1, [actions.nToLaunch(k), 5])
       }
       if (state.chess.in_checkmate()) {
         let k = getPieceIndex({type:'k', color: state.chess.turn() })
         console.log('mate!', k)
-        state.output.send(NOTE_ON, [nToLaunch(k), 5])
+        state.output.send(NOTE_ON, [actions.nToLaunch(k), 5])
       }
     }
     
   },
   highlightAvailableMoves: square => {
-    state.output.send(NOTE_ON | 1, [nToLaunch(squareToN(square), state.invert), 21])
+    state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(square), state.invert), 21])
     let piece_moves = state.chess.moves({square: square, verbose:true})
     console.log('possible moves', piece_moves)
     piece_moves.forEach((p, i) => {
       console.log(p)
       if (state.chess.get(p.to)) {
         // piece at square. flash green
-        console.log('capture', nToLaunch(squareToN(p.to), state.invert))
-        state.output.send(NOTE_ON | 1, [nToLaunch(squareToN(p.to), state.invert), 21])
+        console.log('capture', actions.nToLaunch(actions.squareToN(p.to), state.invert))
+        state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(p.to), state.invert), 21])
       } else {
-        console.log('regular move', p.to, squareToN(p.to), nToLaunch(squareToN(p.to), state.invert))
-        state.output.send(NOTE_ON | 2, [nToLaunch(squareToN(p.to), state.invert), 21])
+        console.log('regular move', p.to, actions.squareToN(p.to), actions.nToLaunch(actions.squareToN(p.to), state.invert))
+        state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(p.to), state.invert), 21])
       }
     })
   }
