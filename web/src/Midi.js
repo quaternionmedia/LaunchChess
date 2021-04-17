@@ -5,17 +5,15 @@ export const CONTROL_CHANGE = 176
 
 export const Midi = (state, actions) => ({
   
-toggleLive: () => {
-    state.connected = !state.connected
-    state.output.sendSysex([0, 32, 41], [2, 12, 14, state.connected ? 1 : 0])
-  },
-  connect: (noteCallback, ccCallback, afterInit) => {
-    state.input = WebMidi.getInputByName(state.deviceName)
-    state.input.addListener('noteon', "all", noteCallback)
-    state.input.addListener('controlchange', "all", ccCallback)
-    state.output = WebMidi.getOutputByName(state.deviceName)
-    console.log('connecting', state.input, state.output)
-    afterInit()
+toggleLive: (mode) => {
+    if (mode === true) {
+      state.connected(true)
+    } else if (mode === false) {
+      state.connected(false)
+    } else {
+      state.connected(!state.connected())
+    }
+    state.output.sendSysex([0, 32, 41], [2, 12, 14, state.connected() ? 1 : 0])
   },
   close: () => {
     if (state.connected) actions.toggleLive()
