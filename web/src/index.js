@@ -7,7 +7,7 @@ import { User } from './User'
 import { Game, Games } from './Games'
 import { GamePage } from './GameBoard'
 import { ProfilePage } from './Profile'
-import { Connector } from './Connector'
+import { Connector, ConnectionPage } from './Connector'
 import { Launchpad } from './Launchpad'
 import { Midi } from './Midi'
 var Stream = require("mithril/stream")
@@ -28,11 +28,13 @@ export const State = () => ({
   inputs: Stream([]),
   outputs: [],
   deviceName: null,
-  connected: false,
+  connected: Stream(false),
   game: null,
   games: Stream([]),
   chess: null,
   ground: null,
+  selectedSquare: null,
+  selectedPiece: null,
 })
 export const Actions = (state) => ({
   
@@ -43,6 +45,8 @@ let actions = Actions(state)
 Object.assign(actions, Launchpad(state, actions))
 Object.assign(actions, Midi(state, actions))
 Object.assign(actions, LaunchGame(state, actions))
+Object.assign(actions, Connector(state, actions))
+actions.initConnector()
 console.log(state, actions)
 
 m.mount(document.body, Layout())
@@ -51,7 +55,7 @@ let main = document.getElementById('main')
 m.route(main, '/', {
   '/': Home,
   '/connect': GamePage(state, actions),
-  '/connector': Connector(state, actions),
+  '/connector': ConnectionPage(state, actions),
   '/games': Games(state, actions),
   '/board': Game(state),
   '/login': Login,

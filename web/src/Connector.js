@@ -7,57 +7,48 @@ var Stream = require("mithril/stream")
 
 
 
-export const Connector = (state, actions) => {
-  actions.connect = (name) => {
-    state.output = WebMidi.getOutputByName(name)
-    state.input = WebMidi.getInputByName(name)
-    state.connected = true
+export const Connector = (state, actions) => ({
+  connect: (name) => {
+    if (state.connected()) {
+      actions.disconnect()
+    }
+    state.output = WebMidi.getOutputByName(name || state.deviceName)
+    state.input = WebMidi.getInputByName(name || state.deviceName)
+    state.connected(true)
     state.deviceName = name
     console.log('connected', state.input)
-  }
-  actions.disconnect = () => {
+    actions.toggleLive(true)
+  },
+  disconnect: () => {
     state.output = null
-    state.input.removeListener()
-    state.input = null
-    state.connected = false
+    if (state.input) {
+      state.input.removeListener()
+      state.input = null
+    }
+    state.connected(false)
     
-  }
-  return {
-    oninit: vnode => {
-      WebMidi.enable(function (err) {
-        console.log(WebMidi.inputs)
-        console.log(WebMidi.outputs)
-        state.inputs(WebMidi.inputs.map(i => {
-          return i.name in Launchpads ? i.name : null
-        }).filter(Boolean)
-        // console.log('inputs', state.inputs
-      )
-      })
-    },
-    view: vnode => {
-      return [
-        m(Statusbar(state)),
-        m('h1', 'connector'),
-        state.inputs().map(c => { 
-          // console.log('button', c)
-          return m('button.button', {onclick: e => actions.connect(c)}, c)
-        }),
-      // [
-        // m('.connector', {}, [
-          
-        // ]),
-        // m(List(), {}, state.inputs()),
-        // m('button', {onclick: e => console.log(e)}, 'connect'),
-      ]
-        
-  //   ]
-}}
-}
+  },
+  initConnector: () => {
+    WebMidi.enable(function (err) {
+      console.log(WebMidi.inputs)
+      console.log(WebMidi.outputs)
+      state.inputs(WebMidi.inputs.map(i => {
+        return i.name// in Launchpads ? i.name : null
+      }).filter(Boolean)
+      // console.log('inputs', state.inputs
+    )
+  }, true)
+  },
+})
 
-export const List = () => ({
-  view: vnode => {
-    return m('ul', {}, [
-      vnode.children.map(i => m('li', {}, i))
-    ])
-  }
+export const MidiSelector = (state, actions) => m('select', {oninput: e => actions.connect(e.target.value)}, state.inputs().map(c => {
+      return m('option', {value: c}, c)
+    }))
+
+export const ConnectionPage = (state, actions) => ({
+  view: vnode => m('.ConnectionPage', {}, [
+    Statusbar(state),
+    m('h1', 'connector'),
+    MidiSelector(state, actions),
+  ])
 })
