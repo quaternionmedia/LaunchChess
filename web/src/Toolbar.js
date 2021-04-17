@@ -11,10 +11,7 @@ export const ConnectToggle = (state, actions) => m('i.material-icons', {
       actions.close()
     } else {
       console.log('connecting')
-      actions.connect(actions.noteCallback, actions.ccCallback, () => {
-        actions.toggleLive()
-        actions.lightBoard()
-      })
+      actions.connect()
     }
   },
 }, state.connected ? 'power_off' : 'power')

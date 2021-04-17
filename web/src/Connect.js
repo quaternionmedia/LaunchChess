@@ -1,7 +1,7 @@
 import m from 'mithril'
 import { Game, game } from './Games'
 import { Chess } from 'chess.js'
-import { Midi, NOTE_ON, CONTROL_CHANGE } from './Midi'
+import { NOTE_ON } from './Midi'
 import { streamJson } from './ndjson'
 import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'

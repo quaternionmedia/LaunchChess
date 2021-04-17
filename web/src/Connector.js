@@ -22,6 +22,7 @@ export const Connector = (state, actions) => ({
   disconnect: () => {
     state.output = null
     if (state.input) {
+      if (state.connected) actions.toggleLive(false)
       state.input.removeListener()
       state.input = null
     }
@@ -38,6 +39,11 @@ export const Connector = (state, actions) => ({
       // console.log('inputs', state.inputs
     )
   }, true)
+  window.onunload = e => {
+   console.log('unloading')
+   actions.disconnect()
+  }
+  
   },
 })
 
