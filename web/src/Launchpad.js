@@ -1,4 +1,5 @@
 import { Midi, NOTE_ON } from './Midi'
+import { getPieceLocations } from './ChessMaths'
 
 const colors = {'p': 13,'r': 9,'n': 45,'b': 37,'q': 53,'k': 49}
 
