@@ -2,9 +2,8 @@ import m from 'mithril'
 import WebMidi from 'webmidi'
 import { Launchpads } from './Launchpad'
 import { Midi } from './Midi'
-import { Statusbar } from './Statusbar'
 var Stream = require("mithril/stream")
-import { ConnectToggle } from './Toolbar'
+import { StatusIcon, ConnectToggle } from './Toolbar'
 
 
 
@@ -48,7 +47,7 @@ export const MidiSelector = (state, actions) => m('select', {oninput: e => actio
 
 export const ConnectionPage = (state, actions) => ({
   view: vnode => m('.ConnectionPage', {}, [
-    Statusbar(state),
+    StatusIcon(state),
     m('h1', 'connector'),
     MidiSelector(state, actions),
     ConnectToggle(state, actions)

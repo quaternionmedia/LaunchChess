@@ -5,7 +5,6 @@ import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
 import { toDests, toColor, playOtherSide } from './utils'
 import { Chess } from 'chess.js'
-import { Statusbar } from './Statusbar'
 import { Toolbar } from './Toolbar'
 
 export const GameBoard = (state, actions) => {
@@ -66,7 +65,6 @@ export const GameBoard = (state, actions) => {
 
 export const GamePage = (state, actions) => ({
   view: vnode => [
-    m(Statusbar(state, actions)),
     m(Toolbar(state, actions)),
     m('', {}, JSON.stringify(state.invert ? User.username : state.game.opponent)),
     m(GameBoard(state, actions)),
