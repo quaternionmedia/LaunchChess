@@ -7,13 +7,13 @@ export const Midi = (state, actions) => ({
   
 toggleLive: (mode) => {
     if (mode === true) {
-      state.connected(true)
+      state.connected = true
     } else if (mode === false) {
-      state.connected(false)
+      state.connected = false
     } else {
-      state.connected(!state.connected())
+      state.connected = !state.connected
     }
-    state.output.sendSysex([0, 32, 41], [2, 12, 14, state.connected() ? 1 : 0])
+    state.output.sendSysex([0, 32, 41], [2, 12, 14, state.connected ? 1 : 0])
   },
   close: () => {
     if (state.connected) actions.toggleLive()

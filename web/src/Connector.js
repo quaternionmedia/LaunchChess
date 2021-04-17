@@ -10,12 +10,12 @@ import { ConnectToggle } from './Toolbar'
 
 export const Connector = (state, actions) => ({
   connect: (name) => {
-    if (state.connected()) {
+    if (state.connected) {
       actions.disconnect()
     }
     state.output = WebMidi.getOutputByName(name || state.deviceName)
     state.input = WebMidi.getInputByName(name || state.deviceName)
-    state.connected(true)
+    state.connected = true
     state.deviceName = name
     console.log('connected', state.input)
     actions.toggleLive(true)
@@ -26,7 +26,7 @@ export const Connector = (state, actions) => ({
       state.input.removeListener()
       state.input = null
     }
-    state.connected(false)
+    state.connected = false
     
   },
   initConnector: () => {

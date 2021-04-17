@@ -1,12 +1,12 @@
 import m from 'mithril'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 
-export const ConnectIcon = state => m('.status', {class: state.connected() ? 'connected' : 'disconnected', title: state.connected() ? 'connected' : 'disconnected'}, '')
+export const StatusIcon = state => m('.status', {class: state.connected ? 'connected' : 'disconnected', title: state.connected ? 'connected' : 'disconnected'}, '')
 
 export const ConnectToggle = (state, actions) => m('i.material-icons', {
-  title: state.connected() ? 'disconnect' : 'connect',
+  title: state.connected ? 'disconnect' : 'connect',
   onclick: e => {
-    if (state.connected()) {
+    if (state.connected) {
       console.log('disconnecting')
       actions.close()
     } else {
@@ -17,7 +17,7 @@ export const ConnectToggle = (state, actions) => m('i.material-icons', {
       })
     }
   },
-}, state.connected() ? 'power_off' : 'power')
+}, state.connected ? 'power_off' : 'power')
 
 export const FlipButton = (state, actions) => m('i.material-icons', {
   title: 'flip board',
@@ -35,7 +35,7 @@ export const InfluenceToggle = (state, actions) => m('i.material-icons', {
 
 
 export const Toolbar = (state, actions) => m('.toolbar', {}, [
-  ConnectIcon(state),
+  StatusIcon(state),
   ConnectToggle(state, actions),
   FlipButton(state, actions),
   InfluenceToggle(state, actions),
