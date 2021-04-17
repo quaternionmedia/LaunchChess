@@ -4,17 +4,14 @@ import { LICHESS_API_URL } from './config'
 import { Chessground } from 'chessground'
 import { Chess } from 'chess.js'
 import { Board } from './Board'
+import { Toolbar } from './Toolbar'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 import { toDests, toColor, playOtherSide } from './utils'
 
-export var game = {}
-
 export const Games = (state, actions) => {
-  // var games = []
   function getGames() {
     auth(LICHESS_API_URL + 'account/playing').then(res => res.nowPlaying).then(state.games)
       console.log('current games', state.games())
-    // })
   }
   return {
     oninit: vnode => {
@@ -53,29 +50,28 @@ export const Games = (state, actions) => {
   }
 }
 
-export const Game = (state, actions) => {
-  let config = {
-    movable: {
-      color: 'both',
-      free: false,
-    },
-  }
-  function init(vnode) {
-    state.ground = Chessground(vnode.dom, {...config, ...vnode.attrs.config})
-    state.ground.set({
-      movable: { dests: toDests(state.chess), events: { after: playOtherSide(state.chess, state.ground) } }
-    })
-    console.log('game loaded', state.ground)
-  }
-  return {
+let config = {
+  movable: {
+    color: 'both',
+    free: false,
+  },
+}
+
+export const Game = (state, actions) => m('.board.fullscreen', {
     oninit: vnode => {
       state.chess = new Chess()
+      console.log('game loading', vnode.attrs, state.chess.ascii())
     },
-    view: vnode => {
-      return m(Board(state, actions), {
-        class: 'fullscreen',
-        oncreate: init,
-         ...vnode.attrs})
+    oncreate: vnode => {
+      state.ground = Chessground(vnode.dom, {...config, ...vnode.attrs.config})
+      state.ground.set({
+        movable: { dests: toDests(state.chess), events: { after: playOtherSide(state.chess, state.ground) } }
+      })
     }
-  }
-}
+  })
+
+export const GamePage = (state, actions) => ({
+  view: vnode => m('.gamePage', {}, [
+    Toolbar(state, actions),
+    Game(state, actions),
+])})

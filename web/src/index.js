@@ -4,8 +4,8 @@ import { LaunchGame } from './Connect'
 import { Login } from './Login'
 import './style.css'
 import { User } from './User'
-import { Game, Games } from './Games'
-import { GamePage } from './GameBoard'
+import { GamePage, Games } from './Games'
+import { GameBoardPage } from './GameBoard'
 import { ProfilePage } from './Profile'
 import { Connector, ConnectionPage } from './Connector'
 import { Launchpad } from './Launchpad'
@@ -54,10 +54,11 @@ let main = document.getElementById('main')
 
 m.route(main, '/', {
   '/': Home,
-  '/connect': GamePage(state, actions),
+  '/connect': GameBoardPage(state, actions),
+  '/counter': CounterPage({count:5}),
   '/connector': ConnectionPage(state, actions),
   '/games': Games(state, actions),
-  '/board': Game(state),
+  '/board': GamePage(state, actions),
   '/login': Login,
   '/profile': ProfilePage,
 

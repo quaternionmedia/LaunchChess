@@ -63,7 +63,7 @@ export const GameBoard = (state, actions) => {
   }
 }
 
-export const GamePage = (state, actions) => ({
+export const GameBoardPage = (state, actions) => ({
   view: vnode => [
     m(Toolbar(state, actions)),
     m('', {}, JSON.stringify(state.invert ? User.username : state.game.opponent)),

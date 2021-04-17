@@ -6,11 +6,7 @@ import '../node_modules/chessground/assets/chessground.cburnett.css'
 
 
 
-export const Board = (state, actions) => ({
+export const Board = (state, actions) => m('.board', {
   oncreate: vnode => {
-    let ground = new Chessground(vnode.dom, vnode.attrs.config || {})
-  },
-  view: vnode => {
-    return m('.board', vnode.attrs)
-  },
-})
+    state.ground = new Chessground(vnode.dom, vnode.attrs.config || {})
+  }})
