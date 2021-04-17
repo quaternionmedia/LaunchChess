@@ -37,14 +37,11 @@ export function calculateInfluence(fen) {
 }
 
 export function fenForOtherSide(fen) {
-  let newFen = fen.search('w') >= 0 ?
-        fen.replace('w' , 'b') :
-        fen.replace('b', 'w')
-  let index = newFen.search(/w|b/g)
-  if (newFen[index + 2] != '-') {
-    // fix for en passant
-    newFen.replace( newFen.substr(index + 2, 2) , '-')
-  }
+  let tokens = fen.split(' ')
+  tokens[1] = tokens[1] == 'w' ? 'b' : 'w'
+  // fix for en passant
+  tokens[3] = '-'
+  let newFen = tokens.join(' ')
   return newFen
 }
 
