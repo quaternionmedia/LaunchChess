@@ -28,10 +28,14 @@ export const LaunchGame = (state, actions) => ({
   // let color
   
   lightBoard: () => {
-    if (state.influence) {
-      actions.showInfluence()
+    if (state.chess) {
+      if (state.influence) {
+        actions.showInfluence()
+      } else {
+        actions.lightGame()
+      }
     } else {
-      actions.lightGame()
+      actions.grid()
     }
   },
   
@@ -51,9 +55,9 @@ export const LaunchGame = (state, actions) => ({
     let colorMap = defenders.map((s, i) => {
       let v = s - attackers[i]
       let c = Math.min(v+5, 9)
-      return COLORS[toColor(state.chess) == state.game.color ? c : 10 - c]
+      return COLORS[toColor(state.chess) == state.color ? c : 10 - c]
     })
-    if (state.invert == (state.game.color == 'black')) colorMap.reverse()
+    if (state.invert != (state.color == 'black')) colorMap.reverse()
     console.log(colorMap)
     actions.lightMatrix(colorMap)
   },
@@ -67,39 +71,37 @@ export const LaunchGame = (state, actions) => ({
       console.log('touched', s)
       const legal_moves = state.chess.moves({verbose:true})
       console.log('legal moves', legal_moves)
-      if (state.selectedSquare && actions.squareToN(selectedSquare) == s) {
+      if (state.selectedSquare && actions.squareToN(state.selectedSquare) == s) {
         // clear selected piece
-        selectedSquare = null
-        lightBoard()
+        state.selectedSquare = null
+        actions.lightBoard()
         state.ground.selectSquare(null)
       } else if (state.chess.get(actions.nToSquare(s)) && state.chess.get(actions.nToSquare(s)).color == state.chess.turn()) {
-        if (selectedSquare) {
+        if (state.selectedSquare) {
           // clear other selected piece
-          lightBoard()
+          actions.lightBoard()
           // ground.selectSquare(null)
         }
         console.log('checking', actions.nToSquare(s), state.chess.get(actions.nToSquare(s)))
         if (state.chess.get(actions.nToSquare(s)) && (state.chess.get(actions.nToSquare(s)).color == state.chess.turn())) {
           // select piece
-          selectedPiece = true
-          selectedSquare = actions.nToSquare(s)
-          state.ground.selectSquare(selectedSquare)
-          actions.highlightAvailableMoves(selectedSquare, invert)
+          state.selectedSquare = actions.nToSquare(s)
+          state.selectedPiece = state.chess.get(actions.nToSquare(s))
+          state.ground.selectSquare(state.selectedSquare)
+          actions.highlightAvailableMoves(state.selectedSquare)
         }
-      } else if (selected) {
+      } else if (state.selectedSquare) {
         // move selected to square
         
-        const move = {from: selectedSquare, to: actions.nToSquare(s)}
-        if (selected.type == 'p' && (selected.color == 'w' && s >> 3 == 7 ) || (selected.color == 'b' && s >> 3 == 0 )) {
+        const move = {from: state.selectedSquare, to: actions.nToSquare(s)}
+        if (state.selectedPiece.type == 'p' && (state.selectedPiece.color == 'w' && s >> 3 == 7 ) || (state.selectedPiece.color == 'b' && s >> 3 == 0 )) {
           console.log('promotion! Auto promote to Queen')
           move.promotion = 'q'
         }
         console.log('checking if ', move, ' is legal')
-        const squares = state.chess.moves({square: selectedSquare, verbose: true}).map(m => m.to)
+        const squares = state.chess.moves({square: state.selectedSquare, verbose: true}).map(m => m.to)
         if (squares.includes(move.to)) {
-          state.ground.move(move.from, move.to)
-          state.ground.selectSquare(null)
-          makeMove(move)
+          actions.makeMove(move)
         } else {
           console.log('illegal move', move)
         }
@@ -116,29 +118,29 @@ export const LaunchGame = (state, actions) => ({
           // left arrow
           // undo move
           state.chess.undo()
-          selected, selectedSquare = null
-          lightBoard()
+          state.selectedPiece, state.selectedSquare = null
+          actions.lightBoard()
           break
         }
         case 95: {
           // Session button
           // flip board
-          flipBoard()
+          actions.flipBoard()
           break
         }
         case 98: {
           // Custom Midi
           // toggle square influence / game
-          toggleInfluence()
+          actions.toggleInfluence()
           break
         }
       }
     }
   },
   toggleInfluence: () => {
-    influence = !influence
-    Midi.output.send(NOTE_ON, [98, influence ? 5 : 0])
-    lightBoard()
+    state.influence = !state.influence
+    state.output.send(NOTE_ON, [98, state.influence ? 5 : 0])
+    actions.lightBoard()
   },
   streamGame: () => {
     streamJson(LICHESS_API_URL + 'board/game/stream/' + m.route.param('id'),
@@ -180,31 +182,28 @@ export const LaunchGame = (state, actions) => ({
           lastMove: [last.from, last.to]
         })
       }
-      lightBoard()
+      actions.lightBoard()
     })
   },
   makeMove: move => {
-      console.log('moving', move)
-      state.chess.move(move)
-      selected, selectedSquare = null
-      lightBoard()
-      console.log(state.chess.board())
-      // send to lichess api
-      let move_uci = uci(move)
-      auth('https://lichess.org/api/board/game/' + m.route.param('id') + '/move/' + move_uci, {
-        method: 'post',
-      }).then(e => {
-        console.log('played move', move_uci, e)
-      })
+    state.ground.move(move.from, move.to)
+    state.ground.selectSquare(null)
+    // send to lichess api
+    // let move_uci = uci(move)
+    // auth('https://lichess.org/api/board/game/' + m.route.param('id') + '/move/' + move_uci, {
+    //   method: 'post',
+    // }).then(e => {
+    //   console.log('played move', move_uci, e)
+    // })
   },
-  initLaunchGame: () => {
-    console.log('connecting')
-    launchpad = new LaunchpadX()
-    Midi.init(onInput, onCC, () => {
-      Midi.toggleLive()
-      lightBoard()
-    })
-  }
+  // initLaunchGame: () => {
+  //   console.log('connecting')
+  //   launchpad = new LaunchpadX()
+  //   Midi.init(onInput, onCC, () => {
+  //     Midi.toggleLive()
+  //     actions.lightBoard()
+  //   })
+  // }
   // return {
   //   onremove: vnode => {
   //     Midi.close()
