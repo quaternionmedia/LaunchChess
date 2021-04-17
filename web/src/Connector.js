@@ -4,6 +4,7 @@ import { Launchpads } from './Launchpad'
 import { Midi } from './Midi'
 import { Statusbar } from './Statusbar'
 var Stream = require("mithril/stream")
+import { ConnectToggle } from './Toolbar'
 
 
 
@@ -50,5 +51,6 @@ export const ConnectionPage = (state, actions) => ({
     Statusbar(state),
     m('h1', 'connector'),
     MidiSelector(state, actions),
+    ConnectToggle(state, actions)
   ])
 })
