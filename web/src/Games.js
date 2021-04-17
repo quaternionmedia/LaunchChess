@@ -61,11 +61,34 @@ export const Game = (state, actions) => m('.board.fullscreen', {
     oninit: vnode => {
       state.chess = new Chess()
       console.log('game loading', vnode.attrs, state.chess.ascii())
+      actions.lightBoard()
     },
     oncreate: vnode => {
       state.ground = Chessground(vnode.dom, {...config, ...vnode.attrs.config})
       state.ground.set({
-        movable: { dests: toDests(state.chess), events: { after: playOtherSide(state.chess, state.ground) } }
+        movable: {
+          dests: toDests(state.chess), 
+          events: {
+            // after: 
+          }
+        },
+        events: {
+          select: key => {
+            console.log('chessground selected', key, typeof(key), key.charAt(0), key.charAt(1))
+            if (state.chess.get(key) && state.chess.get(key).color == state.chess.turn()) {
+              // clear previous selection
+              actions.lightBoard()
+              state.selectedSquare = key
+              state.selectedPiece = state.chess.get(key)
+              actions.highlightAvailableMoves(key)
+            }
+            
+          },
+          move: (orig, dest) => {
+            playOtherSide(state.chess, state.ground)(orig, dest)
+            actions.lightBoard()
+          },
+        }
       })
     }
   })
