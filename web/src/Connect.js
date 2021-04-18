@@ -106,9 +106,7 @@ export const LaunchGame = (state, actions) => ({
         case 93: {
           // left arrow
           // undo move
-          state.chess.undo()
-          state.selectedPiece, state.selectedSquare = null
-          actions.lightBoard()
+          actions.takeback()
           break
         }
         case 95: {
@@ -199,4 +197,10 @@ export const LaunchGame = (state, actions) => ({
       actions.lightBoard()
     })
   },
+  takeback: () => {
+    state.chess.undo()
+    state.selectedPiece, state.selectedSquare = null
+    state.ground.set({fen: state.chess.fen()})
+    actions.lightBoard()
+  }
 })
