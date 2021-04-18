@@ -72,15 +72,15 @@ let onlineActions = {
 }
 
 
-m.mount(document.body, Layout())
+m.mount(document.body, Layout(state))
 let main = document.getElementById('main')
 
 m.route(main, '/', {
   '/': Home,
-  '/connect': GamePage(state, onlineActions),
-  '/connector': ConnectionPage(state, actions),
+  '/connect': ConnectionPage(state, actions),
+  '/otb': GamePage(state, actions),
   '/games': Games(state, actions),
-  '/board': GamePage(state, actions),
+  '/online': GamePageOnline(state, onlineActions),
   '/login': Login,
   '/profile': ProfilePage,
 

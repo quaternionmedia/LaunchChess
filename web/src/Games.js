@@ -37,7 +37,7 @@ export const Games = (state, actions) => {
               onclick: e => {
                 console.log('game clicked', g)
                 state.game = g
-                m.route.set('/connect', {id: g.gameId})
+                m.route.set('/online', {id: g.gameId})
               },
           })
           ])
@@ -94,11 +94,14 @@ export const GamePage = (state, actions) => ({
     Game(state, actions),
 ])})
 
+export const Player = () => m('', {}, JSON.stringify(User.username))
+export const Opponent = state => m('', {}, JSON.stringify(state.game.opponent))
+
 export const GamePageOnline = (state, actions) => ({
   view: vnode => [
-    m(Toolbar(state, actions)),
-    m('', {}, JSON.stringify(state.invert ? User.username : state.game.opponent)),
-    m(Game(state, actions)),
-    m('', {}, JSON.stringify(state.invert ? state.game.opponent : User.username)),
+    Toolbar(state, actions),
+    state.invert ? Player() : Opponent(state),
+    Game(state, actions),
+    state.invert ? Opponent(state) : Player(),
   ]
 })
