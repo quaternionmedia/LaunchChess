@@ -10,6 +10,8 @@ import { Connector, ConnectionPage } from './Connector'
 import { Launchpad } from './Launchpad'
 import { Midi } from './Midi'
 import { uci } from './ChessMaths'
+import { playOtherSide } from './utils'
+
 var Stream = require("mithril/stream")
 
 export function Home() {
@@ -56,9 +58,20 @@ console.log(state, actions)
 let onlineActions = {
   ...actions, 
   onmove: (orig, dest) => {
-    // actions.makeMove(move)
-    console.log('sending to lichess api')
-    let move_uci = uci({from: orig, to: dest})
+    let move = {from: orig, to: dest}
+    let piece = state.chess.get(move.from)
+    if (piece.type == 'p' && ((piece.color == 'w' && move.to.charAt(1) == 8 ) || (piece.color == 'b' && move.to.charAt(1) == 1 ))) {
+      console.log('promotion! Auto promote to Queen')
+      move.promotion = 'q'
+    }
+    state.chess.move(move)
+    console.log('moved', move, piece, state.chess.ascii())
+    state.ground.set({fen: state.chess.fen()})
+    
+    actions.lightBoard()
+    playOtherSide(state.chess, state.ground)(orig, dest)
+    // send to lichess api
+    let move_uci = uci(move)
     auth('https://lichess.org/api/board/game/' + m.route.param('id') + '/move/' + move_uci, {
       method: 'post',
     }).then(e => {
