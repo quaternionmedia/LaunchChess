@@ -34,7 +34,7 @@ export const State = () => ({
   games: Stream([]),
   chess: null,
   ground: null,
-  color: 'white',
+  color: 'w',
   selectedSquare: null,
   selectedPiece: null,
   influence: false,
@@ -54,16 +54,25 @@ Object.assign(actions, Connector(state, actions))
 actions.initConnector()
 console.log(state, actions)
 
-let onlineActions = {...actions, onmove: (orig, dest) => {
-  // actions.makeMove(move)
-  console.log('sending to lichess api')
-  let move_uci = uci({from: orig, to: dest})
-  auth('https://lichess.org/api/board/game/' + m.route.param('id') + '/move/' + move_uci, {
-    method: 'post',
-  }).then(e => {
-    console.log('played move', move_uci, e)
-  })
-}}
+let onlineActions = {
+  ...actions, 
+  onmove: (orig, dest) => {
+    // actions.makeMove(move)
+    console.log('sending to lichess api')
+    let move_uci = uci({from: orig, to: dest})
+    auth('https://lichess.org/api/board/game/' + m.route.param('id') + '/move/' + move_uci, {
+      method: 'post',
+    }).then(e => {
+      console.log('played move', move_uci, e)
+    })
+  },
+  afterInit: () => {
+    actions.afterInit()
+    actions.streamGame()
+  }
+}
+// Object.assign(onlineActions, GameStream(state, actions))
+
 
 m.mount(document.body, Layout())
 let main = document.getElementById('main')

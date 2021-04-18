@@ -57,7 +57,7 @@ export const LaunchGame = (state, actions) => ({
       let c = Math.min(v+5, 9)
       return COLORS[toColor(state.chess) == state.color ? c : 10 - c]
     })
-    if (state.invert != (state.color == 'black')) colorMap.reverse()
+    if (state.invert != (state.color == 'b')) colorMap.reverse()
     console.log(colorMap)
     actions.lightMatrix(colorMap)
   },
@@ -148,17 +148,17 @@ export const LaunchGame = (state, actions) => ({
       v => {
       console.log('calling back', v)
       if (v.type == 'gameFull') {
-        game.gameFull = v
+        state.game = v
         // TODO: change to Stream()
         // m.redraw()
         console.log('loading game', v.state.moves)
         console.log('loaded?', state.chess.load_pgn(v.state.moves, {sloppy: true}))
         if (v.black.id == User.profile.id) {
           // if playing black, flip board
-          flipBoard()
-          color = 'b'
+          actions.flipBoard()
+          state.color = 'b'
         } else {
-          color = 'w'
+          state.color = 'w'
         }
       } else if (v.type == 'gameState') {
         console.log('move played', v.moves)
@@ -199,6 +199,11 @@ export const LaunchGame = (state, actions) => ({
     // }).then(e => {
     //   console.log('played move', move_uci, e)
     // })
+  },
+  afterInit: () => {
+    actions.initMidi(actions.onInput, actions.onCC, () => {
+      actions.lightBoard()
+    })
   },
   // initLaunchGame: () => {
   //   console.log('connecting')

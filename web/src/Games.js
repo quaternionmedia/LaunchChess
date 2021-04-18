@@ -61,10 +61,7 @@ export const Game = (state, actions) => m('.board.fullscreen', {
     oninit: vnode => {
       state.chess = new Chess()
       console.log('game loading', vnode.attrs, state.chess.ascii())
-      // actions.lightBoard()
-      actions.initMidi(actions.onInput, actions.onCC, () => {
-        actions.lightBoard()
-      })
+      actions.afterInit()
     },
     oncreate: vnode => {
       state.ground = Chessground(vnode.dom, {...config, ...vnode.attrs.config})
