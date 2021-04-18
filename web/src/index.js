@@ -3,13 +3,14 @@ import { Layout } from './Menu'
 import { LaunchGame } from './Connect'
 import { Login } from './Login'
 import './style.css'
-import { User } from './User'
+import { User, auth } from './User'
 import { GamePage, Games } from './Games'
 import { GameBoardPage } from './GameBoard'
 import { ProfilePage } from './Profile'
 import { Connector, ConnectionPage } from './Connector'
 import { Launchpad } from './Launchpad'
 import { Midi } from './Midi'
+import { uci } from './ChessMaths'
 var Stream = require("mithril/stream")
 
 export function Home() {
@@ -33,9 +34,12 @@ export const State = () => ({
   games: Stream([]),
   chess: null,
   ground: null,
+  color: 'white',
   selectedSquare: null,
   selectedPiece: null,
   influence: false,
+  grid: true,
+  pieces: true,
 })
 export const Actions = (state) => ({
   
@@ -50,13 +54,23 @@ Object.assign(actions, Connector(state, actions))
 actions.initConnector()
 console.log(state, actions)
 
+let onlineActions = {...actions, onmove: (orig, dest) => {
+  // actions.makeMove(move)
+  console.log('sending to lichess api')
+  let move_uci = uci({from: orig, to: dest})
+  auth('https://lichess.org/api/board/game/' + m.route.param('id') + '/move/' + move_uci, {
+    method: 'post',
+  }).then(e => {
+    console.log('played move', move_uci, e)
+  })
+}}
+
 m.mount(document.body, Layout())
 let main = document.getElementById('main')
 
 m.route(main, '/', {
   '/': Home,
-  '/connect': GameBoardPage(state, actions),
-  '/counter': CounterPage({count:5}),
+  '/connect': GamePage(state, onlineActions),
   '/connector': ConnectionPage(state, actions),
   '/games': Games(state, actions),
   '/board': GamePage(state, actions),

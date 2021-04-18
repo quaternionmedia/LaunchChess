@@ -26,7 +26,7 @@ export const Games = (state, actions) => {
         state.games().map(g => {
           return m('.gamecontainer', {}, [
             g.opponent.username,
-            m(Board(), {
+            m(Board, {
               class: 'thumb',
               config: {
                 fen: g.fen,
@@ -70,14 +70,11 @@ export const Game = (state, actions) => m('.board.fullscreen', {
       state.ground = Chessground(vnode.dom, {...config, ...vnode.attrs.config})
       state.ground.set({
         movable: {
-          dests: toDests(state.chess), 
-          events: {
-            // after: 
-          }
+          dests: toDests(state.chess),
         },
         events: {
           select: key => {
-            console.log('chessground selected', key, typeof(key), key.charAt(0), key.charAt(1))
+            console.log('chessground selected', key)
             if (state.chess.get(key) && state.chess.get(key).color == state.chess.turn()) {
               // clear previous selection
               actions.lightBoard()
@@ -85,11 +82,9 @@ export const Game = (state, actions) => m('.board.fullscreen', {
               state.selectedPiece = state.chess.get(key)
               actions.highlightAvailableMoves(key)
             }
-            
           },
           move: (orig, dest) => {
-            playOtherSide(state.chess, state.ground)(orig, dest)
-            actions.lightBoard()
+            actions.onmove(orig, dest)
           },
         }
       })

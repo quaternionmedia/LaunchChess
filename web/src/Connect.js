@@ -188,6 +188,10 @@ export const LaunchGame = (state, actions) => ({
   makeMove: move => {
     state.ground.move(move.from, move.to)
     state.ground.selectSquare(null)
+  },
+  onmove: (orig, dest) => {
+      playOtherSide(state.chess, state.ground)(orig, dest)
+      actions.lightBoard()
     // send to lichess api
     // let move_uci = uci(move)
     // auth('https://lichess.org/api/board/game/' + m.route.param('id') + '/move/' + move_uci, {
