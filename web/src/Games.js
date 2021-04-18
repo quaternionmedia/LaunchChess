@@ -93,3 +93,12 @@ export const GamePage = (state, actions) => ({
     Toolbar(state, actions),
     Game(state, actions),
 ])})
+
+export const GamePageOnline = (state, actions) => ({
+  view: vnode => [
+    m(Toolbar(state, actions)),
+    m('', {}, JSON.stringify(state.invert ? User.username : state.game.opponent)),
+    m(Game(state, actions)),
+    m('', {}, JSON.stringify(state.invert ? state.game.opponent : User.username)),
+  ]
+})

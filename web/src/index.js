@@ -4,8 +4,7 @@ import { LaunchGame } from './Connect'
 import { Login } from './Login'
 import './style.css'
 import { User, auth } from './User'
-import { GamePage, Games } from './Games'
-import { GameBoardPage } from './GameBoard'
+import { GamePage, GamePageOnline, Games } from './Games'
 import { ProfilePage } from './Profile'
 import { Connector, ConnectionPage } from './Connector'
 import { Launchpad } from './Launchpad'
@@ -71,7 +70,6 @@ let onlineActions = {
     actions.streamGame()
   }
 }
-// Object.assign(onlineActions, GameStream(state, actions))
 
 
 m.mount(document.body, Layout())
