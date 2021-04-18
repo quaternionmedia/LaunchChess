@@ -19,14 +19,6 @@ import '../node_modules/material-design-icons-iconfont/dist/material-design-icon
 export const COLORS = [5, 121, 9, 11, 15, 1, 23, 37, 45, 49, 69]
 
 export const LaunchGame = (state, actions) => ({
-  // let launchpad
-  // let selected, selectedSquare
-  // let invert = false
-  // let chess = new Chess()
-  // let ground
-  // let influence = false
-  // let color
-  
   lightBoard: () => {
     if (state.chess) {
       if (state.influence) {
@@ -94,10 +86,7 @@ export const LaunchGame = (state, actions) => ({
         // move selected to square
         
         const move = {from: state.selectedSquare, to: actions.nToSquare(s)}
-        if (state.selectedPiece.type == 'p' && (state.selectedPiece.color == 'w' && s >> 3 == 7 ) || (state.selectedPiece.color == 'b' && s >> 3 == 0 )) {
-          console.log('promotion! Auto promote to Queen')
-          move.promotion = 'q'
-        }
+        
         console.log('checking if ', move, ' is legal')
         const squares = state.chess.moves({square: state.selectedSquare, verbose: true}).map(m => m.to)
         if (squares.includes(move.to)) {
@@ -186,89 +175,28 @@ export const LaunchGame = (state, actions) => ({
     })
   },
   makeMove: move => {
+    
     state.ground.move(move.from, move.to)
     state.ground.selectSquare(null)
+    
   },
   onmove: (orig, dest) => {
-      playOtherSide(state.chess, state.ground)(orig, dest)
-      actions.lightBoard()
-    // send to lichess api
-    // let move_uci = uci(move)
-    // auth('https://lichess.org/api/board/game/' + m.route.param('id') + '/move/' + move_uci, {
-    //   method: 'post',
-    // }).then(e => {
-    //   console.log('played move', move_uci, e)
-    // })
+    let move = {from: orig, to: dest}
+    let piece = state.chess.get(move.from)
+    if (piece.type == 'p' && ((piece.color == 'w' && move.to.charAt(1) == 8 ) || (piece.color == 'b' && move.to.charAt(1) == 1 ))) {
+      console.log('promotion! Auto promote to Queen')
+      move.promotion = 'q'
+    }
+    state.chess.move(move)
+    console.log('moved', move, piece, state.chess.ascii())
+    state.ground.set({fen: state.chess.fen()})
+    
+    actions.lightBoard()
+    playOtherSide(state.chess, state.ground)(orig, dest)
   },
   afterInit: () => {
     actions.initMidi(actions.onInput, actions.onCC, () => {
       actions.lightBoard()
     })
   },
-  // initLaunchGame: () => {
-  //   console.log('connecting')
-  //   launchpad = new LaunchpadX()
-  //   Midi.init(onInput, onCC, () => {
-  //     Midi.toggleLive()
-  //     actions.lightBoard()
-  //   })
-  // }
-  // return {
-  //   onremove: vnode => {
-  //     Midi.close()
-  //   },
-  //   view: vnode => {
-  //     let status = Midi.connected() ? 'connected' : 'disconnected'
-  //     return [
-  //       m(Toolbar()),
-  //       game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.white : game.gameFull.black)) : null,
-  //       m(Game()),
-        // m('.board.fullscreen', {
-        // 
-        //     oninit: vnode => {
-        //       init()
-        //     },
-        //   oncreate: v => {
-        //     ground = Chessground(v.dom, {fen: v.attrs.fen,
-        //       orientation: invert ? 'black' : 'white',
-        //       premovable: {
-        //         enabled: false
-        //       },
-        //       movable: {
-        //          free: false
-        //       },
-        //       events: {
-        //         select: key => {
-        //           console.log('chessground selected', key)
-        //           //clear previous selection
-        //           lightBoard()
-        //           selected = true
-        //           selectedSquare = key
-        //           actions.highlightAvailableMoves(chess, key, invert)
-        //         },
-        //         move: (orig, dest, captured) => {
-        //           console.log('chessground moved', orig, dest, captured)
-        //           ground.move(orig, dest)
-        //           makeMove({from: orig, to: dest})
-        //         }
-        //       }
-        //     })
-        // 
-        //     let c = game.isMyTurn ? game.color : game.color == 'white' ? 'black' : 'white'
-        //     console.log('my color', c)
-        //     ground.set({
-        //       movable: { 
-        //         dests: toDests(chess), events: { after: playOtherSide(chess, ground) },
-        //         color: c,
-        //       }
-        //     })
-        //     streamGame()
-        // 
-        //   },
-        //      }),
-  //       game.gameFull ? m('', {}, JSON.stringify(invert ? game.gameFull.black : game.gameFull.white)) : null,
-  // 
-  //     ]
-  //   }
-  // }
 })
