@@ -30,10 +30,18 @@ export const InfluenceToggle = (state, actions) => m('i.material-icons', {
   }
 }, 'compare_arrows')
 
+export const TakebackButton = (state, actions) => m('i.material-icons', {
+  title: 'takeback',
+  onclick: e => {
+    actions.takeback()
+  }
+}, 'undo')
+
 
 export const Toolbar = (state, actions) => m('.toolbar', {}, [
   StatusIcon(state),
   ConnectToggle(state, actions),
   FlipButton(state, actions),
   InfluenceToggle(state, actions),
+  TakebackButton(state, actions),
 ])
