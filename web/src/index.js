@@ -8,6 +8,7 @@ import { GamePage, GamePageOnline, Games } from './Games'
 import { ProfilePage } from './Profile'
 import { Connector, ConnectionPage } from './Connector'
 import { Launchpad } from './Launchpad'
+import { Midi } from './Midi'
 import { uci } from './ChessMaths'
 import { playOtherSide } from './utils'
 

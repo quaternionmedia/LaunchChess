@@ -4,7 +4,7 @@ import { streamJson } from './ndjson'
 import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
 import { calculateInfluence, fenForOtherSide } from './ChessMaths'
-import { toDests, toColor, playOtherSide } from './utils'
+import { toDests, toColor, playOtherSide, setBoard } from './utils'
 
 
 // let GREEN = [ 123, 23, 64, 22, 76, 87, 21, 122 ]
@@ -196,5 +196,6 @@ export const LaunchGame = (state, actions) => ({
     state.selectedPiece, state.selectedSquare = null
     state.ground.set({fen: state.chess.fen()})
     actions.lightBoard()
+    setBoard(state.chess, state.ground)
   }
 })
