@@ -1,5 +1,5 @@
 import m from 'mithril'
-import { NOTE_ON } from './Midi'
+import { NOTE_ON, CONTROL_CHANGE } from './Midi'
 import { streamJson } from './ndjson'
 import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
@@ -23,6 +23,11 @@ export const LaunchGame = (state, actions) => ({
     } else {
       if (state.grid) actions.grid()
     }
+    state.output.send(CONTROL_CHANGE, [95, state.invert ? 83 : 3])
+    state.output.send(CONTROL_CHANGE, [96, state.grid ? 3 : 1])
+    state.output.send(CONTROL_CHANGE, [97, state.pieces ? 55 : 52])
+    state.output.send(CONTROL_CHANGE, [98, state.influence ? 5 : 7])
+    state.output.send(CONTROL_CHANGE, [99, state.chess.turn() == 'w' ? 3 : 83])
   },
   
   flipBoard: () => {
@@ -109,6 +114,20 @@ export const LaunchGame = (state, actions) => ({
           actions.flipBoard()
           break
         }
+        case 96: {
+          // Custom button
+          // Toggle grid
+          state.grid = !state.grid
+          actions.lightBoard()
+          break
+        }
+        case 97: {
+          // Note button
+          // Toggle pieces
+          state.pieces = !state.pieces
+          actions.lightBoard()
+          break
+        }
         case 98: {
           // Custom Midi
           // toggle square influence / game
@@ -120,7 +139,6 @@ export const LaunchGame = (state, actions) => ({
   },
   toggleInfluence: () => {
     state.influence = !state.influence
-    state.output.send(NOTE_ON, [98, state.influence ? 5 : 0])
     actions.lightBoard()
   },
   streamGame: () => {

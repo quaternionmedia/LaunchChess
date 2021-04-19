@@ -49,7 +49,7 @@ export const Launchpad = (state, actions) => ({
         // console.log('piece at i', i, piece)
         if (state.pieces) {
           color = colors[piece.type]
-          if (piece.color == 'w') color += 2
+          if (piece.color == 'b') color += 2
         } else if (state.grid) color = (i + (i >> 3)) % 2 == 0 ? 0 : 1
       } else {
         piece = null
@@ -69,7 +69,6 @@ export const Launchpad = (state, actions) => ({
         actions.highlightMove(history.length-2)
       }
     }
-    state.output.send(NOTE_ON, [99, state.chess.turn() == 'w' ? 3 : 83])
   },
   highlightMove: index => {
     let lastMove = state.chess.history({verbose:true})[index]
@@ -78,9 +77,11 @@ export const Launchpad = (state, actions) => ({
       let to_square = lastMove.to
       console.log('highlighting', lastMove, from_square, to_square)
       if (! state.chess.get(from_square)) {
+        // if no piece currently on from square, send flashing neutral
         state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(from_square)), 70])
       }
       if (state.chess.get(to_square)) {
+        // if there is a piece, send flashing piece color
         let c = colors[state.chess.get(to_square).type]
         state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(to_square)), state.chess.get(to_square).color == 'w' ? c : c + 2])
       }

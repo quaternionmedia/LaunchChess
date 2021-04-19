@@ -57,9 +57,9 @@ export const PiecesToggle = (state, actions) => m('i.material-icons', {
 export const Toolbar = (state, actions) => m('.toolbar', {}, [
   StatusIcon(state),
   ConnectToggle(state, actions),
-  FlipButton(state, actions),
-  InfluenceToggle(state, actions),
   TakebackButton(state, actions),
+  FlipButton(state, actions),
   GridToggle(state, actions),
   PiecesToggle(state, actions),
+  InfluenceToggle(state, actions),
 ])
