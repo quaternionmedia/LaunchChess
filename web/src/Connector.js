@@ -1,8 +1,5 @@
 import m from 'mithril'
 import WebMidi from 'webmidi'
-import { Launchpads } from './Launchpad'
-import { Midi } from './Midi'
-var Stream = require("mithril/stream")
 import { StatusIcon, ConnectToggle } from './Toolbar'
 
 
@@ -34,7 +31,7 @@ export const Connector = (state, actions) => ({
       console.log(WebMidi.inputs)
       console.log(WebMidi.outputs)
       state.inputs(WebMidi.inputs.map(i => {
-        return i.name// in Launchpads ? i.name : null
+        return i.name
       }).filter(Boolean)
       // console.log('inputs', state.inputs
     )
