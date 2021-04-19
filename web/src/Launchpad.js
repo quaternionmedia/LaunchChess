@@ -50,10 +50,10 @@ export const Launchpad = (state, actions) => ({
         if (state.pieces) {
           color = colors[piece.type]
           if (piece.color == 'w') color += 2
-        }
+        } else if (state.grid) color = (i + (i >> 3)) % 2 == 0 ? 0 : 1
       } else {
         piece = null
-        if (state.grid) {color = (i + (i >> 3)) % 2 == 0 ? 0 : 1}
+        if (state.grid) color = (i + (i >> 3)) % 2 == 0 ? 0 : 1
       }
       
       // console.log(i, piece, l)

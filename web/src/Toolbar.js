@@ -45,6 +45,14 @@ export const GridToggle = (state, actions) => m('i.material-icons', {
   }
 }, state.grid ? 'grid_off' : 'grid_on')
 
+export const PiecesToggle = (state, actions) => m('i.material-icons', {
+  title: state.pieces ? 'hide pieces' : 'show pieces',
+  onclick: e => {
+    state.pieces = !state.pieces
+    actions.lightBoard()
+  }
+}, m('img.1em', {src: 'static/Chess_tile_ql.svg'}))
+
 
 export const Toolbar = (state, actions) => m('.toolbar', {}, [
   StatusIcon(state),
@@ -53,4 +61,5 @@ export const Toolbar = (state, actions) => m('.toolbar', {}, [
   InfluenceToggle(state, actions),
   TakebackButton(state, actions),
   GridToggle(state, actions),
+  PiecesToggle(state, actions),
 ])

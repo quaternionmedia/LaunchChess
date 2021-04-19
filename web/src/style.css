@@ -87,7 +87,9 @@ i:hover {
 i:active {
   animation: blinker .2s 1;
 }
-
+.1em {
+  width: 1em;
+}
 .profile {
   display: grid;
   background: #444;
