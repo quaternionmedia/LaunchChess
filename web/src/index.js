@@ -38,9 +38,10 @@ export const State = () => ({
   color: 'w',
   selectedSquare: null,
   selectedPiece: null,
-  influence: false,
+  invert: false,
   grid: true,
   pieces: true,
+  influence: false,
 })
 export const Actions = (state) => ({
   

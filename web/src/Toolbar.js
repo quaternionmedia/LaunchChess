@@ -51,7 +51,7 @@ export const PiecesToggle = (state, actions) => m('i.material-icons', {
     state.pieces = !state.pieces
     actions.lightBoard()
   }
-}, m('img.1em', {src: 'static/Chess_tile_ql.svg'}))
+}, m('img.oneem', {src: 'static/Chess_tile_ql.svg'}))
 
 
 export const Toolbar = (state, actions) => m('.toolbar', {}, [
