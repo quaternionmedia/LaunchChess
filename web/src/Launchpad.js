@@ -39,20 +39,28 @@ export const Launchpad = (state, actions) => ({
   },
   lightGame: () => {
     const board = state.chess.board()
-    let piece
     for (let i=0; i<64; i++) {
+      let piece
+      let color = 0
+      const l = actions.nToLaunch(i)
+      
       if (board[(63-i) >> 3][i % 8]) {
         piece = board[(63-i) >> 3][i % 8]
         // console.log('piece at i', i, piece)
+        if (state.pieces) {
+          color = colors[piece.type]
+          if (piece.color == 'w') color += 2
+        }
       } else {
         piece = null
+        if (state.grid) {color = (i + (i >> 3)) % 2 == 0 ? 0 : 1}
       }
-      const l = actions.nToLaunch(i)
+      
       // console.log(i, piece, l)
-      const c = piece ? colors[piece.type] : (i + (i >> 3)) % 2 == 0 ? 0 : 1
+      
       // console.log(NOTE_ON, l, c)
       
-      state.output.send(NOTE_ON, [l, piece ? (piece.color == 'w' ? c : c + 2) : c])
+      state.output.send(NOTE_ON, [l, color])
     }
     let history = state.chess.history()
     if (history.length) {

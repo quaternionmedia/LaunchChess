@@ -37,6 +37,14 @@ export const TakebackButton = (state, actions) => m('i.material-icons', {
   }
 }, 'undo')
 
+export const GridToggle = (state, actions) => m('i.material-icons', {
+  title: state.grid ? 'hide grid' : 'show grid',
+  onclick: e => {
+    state.grid = !state.grid
+    actions.lightBoard()
+  }
+}, state.grid ? 'grid_off' : 'grid_on')
+
 
 export const Toolbar = (state, actions) => m('.toolbar', {}, [
   StatusIcon(state),
@@ -44,4 +52,5 @@ export const Toolbar = (state, actions) => m('.toolbar', {}, [
   FlipButton(state, actions),
   InfluenceToggle(state, actions),
   TakebackButton(state, actions),
+  GridToggle(state, actions),
 ])

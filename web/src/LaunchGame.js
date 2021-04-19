@@ -21,7 +21,7 @@ export const LaunchGame = (state, actions) => ({
         actions.lightGame()
       }
     } else {
-      actions.grid()
+      if (state.grid) actions.grid()
     }
   },
   
