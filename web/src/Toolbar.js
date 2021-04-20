@@ -1,4 +1,5 @@
 import m from 'mithril'
+import { confirm } from 'alertifyjs'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 
 export const StatusIcon = state => m('.status', {class: state.connected ? 'connected' : 'disconnected', title: state.connected ? 'connected' : 'disconnected'}, '')
@@ -66,15 +67,26 @@ export const HistoryIncrement = (state, actions) => m('i.material-icons', {
     actions.lightBoard()
   }}, 'history')
 
-  export const HistoryDecrement = (state, actions) => m('i.material-icons', {
-    title: 'decreace history',
-    onclick: e => {
-      state.history = Math.max(0, state.history - 1)
-      actions.lightBoard()
-    }}, 'history_toggle_off')
+export const HistoryDecrement = (state, actions) => m('i.material-icons', {
+  title: 'decreace history',
+  onclick: e => {
+    state.history = Math.max(0, state.history - 1)
+    actions.lightBoard()
+  }}, 'history_toggle_off')
+    
+export const NewGame = (state, actions) => m('i', {
+  onclick: e => {
+    confirm('New game?', yes => {
+      actions.newGame()
+    }, no => {
+      console.log('cancelling')
+    })
+  },
+}, 'start new game')
 
 
 export const Toolbar = (state, actions) => m('.toolbar', {}, [
+  NewGame(state, actions),
   StatusIcon(state),
   ConnectToggle(state, actions),
   m('.inline.tool', {title: 'history'}, state.history),

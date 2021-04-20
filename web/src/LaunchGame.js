@@ -52,8 +52,10 @@ export const LaunchGame = (state, actions) => ({
     console.log(colorMap)
     actions.lightMatrix(colorMap)
   },
-  
-  
+  newGame: () => {
+    state.chess = new Chess()
+    setBoard(state.chess, state.ground)
+  },
   onInput: message => {
     message = message.data
     console.log('input', message)
