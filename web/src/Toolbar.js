@@ -35,7 +35,13 @@ export const TakebackButton = (state, actions) => m('i.material-icons', {
   onclick: e => {
     actions.takeback()
   }
-}, 'undo')
+}, 'arrow_left')
+
+export const ForwardsButton = (state, actions) => m('i.material-icons', {
+  title: 'does nothing',
+  onclick: e => {
+  }
+}, 'arrow_right')
 
 export const GridToggle = (state, actions) => m('i.material-icons', {
   title: state.grid ? 'hide grid' : 'show grid',
@@ -53,11 +59,29 @@ export const PiecesToggle = (state, actions) => m('i.material-icons', {
   }
 }, m('img.oneem', {src: 'static/Chess_tile_ql.svg'}))
 
+export const HistoryIncrement = (state, actions) => m('i.material-icons', {
+  title: 'increace history',
+  onclick: e => {
+    state.history += 1
+    actions.lightBoard()
+  }}, 'history')
+
+  export const HistoryDecrement = (state, actions) => m('i.material-icons', {
+    title: 'decreace history',
+    onclick: e => {
+      state.history = Math.max(0, state.history - 1)
+      actions.lightBoard()
+    }}, 'history_toggle_off')
+
 
 export const Toolbar = (state, actions) => m('.toolbar', {}, [
   StatusIcon(state),
   ConnectToggle(state, actions),
+  m('.inline.tool', {title: 'history'}, state.history),
+  HistoryIncrement(state, actions),
+  HistoryDecrement(state, actions),
   TakebackButton(state, actions),
+  ForwardsButton(state, actions),
   FlipButton(state, actions),
   GridToggle(state, actions),
   PiecesToggle(state, actions),

@@ -42,6 +42,7 @@ export const State = () => ({
   grid: true,
   pieces: true,
   influence: false,
+  history: 1,
 })
 export const Actions = (state) => ({
   

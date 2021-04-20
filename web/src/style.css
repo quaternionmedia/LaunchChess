@@ -101,3 +101,12 @@ i:active {
 .toolbar {
   margin-bottom: 1em;
 }
+.inline {
+  display: inline;
+}
+.tool {
+  margin-right: 1em;
+}
+.vl {
+  border-left: thick solid #393939;
+}

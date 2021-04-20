@@ -63,15 +63,12 @@ export const Launchpad = (state, actions) => ({
       state.output.send(NOTE_ON, [l, color])
     }
     let history = state.chess.history()
-    if (history.length) {
-      actions.highlightMove(history.length-1)
-      if (history.length > 1) {
-        actions.highlightMove(history.length-2)
-      }
+      for (let i=0; i<Math.min(history.length, state.history); i++) {
+        actions.highlightMove(i)
     }
   },
   highlightMove: index => {
-    let lastMove = state.chess.history({verbose:true})[index]
+    let lastMove = state.chess.history({verbose:true}).reverse()[index]
     if (lastMove) {
       let from_square = lastMove.from
       let to_square = lastMove.to
