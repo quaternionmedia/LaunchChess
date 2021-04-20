@@ -1,5 +1,5 @@
 import m from 'mithril'
-import { NOTE_ON, CONTROL_CHANGE } from './Midi'
+import { NOTE_ON, CONTROL_CHANGE } from './Launchpad'
 import { streamJson } from './ndjson'
 import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'

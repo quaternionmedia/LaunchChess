@@ -1,5 +1,7 @@
-import { Midi, NOTE_ON } from './Midi'
 import { getPieceLocations } from './ChessMaths'
+
+export const NOTE_ON = 144
+export const CONTROL_CHANGE = 176
 
 const colors = {'p': 13,'r': 9,'n': 45,'b': 37,'q': 53,'k': 49}
 
@@ -22,6 +24,16 @@ export const Launchpad = (state, actions) => ({
   },
   nToSquare: n => {
     return String.fromCharCode(97+(n%8), 49+(n>>3))
+  },
+  toggleLive: (mode) => {
+    if (mode === true) {
+      state.connected = true
+    } else if (mode === false) {
+      state.connected = false
+    } else {
+      state.connected = !state.connected
+    }
+    state.output.sendSysex([0, 32, 41], [2, 12, 14, state.connected ? 1 : 0])
   },
   grid: () => {
     for (let y=0; y<8; y++) {

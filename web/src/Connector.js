@@ -42,6 +42,15 @@ export const Connector = (state, actions) => ({
   }
   
   },
+  initMidi: (noteCallback, ccCallback, afterInit) => {
+    // WebMidi.enable(function (err) {
+    console.log(WebMidi.inputs)
+    console.log(WebMidi.outputs)
+    state.input.addListener('noteon', "all", noteCallback)
+    state.input.addListener('controlchange', "all", ccCallback)
+    
+    afterInit()      
+  }
 })
 
 export const MidiSelector = (state, actions) => m('select', {oninput: e => actions.connect(e.target.value)}, state.inputs().map(c => {

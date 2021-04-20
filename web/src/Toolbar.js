@@ -8,7 +8,7 @@ export const ConnectToggle = (state, actions) => m('i.material-icons', {
   onclick: e => {
     if (state.connected) {
       console.log('disconnecting')
-      actions.close()
+      actions.disconnect()
     } else {
       console.log('connecting')
       actions.connect()
