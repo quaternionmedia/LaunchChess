@@ -1,10 +1,11 @@
 import m from 'mithril'
+import { Chess } from 'chess.js'
 import { NOTE_ON, CONTROL_CHANGE } from './Launchpad'
 import { streamJson } from './ndjson'
 import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
 import { calculateInfluence, fenForOtherSide } from './ChessMaths'
-import { toDests, toColor, playOtherSide, setBoard } from './utils'
+import { toDests, toColor, playOtherSide, setBoard, newGame } from './utils'
 
 
 // let GREEN = [ 123, 23, 64, 22, 76, 87, 21, 122 ]
@@ -23,13 +24,20 @@ export const LaunchGame = (state, actions) => ({
     } else {
       if (state.grid) actions.grid()
     }
+    state.output.send(CONTROL_CHANGE, [91, Math.min(state.history+1, 3)])
+    state.output.send(CONTROL_CHANGE, [92, Math.min(state.history, 3)])
+    state.output.send(CONTROL_CHANGE, [93, 67])
     state.output.send(CONTROL_CHANGE, [95, state.invert ? 83 : 3])
     state.output.send(CONTROL_CHANGE, [96, state.grid ? 3 : 1])
-    state.output.send(CONTROL_CHANGE, [97, state.pieces ? 55 : 52])
+    state.output.send(CONTROL_CHANGE, [97, state.pieces ? 53 : 82])
     state.output.send(CONTROL_CHANGE, [98, state.influence ? 5 : 7])
     state.output.send(CONTROL_CHANGE, [99, state.chess.turn() == 'w' ? 3 : 83])
   },
-  
+  togglePieces: (mode=null) => {
+    state.pieces = mode ? mode : !state.pieces
+    state.ground.set({drawable:{visible: false}})
+    actions.lightBoard()
+  },
   flipBoard: () => {
     state.invert = !state.invert
     actions.lightBoard()
@@ -55,38 +63,40 @@ export const LaunchGame = (state, actions) => ({
   newGame: () => {
     state.chess = new Chess()
     setBoard(state.chess, state.ground)
-  },
+  },  
   onInput: message => {
     message = message.data
     console.log('input', message)
     if (message[2]) {
       const s = actions.launchToN(message[1])
+      const square = actions.nToSquare(s)
       console.log('touched', s)
       const legal_moves = state.chess.moves({verbose:true})
       console.log('legal moves', legal_moves)
       if (state.selectedSquare && actions.squareToN(state.selectedSquare) == s) {
         // clear selected piece
-        state.selectedSquare = null
         actions.lightBoard()
+        state.selectedSquare = null
         state.ground.selectSquare(null)
-      } else if (state.chess.get(actions.nToSquare(s)) && state.chess.get(actions.nToSquare(s)).color == state.chess.turn()) {
+      } else if (state.chess.get(square) && state.chess.get(square).color == state.chess.turn()) {
         if (state.selectedSquare) {
           // clear other selected piece
           actions.lightBoard()
-          // ground.selectSquare(null)
+          state.selectedSquare = null
+          state.ground.selectSquare(null)
         }
-        console.log('checking', actions.nToSquare(s), state.chess.get(actions.nToSquare(s)))
-        if (state.chess.get(actions.nToSquare(s)) && (state.chess.get(actions.nToSquare(s)).color == state.chess.turn())) {
+        console.log('checking', square, state.chess.get(square))
+        if (state.chess.get(square) && (state.chess.get(square).color == state.chess.turn())) {
           // select piece
-          state.selectedSquare = actions.nToSquare(s)
-          state.selectedPiece = state.chess.get(actions.nToSquare(s))
+          state.selectedSquare = square
+          state.selectedPiece = state.chess.get(square)
           state.ground.selectSquare(state.selectedSquare)
           actions.highlightAvailableMoves(state.selectedSquare)
         }
       } else if (state.selectedSquare) {
         // move selected to square
         
-        const move = {from: state.selectedSquare, to: actions.nToSquare(s)}
+        const move = {from: state.selectedSquare, to: square}
         
         console.log('checking if ', move, ' is legal')
         const squares = state.chess.moves({square: state.selectedSquare, verbose: true}).map(m => m.to)
@@ -185,6 +195,13 @@ export const LaunchGame = (state, actions) => ({
       }
       actions.lightBoard()
     })
+  },
+  newGame: () => {
+    state.chess = new Chess()
+    console.log('new game', state.chess.ascii())
+    setBoard(state.chess, state.ground)
+    state.ground.selectSquare(null)
+    actions.lightBoard()
   },
   makeMove: move => {
     
