@@ -208,6 +208,7 @@ export const LaunchGame = (state, actions) => ({
     actions.initMidi(actions.onInput, actions.onCC, () => {
       actions.lightBoard()
     })
+    
   },
   takeback: () => {
     state.chess.undo()

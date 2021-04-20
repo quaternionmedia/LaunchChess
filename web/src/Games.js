@@ -59,13 +59,14 @@ let config = {
 
 export const Game = (state, actions) => m('.board.fullscreen', {
     oninit: vnode => {
-      state.chess = new Chess()
+      if (!state.chess) state.chess = new Chess()
       console.log('game loading', vnode.attrs, state.chess.ascii())
       actions.afterInit()
     },
     oncreate: vnode => {
       state.ground = Chessground(vnode.dom, {...config, ...vnode.attrs.config})
       state.ground.set({
+        fen: state.chess.fen(),
         movable: {
           dests: toDests(state.chess),
         },
