@@ -75,7 +75,7 @@ export const Launchpad = (state, actions) => ({
       state.output.send(NOTE_ON, [l, color])
     }
     let history = state.chess.history()
-      for (let i=0; i<Math.min(history.length, state.history); i++) {
+      for (let i=0; i<Math.min(history.length, state.history()); i++) {
         actions.highlightMove(i)
     }
   },

@@ -24,8 +24,8 @@ export const LaunchGame = (state, actions) => ({
     } else {
       if (state.grid) actions.grid()
     }
-    state.output.send(CONTROL_CHANGE, [91, Math.min(state.history+1, 3)])
-    state.output.send(CONTROL_CHANGE, [92, Math.min(state.history, 3)])
+    state.output.send(CONTROL_CHANGE, [91, Math.min(state.history()+1, 3)])
+    state.output.send(CONTROL_CHANGE, [92, Math.min(state.history(), 3)])
     state.output.send(CONTROL_CHANGE, [93, 67])
     state.output.send(CONTROL_CHANGE, [95, state.invert ? 83 : 3])
     state.output.send(CONTROL_CHANGE, [96, state.grid ? 3 : 1])
@@ -114,6 +114,18 @@ export const LaunchGame = (state, actions) => ({
     if (message[2]) {
       console.log('cc', message)
       switch (message[1]) {
+        case 91: {
+          // up arrow
+          // increase history
+          actions.incrementHistory()
+          break
+        }
+        case 92: {
+          // down arrow
+          // decreace history
+          actions.decrementHistory()
+          break
+        }
         case 93: {
           // left arrow
           // undo move

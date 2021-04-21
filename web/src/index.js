@@ -41,10 +41,19 @@ export const State = () => ({
   grid: true,
   pieces: true,
   influence: false,
-  history: 1,
+  history: Stream(1),
 })
 export const Actions = (state) => ({
-  
+  incrementHistory: () => {
+    state.history(state.history() + 1)
+    actions.lightBoard()
+    m.redraw()
+  },
+  decrementHistory: () => {
+    state.history(Math.max(0, state.history() - 1))
+    actions.lightBoard()
+    m.redraw()
+  },
 })
 
 let state = State()

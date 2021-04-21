@@ -59,17 +59,11 @@ export const PiecesToggle = (state, actions) => m('i.material-icons', {
 
 export const HistoryIncrement = (state, actions) => m('i.material-icons', {
   title: 'increace history',
-  onclick: e => {
-    state.history += 1
-    actions.lightBoard()
-  }}, 'history')
+  onclick: actions.incrementHistory}, 'history')
 
 export const HistoryDecrement = (state, actions) => m('i.material-icons', {
   title: 'decreace history',
-  onclick: e => {
-    state.history = Math.max(0, state.history - 1)
-    actions.lightBoard()
-  }}, 'history_toggle_off')
+  onclick: actions.decrementHistory}, 'history_toggle_off')
     
 export const NewGame = (state, actions) => m('i', {
   onclick: e => {
@@ -86,7 +80,7 @@ export const Toolbar = (state, actions) => m('.toolbar', {}, [
   NewGame(state, actions),
   StatusIcon(state),
   ConnectToggle(state, actions),
-  m('.inline.tool', {title: 'history'}, state.history),
+  m('.inline.tool', {title: 'history'}, state.history()),
   HistoryIncrement(state, actions),
   HistoryDecrement(state, actions),
   TakebackButton(state, actions),

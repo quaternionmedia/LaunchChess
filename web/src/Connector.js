@@ -53,14 +53,16 @@ export const Connector = (state, actions) => ({
   }
 })
 
-export const MidiSelector = (state, actions) => m('select', {oninput: e => actions.connect(e.target.value)}, state.inputs().map(c => {
+export const MidiSelector = (state, actions) => m('select', {
+  value: null,
+  oninput: e => actions.connect(e.target.value)}, state.inputs().map(c => {
       return m('option', {value: c}, c)
     }))
 
 export const ConnectionPage = (state, actions) => ({
   view: vnode => m('.ConnectionPage', {}, [
     StatusIcon(state),
-    m('h1', 'connector'),
+    m('h1', 'connect your Launchpad'),
     MidiSelector(state, actions),
     ConnectToggle(state, actions)
   ])
