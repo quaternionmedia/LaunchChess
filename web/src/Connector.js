@@ -14,14 +14,14 @@ export const Connector = (state, actions) => ({
     state.connected = true
     state.deviceName = name
     console.log('connected', state.input)
-    actions.toggleLive(true)
+    if (state.input) actions.toggleLive(true)
   },
   disconnect: () => {
-    state.output = null
     if (state.input) {
       if (state.connected) actions.toggleLive(false)
       state.input.removeListener()
       state.input = null
+      state.output = null
     }
     state.connected = false
     
@@ -46,6 +46,7 @@ export const Connector = (state, actions) => ({
     // WebMidi.enable(function (err) {
     console.log(WebMidi.inputs)
     console.log(WebMidi.outputs)
+    state.input.removeListener()
     state.input.addListener('noteon', "all", noteCallback)
     state.input.addListener('controlchange', "all", ccCallback)
     
