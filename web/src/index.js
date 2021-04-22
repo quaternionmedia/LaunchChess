@@ -4,7 +4,7 @@ import { LaunchGame } from './LaunchGame'
 import { Login } from './Login'
 import './style.css'
 import { User, auth } from './User'
-import { GamePage, GamePageOnline, Games } from './Games'
+import { GamePage, GamePageOnline, Games, getGames } from './Games'
 import { ProfilePage } from './Profile'
 import { Connector, ConnectionPage } from './Connector'
 import { Launchpad } from './Launchpad'
@@ -61,7 +61,9 @@ let actions = Actions(state)
 Object.assign(actions, Launchpad(state, actions))
 Object.assign(actions, LaunchGame(state, actions))
 Object.assign(actions, Connector(state, actions))
+Object.assign(actions, getGames(state, actions))
 actions.initConnector()
+
 console.log(state, actions)
 
 let onlineActions = {

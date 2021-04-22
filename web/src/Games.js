@@ -8,47 +8,53 @@ import { Toolbar } from './Toolbar'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 import { toDests, toColor, playOtherSide } from './utils'
 
-export const Games = (state, actions) => {
-  function getGames() {
-    auth(LICHESS_API_URL + 'account/playing').then(res => res.nowPlaying).then(state.games)
-      console.log('current games', state.games())
+export const getGames = (state, actions) => ({
+  getGames: () => {
+    auth(LICHESS_API_URL + 'account/playing').then(res => res.nowPlaying).then(state.games).then( res =>{
+      if (res.length == 1) {
+        console.log('one active game. loading now!')
+        state.game = res[0]
+        m.route.set('/online', {id: state.game.gameId})
+      }
+    })
+    
   }
-  return {
-    oninit: vnode => {
-        getGames()
-    },
-    view: vnode => {
-      return [
-        m('.toolbar', {}, [
-          m('i.material-icons', {onclick: getGames}, 'refresh'),
-          m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, m('i', {}, 'create game on lichess')),
-        ]),
-        state.games().map(g => {
-          return m('.gamecontainer', {}, [
-            g.opponent.username,
-            m(Board, {
-              class: 'thumb',
-              config: {
-                fen: g.fen,
-                viewOnly: true,
-                orientation: g.color,
-                lastMove: [g.lastMove.slice(0,2), g.lastMove.slice(2)],
-                },
-              onclick: e => {
-                console.log('game clicked', g)
-                state.game = g
-                m.route.set('/online', {id: g.gameId})
-              },
-          })
-          ])
-        }),
-        state.games().map(g => {
-          return m('', {}, JSON.stringify(g))
-        })
-      ]
-    }
-  }
-}
+})
+
+export const Games = (state, actions) => ({
+  oninit: vnode => {
+    actions.getGames()
+    
+  },
+  view: vnode => [
+    
+  m('.toolbar', {}, [
+    m('i.material-icons', {onclick: actions.getGames}, 'refresh'),
+    m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, m('i', {}, 'create game on lichess')),
+  ]),
+  state.games().map(g => {
+    return m('.gamecontainer', {}, [
+      g.opponent.username,
+      m(Board, {
+        class: 'thumb',
+        config: {
+          fen: g.fen,
+          viewOnly: true,
+          orientation: g.color,
+          lastMove: [g.lastMove.slice(0,2), g.lastMove.slice(2)],
+          },
+        onclick: e => {
+          console.log('game clicked', g)
+          state.game = g
+          m.route.set('/online', {id: g.gameId})
+        },
+    })
+    ])
+  }),
+  state.games().map(g => {
+    return m('', {}, JSON.stringify(g))
+  })
+]})
 
 let config = {
   movable: {
