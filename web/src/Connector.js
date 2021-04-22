@@ -1,7 +1,11 @@
 import m from 'mithril'
 import WebMidi from 'webmidi'
 import { StatusIcon, ConnectToggle } from './Toolbar'
+import { Launchpads, NOVATION, HEADERS } from './Launchpad'
 
+const equals = (a, b) =>
+  a.length === b.length &&
+  a.every((v, i) => v === b[i])
 
 
 export const Connector = (state, actions) => ({
@@ -14,7 +18,12 @@ export const Connector = (state, actions) => ({
     state.connected = true
     state.deviceName = name
     console.log('connected', state.input)
-    if (state.input) actions.toggleLive(true)
+    if (state.input) {
+      // send sysex to see if device is a launchpad
+      actions.detectDevice(state.input, state.output)
+    } else {
+      
+    }
   },
   disconnect: () => {
     if (state.input) {
@@ -51,6 +60,32 @@ export const Connector = (state, actions) => ({
     state.input.addListener('controlchange', "all", ccCallback)
     
     afterInit()      
+  },
+  detectDevice: (input, output) => {
+    input.addListener('sysex', 'all', sysex => {
+      let data = sysex.data
+      console.log('got sysex message', sysex)
+      if (equals(data.slice(0, 5), [240, 126, 0, 6, 2]) && equals(data.slice(5, 8), NOVATION)) {
+        console.log('found Novation product')
+        Object.values(HEADERS).map(value => {
+          output.sendSysex(NOVATION, [...value, 14])
+        })
+      }
+      if (equals(data.slice(0, 4), [240, ...NOVATION]) && data[6] == 14) {
+        let header = data.slice(4, 6)
+        console.log('identified device!', header)
+        state.header = header
+        for (const key in HEADERS) {
+          if (equals(header, HEADERS[key])) {
+            console.log('this is a ', key)
+            Object.assign(actions, Launchpads[key](state, actions))
+            input.removeListener('sysex')
+            actions.toggleLive(true)
+          }
+        }
+      }
+    })
+    output.sendSysex([126, 127, 6], [1])
   }
 })
 

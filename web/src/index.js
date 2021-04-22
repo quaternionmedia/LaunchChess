@@ -7,8 +7,8 @@ import { User } from './User'
 import { GamePage, GamePageOnline, Games, getGames } from './Games'
 import { ProfilePage } from './Profile'
 import { Connector, ConnectionPage } from './Connector'
-import { Launchpad } from './Launchpad'
 import { State, Actions, OnlineActions } from './Actions'
+import { LaunchpadX } from './Launchpad'
 
 export const Home = () => ({
   view: () => m('#home', {}, 'LaunchChess')
@@ -19,7 +19,6 @@ console.log('launchchess started!')
 
 let state = State()
 let actions = Actions(state)
-Object.assign(actions, Launchpad(state, actions))
 Object.assign(actions, LaunchGame(state, actions))
 Object.assign(actions, Connector(state, actions))
 Object.assign(actions, getGames(state, actions))

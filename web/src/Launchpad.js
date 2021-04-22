@@ -3,6 +3,27 @@ import { getPieceLocations } from './ChessMaths'
 export const NOTE_ON = 144
 export const CONTROL_CHANGE = 176
 
+export const NOVATION = [0, 32, 41]
+
+export const HEADERS = {
+  s: [9],
+  mk2: [2, 24],
+  LaunchpadX: [2, 12],
+  pro: [2, 16],
+  mini: [2, 14]
+}
+const LAYOUT_FUNCTION = {
+  mk2: 22,
+  LaunchpadX: 14,
+  pro: 44,
+  mini: 14
+}
+const LAYOUT_DATA = {
+  // mk2: (0, ?),
+  x: (0, 1),
+  pro: (0, 3),
+  mini: (0, 1),
+}
 const colors = {'p': 13,'r': 9,'n': 45,'b': 37,'q': 53,'k': 49}
 
 export const Launchpad = (state, actions) => ({
@@ -129,10 +150,11 @@ export const Launchpad = (state, actions) => ({
 
 })
 
-export class LaunchpadX extends Launchpad {
-  
-}
+export const LaunchpadX = (state, actions) => ({
+  ...Launchpad(state, actions),
+})
+
 
 export const Launchpads = {
-  'Launchpad X MIDI 2': LaunchpadX,
+  LaunchpadX: LaunchpadX,
 }
