@@ -3,16 +3,12 @@ import { Layout } from './Menu'
 import { LaunchGame } from './LaunchGame'
 import { Login } from './Login'
 import './style.css'
-import { User, auth } from './User'
+import { User } from './User'
 import { GamePage, GamePageOnline, Games, getGames } from './Games'
 import { ProfilePage } from './Profile'
 import { Connector, ConnectionPage } from './Connector'
 import { Launchpad } from './Launchpad'
-import { uci } from './ChessMaths'
-import { playOtherSide } from './utils'
-import { Chess } from 'chess.js'
-
-var Stream = require("mithril/stream")
+import { State, Actions, OnlineActions } from './Actions'
 
 export const Home = () => ({
   view: () => m('#home', {}, 'LaunchChess')
@@ -21,73 +17,19 @@ export const Home = () => ({
 console.log('launchchess started!')
 
 
-export const State = () => ({
-  input: null, 
-  output: null,
-  inputs: Stream([]),
-  outputs: [],
-  deviceName: null,
-  connected: false,
-  game: null,
-  games: Stream([]),
-  chess: new Chess(),
-  ground: null,
-  color: 'w',
-  selectedSquare: null,
-  selectedPiece: null,
-  invert: false,
-  grid: true,
-  pieces: true,
-  influence: false,
-  history: Stream(1),
-})
-export const Actions = (state) => ({
-  incrementHistory: () => {
-    state.history(state.history() + 1)
-    actions.lightBoard()
-    m.redraw()
-  },
-  decrementHistory: () => {
-    state.history(Math.max(0, state.history() - 1))
-    actions.lightBoard()
-    m.redraw()
-  },
-})
-
 let state = State()
 let actions = Actions(state)
 Object.assign(actions, Launchpad(state, actions))
 Object.assign(actions, LaunchGame(state, actions))
 Object.assign(actions, Connector(state, actions))
 Object.assign(actions, getGames(state, actions))
+let onlineActions = {
+  ...actions,
+  ...OnlineActions(state, actions)
+}
 actions.initConnector()
 
 console.log(state, actions)
-
-let onlineActions = {
-  ...actions, 
-  onmove: (orig, dest) => {
-    actions.onmove(orig, dest)
-    
-    let move = {from: orig, to: dest}
-    let piece = state.chess.get(move.to)
-    if (piece.type == 'p' && ((piece.color == 'w' && move.to.charAt(1) == 8 ) || (piece.color == 'b' && move.to.charAt(1) == 1 ))) {
-      console.log('promotion! Auto promote to Queen')
-      move.promotion = 'q'
-    }
-    // send to lichess api
-    let move_uci = uci(move)
-    auth('https://lichess.org/api/board/game/' + m.route.param('id') + '/move/' + move_uci, {
-      method: 'post',
-    }).then(e => {
-      console.log('played move', move_uci, e)
-    })
-  },
-  afterInit: () => {
-    actions.afterInit()
-    actions.streamGame()
-  }
-}
 
 
 m.mount(document.body, Layout(state))
