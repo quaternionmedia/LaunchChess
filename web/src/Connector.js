@@ -2,6 +2,7 @@ import m from 'mithril'
 import WebMidi from 'webmidi'
 import { StatusIcon, ConnectToggle } from './Toolbar'
 import { Launchpads, NOVATION, HEADERS } from './Launchpad'
+import { onlineActions } from './index'
 
 const equals = (a, b) =>
   a.length === b.length &&
@@ -79,6 +80,7 @@ export const Connector = (state, actions) => ({
           if (equals(header, HEADERS[key])) {
             console.log('this is a ', key)
             Object.assign(actions, Launchpads[key](state, actions))
+            Object.assign(onlineActions, Launchpads[key](state, actions))
             input.removeListener('sysex')
             actions.toggleLive(true)
           }

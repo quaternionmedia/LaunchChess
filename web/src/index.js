@@ -17,12 +17,13 @@ export const Home = () => ({
 console.log('launchchess started!')
 
 
-let state = State()
-let actions = Actions(state)
+var state = State()
+export var actions = Actions(state)
+// Object.assign(actions, LaunchpadX(state, actions))
 Object.assign(actions, LaunchGame(state, actions))
 Object.assign(actions, Connector(state, actions))
 Object.assign(actions, getGames(state, actions))
-let onlineActions = {
+export var onlineActions = {
   ...actions,
   ...OnlineActions(state, actions)
 }
