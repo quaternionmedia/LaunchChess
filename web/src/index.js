@@ -13,13 +13,10 @@ import { playOtherSide } from './utils'
 
 var Stream = require("mithril/stream")
 
-export function Home() {
-  return {
-    view: vnode => {
-      return m('#home', {}, 'LaunchChess')
-    }
-  }
-}
+export const Home = () => ({
+  view: () => m('#home', {}, 'LaunchChess')
+})
+
 console.log('launchchess started!')
 
 
@@ -96,7 +93,7 @@ m.mount(document.body, Layout(state))
 let main = document.getElementById('main')
 
 m.route(main, '/', {
-  '/': Home,
+  '/': Home(),
   '/connect': ConnectionPage(state, actions),
   '/otb': GamePage(state, actions),
   '/games': Games(state, actions),
