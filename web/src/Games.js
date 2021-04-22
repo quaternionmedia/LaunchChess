@@ -1,6 +1,7 @@
 import m from 'mithril'
 import { User, auth } from './User'
 import { LICHESS_API_URL } from './config'
+import { streamJson } from './ndjson'
 import { Chessground } from 'chessground'
 import { Chess } from 'chess.js'
 import { Board } from './Board'
@@ -11,13 +12,25 @@ import { toDests, toColor, playOtherSide } from './utils'
 export const getGames = (state, actions) => ({
   getGames: () => {
     auth(LICHESS_API_URL + 'account/playing').then(res => res.nowPlaying).then(state.games).then( res =>{
+      console.log('currently playing games', res)
       if (res.length == 1) {
         console.log('one active game. loading now!')
         state.game = res[0]
         m.route.set('/online', {id: state.game.gameId})
+      } else if (res.length == 0){
+        actions.streamGames()
       }
     })
     
+  },
+  streamGames: () => {
+    streamJson(LICHESS_API_URL + 'stream/event', User.token, res => {
+      console.log('new lichess event', res)
+      if (res.type == 'gameStart' && state.games().length == 0) {
+        console.log('auto starting game')
+        actions.getGames()
+      }
+    })
   }
 })
 
