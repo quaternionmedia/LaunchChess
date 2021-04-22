@@ -10,6 +10,7 @@ import { Connector, ConnectionPage } from './Connector'
 import { Launchpad } from './Launchpad'
 import { uci } from './ChessMaths'
 import { playOtherSide } from './utils'
+import { Chess } from 'chess.js'
 
 var Stream = require("mithril/stream")
 
@@ -29,7 +30,7 @@ export const State = () => ({
   connected: false,
   game: null,
   games: Stream([]),
-  chess: null,
+  chess: new Chess(),
   ground: null,
   color: 'w',
   selectedSquare: null,

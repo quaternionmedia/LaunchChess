@@ -17,7 +17,7 @@ export const getGames = (state, actions) => ({
         console.log('one active game. loading now!')
         state.game = res[0]
         m.route.set('/online', {id: state.game.gameId})
-      } else if (res.length == 0){
+      } else if (res.length == 0) {
         actions.streamGames()
       }
     })
@@ -78,7 +78,6 @@ let config = {
 
 export const Game = (state, actions) => m('.board.fullscreen', {
     oninit: vnode => {
-      if (!state.chess) state.chess = new Chess()
       console.log('game loading', vnode.attrs, state.chess.ascii())
       actions.afterInit()
     },
