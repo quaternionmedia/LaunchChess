@@ -195,6 +195,13 @@ export const Launchpad1 = (state, actions) => ({
       state.connected = !state.connected
     }
     state.output.send(CONTROL_CHANGE, [0, state.connected ? 1 : 2])
+  },
+  lightMatrix: (m) => {
+    for (let y=0; y<8; y++) {
+      for (let x=0; x<8; x++) {
+        state.output.send(NOTE_ON, [actions.nToLaunch(x+y*8), m[x+y*8]])
+      }
+    }
   }
 })
 
