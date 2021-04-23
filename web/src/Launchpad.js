@@ -25,10 +25,10 @@ export const Launchpad = (state, actions) => ({
     }
     return 11 + (n>>3)*10 + n%8
   },
-  launchToN: n => {
+  launchToN: l => {
     // launchpad note mapped to 0-63
-    const s = Math.floor((n-11)/ 10)*8 + (n-11) % 10
-    return state.invert ? 63 - s : s
+    const n = Math.floor((l-11)/ 10)*8 + (l-11) % 10
+    return state.invert ? 63 - n : n
   },
   squareToN: sq => {
     return (Number(sq[1]) - 1)*8 + sq.charCodeAt(0) - 97
@@ -176,10 +176,34 @@ export const LaunchpadMk2 = (state, actions) => {
   }
 }
 
+export const Launchpad1 = (state, actions) => ({
+  ...Launchpad(state, actions),
+  nToLaunch: n => {
+    if (state.invert) return 8 - (n % 8) + (n >> 3)*16
+    else return 112 + (n % 8) - (n >> 3)*16
+  },
+  launchToN: l => {
+    if (state.invert) return (Math.floor(l/16) )*8 + 7 - ( (l % 8) >> 3 )
+    else return (7 - Math.floor(l/16) )*8 + ( (l % 8) >> 3 )
+  },
+  toggleLive: (mode) => {
+    if (mode === true) {
+      state.connected = true
+    } else if (mode === false) {
+      state.connected = false
+    } else {
+      state.connected = !state.connected
+    }
+    state.output.send(CONTROL_CHANGE, [0, state.connected ? 1 : 2])
+  }
+})
+
 
 export const Launchpads = {
   LaunchpadX: LaunchpadX,
   LaunchpadPro: LaunchpadPro,
   LaunchpadMini: LaunchpadMini,
   LaunchpadMk2: LaunchpadMk2,
+  Launchpad: Launchpad1,
+  LaunchpadS: Launchpad1,
 }
