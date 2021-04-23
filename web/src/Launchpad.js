@@ -54,7 +54,7 @@ export const Launchpad = (state, actions) => ({
     } else {
       state.connected = !state.connected
     }
-    state.output.sendSysex([0, 32, 41], [2, 12, 14, state.connected ? 1 : 0])
+    state.output.sendSysex(NOVATION, [...state.header, state.changeLayout, state.connected ? state.layout[1] : state.layout[0]])
   },
   grid: () => {
     for (let y=0; y<8; y++) {
@@ -150,9 +150,14 @@ export const Launchpad = (state, actions) => ({
 
 })
 
-export const LaunchpadX = (state, actions) => ({
+export const LaunchpadX = (state, actions) => {
+  state.header = [2, 12]
+  state.changeLayout = 14
+  state.layout = [0, 1]
+  return {
   ...Launchpad(state, actions),
-})
+  }
+}
 
 
 export const Launchpads = {
