@@ -129,10 +129,10 @@ export const Launchpad = (state, actions) => ({
       console.log(p)
       if (state.chess.get(p.to)) {
         // piece at square. flash green
-        console.log('capture', actions.nToLaunch(actions.squareToN(p.to)))
+        // console.log('capture', actions.nToLaunch(actions.squareToN(p.to)))
         state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(p.to)), 21])
       } else {
-        console.log('regular move', p.to, actions.squareToN(p.to), actions.nToLaunch(actions.squareToN(p.to)))
+        // console.log('regular move', p.to, actions.squareToN(p.to), actions.nToLaunch(actions.squareToN(p.to)))
         state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(p.to)), 21])
       }
     })
