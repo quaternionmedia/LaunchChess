@@ -34,4 +34,12 @@ export function setBoard(chess, ground) {
       dests: toDests(chess)
     }
   })
+  
+  let hist = chess.history({verbose: true})
+  if (hist.length) {
+    let last = hist.pop()
+    ground.set({
+      lastMove: [last.from, last.to]
+    })
+  }
 }

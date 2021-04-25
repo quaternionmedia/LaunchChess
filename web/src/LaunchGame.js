@@ -99,7 +99,7 @@ export const LaunchGame = (state, actions) => ({
         const move = {from: state.selectedSquare, to: square}
         
         console.log('checking if ', move, ' is legal')
-        const squares = state.chess.moves({square: state.selectedSquare, verbose: true}).map(m => m.to)
+        const squares = state.chess.moves({square: state.selectedSquare, verbose: true}).map(legal_move => legal_move.to)
         if (squares.includes(move.to)) {
           actions.makeMove(move)
         } else {
@@ -136,6 +136,7 @@ export const LaunchGame = (state, actions) => ({
           // Session button
           // flip board
           actions.flipBoard()
+          m.redraw()
           break
         }
         case 96: {
@@ -190,22 +191,11 @@ export const LaunchGame = (state, actions) => ({
       }
       let turn = state.chess.turn() == 'w' ? 'white' : 'black'
       console.log('updated. turn is', turn)
-      state.ground.set({
-        fen: state.chess.fen(),
-        turnColor: toColor(state.chess),
-        movable: {
-          dests: toDests(state.chess),
-          events: { after: playOtherSide(state.chess, state.ground) }
-        }
-      })
-      if (state.chess.history().length) {
-        let hist = state.chess.history({verbose: true})
-        let last = hist.pop()
-        state.ground.set({
-          lastMove: [last.from, last.to]
-        })
-      }
+      
+      setBoard(state.chess, state.ground)
+      
       actions.lightBoard()
+      m.redraw()
     })
   },
   newGame: () => {
@@ -234,6 +224,7 @@ export const LaunchGame = (state, actions) => ({
     
     actions.lightBoard()
     playOtherSide(state.chess, state.ground)(orig, dest)
+    m.redraw()
   },
   afterInit: () => {
     actions.initMidi(actions.onInput, actions.onCC, () => {
