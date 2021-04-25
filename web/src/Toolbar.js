@@ -69,7 +69,10 @@ export const HistoryIncrement = (state, actions) => m('i.material-icons', {
 
 export const HistoryDecrement = (state, actions) => m('i.material-icons', {
   title: 'decreace history',
-  onclick: actions.decrementHistory}, 'history_toggle_off')
+  onclick: e => {
+    actions.decrementHistory()
+    m.redraw()
+  }}, 'history_toggle_off')
     
 export const NewGame = (state, actions) => m('i', {
   onclick: e => {
@@ -81,12 +84,7 @@ export const NewGame = (state, actions) => m('i', {
   },
 }, 'start new game')
 
-
-export const Toolbar = (state, actions) => m('.toolbar', {}, [
-  NewGame(state, actions),
-  // StatusIcon(state),
-  // ConnectToggle(state, actions),
-  m('.inline.tool', {title: 'history'}, state.history()),
+export const Tools = (state, actions) => [
   HistoryIncrement(state, actions),
   HistoryDecrement(state, actions),
   TakebackButton(state, actions),
@@ -96,4 +94,16 @@ export const Toolbar = (state, actions) => m('.toolbar', {}, [
   PiecesToggle(state, actions),
   InfluenceToggle(state, actions),
   TurnIndicator(state),
+]
+export const Toolbar = (state, actions) => m('.toolbar', {}, [
+  NewGame(state, actions),
+  // StatusIcon(state),
+  // ConnectToggle(state, actions),
+  m('.inline.tool', {title: 'history'}, state.history()),
+  ...Tools(state, actions)
+])
+
+export const OnlineToolbar = (state, actions) => m('.toolbar', {}, [
+  m('.inline.tool', {title: 'history'}, state.history()),
+  ...Tools(state, actions)
 ])

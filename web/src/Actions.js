@@ -29,7 +29,7 @@ export const State = () => ({
   history: Stream(1),
 })
 
-export const Actions = (state) => ({
+export const Actions = (state, actions) => ({
   incrementHistory: () => {
     state.history(state.history() + 1)
     actions.lightBoard()

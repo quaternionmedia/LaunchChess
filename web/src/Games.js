@@ -5,7 +5,7 @@ import { streamJson } from './ndjson'
 import { Chessground } from 'chessground'
 import { Chess } from 'chess.js'
 import { Board } from './Board'
-import { Toolbar } from './Toolbar'
+import { Toolbar, OnlineToolbar } from './Toolbar'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 import { toDests, toColor, playOtherSide } from './utils'
 
@@ -114,14 +114,14 @@ export const GamePage = (state, actions) => ({
     Game(state, actions),
 ])})
 
-export const Player = () => m('', {}, JSON.stringify(User.username))
-export const Opponent = state => m('', {}, JSON.stringify(state.game.opponent))
+export const Player = () => m('', {}, User.username)
+export const Opponent = state => m('', {}, state.game ? JSON.stringify(state.game.opponent) : '?' )
 
 export const GamePageOnline = (state, actions) => ({
   view: vnode => [
-    Toolbar(state, actions),
-    state.invert ? Player() : Opponent(state),
+    OnlineToolbar(state, actions),
+    state.invert != (toColor(state.chess) == 'w') ? Player() : Opponent(state),
     Game(state, actions),
-    state.invert ? Opponent(state) : Player(),
+    state.invert != (toColor(state.chess) == 'w') ? Opponent(state) : Player(),
   ]
 })
