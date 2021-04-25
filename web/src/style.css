@@ -21,8 +21,17 @@ a {
 } 
 
 .board {
-  position: relative;
-  display: block;
+  height: 100%;
+}
+.cg-wrap coords.ranks {
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+}
+.cg-wrap coords.files {
+  left: 0px;
+  top: 0px;
+  bottom: 0px;
 }
 .gamecontainer {
   border: wheat;
@@ -40,16 +49,11 @@ section {
   padding: 1em;
 }
 .fullscreen {
-  /* width: 85%;
-  max-width: 80vh;
-  height: 80vh; */
-  
+  height: 75vh;
   max-width: 75vh;
-  margin-top: 75vh;
 }
 .thumb {
-  max-width: 20vh;
-  height: 20vh;
+  height: 8em;
 }
 .status {
   display: inline-flex;
@@ -58,7 +62,7 @@ section {
   width: 1em;
   border-radius: 50%;
   border: solid;
-  border-width: .1em;
+  border-width: 1.5px;
   border-color: white;
 }
 .connected {
@@ -87,6 +91,11 @@ i:hover {
 i:active {
   animation: blinker .2s 1;
 }
+.button {
+  border-style: solid;
+  border-color: #393939;
+  border-radius: 10px;
+}
 .oneem {
   width: 1em;
 }
@@ -104,9 +113,33 @@ i:active {
 .inline {
   display: inline;
 }
-.tool {
+.tool {  
   margin-right: 1em;
 }
 .vl {
   border-left: thick solid #393939;
+}
+.turn {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  size: 1em;
+  /* border-color: #888; */
+  /* border-style: solid; */
+  border-width: 0px;
+  border-radius: 4px;
+  padding: 6px;
+  margin-right: .5em;
+  min-width: 2em;
+  min-height: 2em;
+  position: absolute;
+  text-align: center;
+}
+.w {
+  background-color: white;
+  color: black;
+}
+.b {
+  background-color: black;
+  color: white;
 }
