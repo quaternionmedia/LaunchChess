@@ -177,8 +177,8 @@ export const LaunchGame = (state, actions) => ({
         // m.redraw()
         console.log('loading game', v.state.moves)
         console.log('loaded?', state.chess.load_pgn(v.state.moves, {sloppy: true}))
-        if (v.black.id == User.profile.id) {
-          // if playing black, flip board
+        if (v.black.id == User.profile.id && !state.invert) {
+          // if playing black, and not already inverted, flip board
           actions.flipBoard()
           state.color = 'b'
         } else {

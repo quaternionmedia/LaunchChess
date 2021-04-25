@@ -85,6 +85,7 @@ export const Game = (state, actions) => m('.board.fullscreen', {
       state.ground = Chessground(vnode.dom, {...config, ...vnode.attrs.config})
       state.ground.set({
         fen: state.chess.fen(),
+        orientation: state.invert ? 'black': 'white',
         movable: {
           dests: toDests(state.chess),
         },
