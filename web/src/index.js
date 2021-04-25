@@ -9,17 +9,15 @@ import { ProfilePage } from './Profile'
 import { Connector, ConnectionPage } from './Connector'
 import { State, Actions, OnlineActions } from './Actions'
 import { LaunchpadX } from './Launchpad'
+import { Home } from './Home'
 
-export const Home = () => ({
-  view: () => m('#home', {}, 'LaunchChess')
-})
 
 console.log('launchchess started!')
 
 
 var state = State()
-export var actions = Actions(state)
-// Object.assign(actions, LaunchpadX(state, actions))
+export var actions = {}
+Object.assign(actions, Actions(state, actions))
 Object.assign(actions, LaunchGame(state, actions))
 Object.assign(actions, Connector(state, actions))
 Object.assign(actions, getGames(state, actions))
@@ -36,7 +34,7 @@ m.mount(document.body, Layout(state))
 let main = document.getElementById('main')
 
 m.route(main, '/', {
-  '/': Home(),
+  '/': Home(state, actions),
   '/connect': ConnectionPage(state, actions),
   '/otb': GamePage(state, actions),
   '/games': Games(state, actions),
