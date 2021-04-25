@@ -54,7 +54,7 @@ export const LaunchGame = (state, actions) => ({
     let colorMap = defenders.map((s, i) => {
       let v = s - attackers[i]
       let c = Math.min(v+5, 9)
-      return COLORS[toColor(state.chess) == state.color ? c : 10 - c]
+      return COLORS[state.chess.turn() == state.color ? c : 10 - c]
     })
     if (state.invert != (state.color == 'b')) colorMap.reverse()
     console.log(colorMap)
