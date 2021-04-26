@@ -36,19 +36,35 @@ export const Connector = (state, actions) => ({
     state.connected = false
     
   },
+  reloadInputs: () => {
+    state.inputs(WebMidi.inputs.map(i => {
+      return i.name.startsWith('Launch') ? i: null
+    }).filter(Boolean))
+    m.redraw()
+  },
   initConnector: () => {
     WebMidi.enable(function (err) {
       console.log(WebMidi.inputs)
       console.log(WebMidi.outputs)
-      state.inputs(WebMidi.inputs.map(i => {
-        return i.name.startsWith('Launch') ? i: null
-      }).filter(Boolean))
+      actions.reloadInputs()
       console.log('inputs', state.inputs())
+      
+      WebMidi.addListener('connected', e => {
+        console.log('device connected')
+        actions.reloadInputs()
+      })
+      
+      WebMidi.addListener('disconnected', e => {
+        console.log('device disconnected')
+        actions.reloadInputs()
+      })
+      
   }, true)
   window.onunload = e => {
    console.log('unloading')
    actions.disconnect()
   }
+  
   
   },
   initMidi: (noteCallback, ccCallback, afterInit) => {
