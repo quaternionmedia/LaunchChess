@@ -36,6 +36,9 @@ export const getGames = (state, actions) => ({
 
 export const Games = (state, actions) => ({
   oninit: vnode => {
+    if (!User.username) {
+      m.route.set('/login')
+    }
     actions.getGames()
     
   },
