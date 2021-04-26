@@ -41,10 +41,9 @@ export const Connector = (state, actions) => ({
       console.log(WebMidi.inputs)
       console.log(WebMidi.outputs)
       state.inputs(WebMidi.inputs.map(i => {
-        return i.name
-      }).filter(Boolean)
-      // console.log('inputs', state.inputs
-    )
+        return i.name.startsWith('Launch') ? i: null
+      }).filter(Boolean))
+      console.log('inputs', state.inputs())
   }, true)
   window.onunload = e => {
    console.log('unloading')
@@ -56,11 +55,15 @@ export const Connector = (state, actions) => ({
     // WebMidi.enable(function (err) {
     console.log(WebMidi.inputs)
     console.log(WebMidi.outputs)
-    state.input.removeListener()
-    state.input.addListener('noteon', "all", noteCallback)
-    state.input.addListener('controlchange', "all", ccCallback)
-    
-    afterInit()      
+    if (state.input) {
+      state.input.removeListener()
+      state.input.addListener('noteon', "all", noteCallback)
+      state.input.addListener('controlchange', "all", ccCallback)
+      
+      afterInit()      
+    } else {
+      console.log('error, not connected')
+    }
   },
   detectDevice: (input, output) => {
     input.addListener('sysex', 'all', sysex => {
@@ -94,14 +97,23 @@ export const Connector = (state, actions) => ({
 export const MidiSelector = (state, actions) => m('select', {
   value: null,
   oninput: e => actions.connect(e.target.value)}, state.inputs().map(c => {
-      return m('option', {value: c}, c)
+      return m('option', {value: c.name}, c.name)
     }))
+
+export const LaunchpadButton = (state, actions) => m('button.button.launchpad', {
+    onclick: e => {
+      actions.connect(state.name)
+    },
+}, state.name)
 
 export const ConnectionPage = (state, actions) => ({
   view: vnode => m('.ConnectionPage', {}, [
-    StatusIcon(state),
     m('h1', 'connect your Launchpad'),
-    MidiSelector(state, actions),
-    ConnectToggle(state, actions)
+    StatusIcon(state),
+    state.inputs().length ? state.inputs().map(i => {
+      return LaunchpadButton({name: i.name}, actions)
+    }) : 'no Launchpads connected',
+    // MidiSelector(state, actions),
+    // ConnectToggle(state, actions)
   ])
 })
