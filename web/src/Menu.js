@@ -13,13 +13,13 @@ export const Link = () => ({
 
 export const Links = state => [
   m(Link, {href:'/connect', id: 'connectButton'}, StatusIcon(state)),
-  m(Link, {href:'/otb', id: 'boardButton'}, 'otb'),
-  m(Link, {href:'/games', id: 'gamesButton'}, 'online'),
+  m(Link, {href:'/otb', id: 'otbButton'}, 'Local'),
+  m(Link, {href:'/games', id: 'gamesButton'}, 'Online'),
   // ,
   User.username ? m(Link, {href: '/profile'}, User.username) : m(Link, {
       href:'/login',
       id: 'loginButton',
-    }, 'login'),
+    }, 'Login'),
 ]
 
 export const Menu = state => [
