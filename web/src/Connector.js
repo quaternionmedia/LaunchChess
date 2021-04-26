@@ -38,7 +38,7 @@ export const Connector = (state, actions) => ({
   },
   reloadInputs: () => {
     state.inputs(WebMidi.inputs.map(i => {
-      return i.name.startsWith('Launch') ? i: null
+      return i.name.startsWith('Launch') || i.name.startsWith('LP') ? i: null
     }).filter(Boolean))
     m.redraw()
   },
