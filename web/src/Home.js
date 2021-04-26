@@ -11,7 +11,13 @@ export const Home = (state, actions) => ({
     m('br'),
     m('', {}, ['More details at the project homepage: ', m('a', {href: website}, website)]),
     m('br'),
-    m(ConnectionPage(state, actions))
-    
+    m(ConnectionPage(state, actions)),
+    m('br'),
+    state.connected ? [
+      'Connected!',
+      m('br'),
+      m('button.button', {onclick: e => m.route.set('/otb')}, 'play over the board'),
+      m('button.button', {onclick: e => m.route.set('/games')}, 'play over the internet'),
+    ] : null
   ])
 })
