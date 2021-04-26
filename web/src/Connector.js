@@ -108,7 +108,7 @@ export const LaunchpadButton = (state, actions) => m('button.button.launchpad', 
 
 export const ConnectionPage = (state, actions) => ({
   view: vnode => m('.ConnectionPage', {}, [
-    m('h1', 'connect your Launchpad'),
+    m('h1', 'Connect your Launchpad'),
     StatusIcon(state),
     state.inputs().length ? state.inputs().map(i => {
       return LaunchpadButton({name: i.name}, actions)
