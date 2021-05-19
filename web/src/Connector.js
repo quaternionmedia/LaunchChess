@@ -119,7 +119,18 @@ export const MidiSelector = (state, actions) => m('select', {
   oninput: e => actions.connect(e.target.value)}, state.inputs().map(c => {
       return m('option', {value: c.name}, c.name)
     }))
-
+export const LaunchpadSelector = (state, actions) => m('select', {
+  value: state.deviceName,
+  oninput: e => {
+    let value = e.target.value
+    console.log('selected', e, value)
+    actions.connect(value)
+    Object.assign(actions, Launchpads[value](state, actions))
+    Object.assign(onlineActions, Launchpads[value](state, actions))
+    state.input.removeListener('sysex')
+    actions.toggleLive(true)
+  },
+}, Object.keys(HEADERS).map(h => m('option', {value: h}, h)))
 export const LaunchpadButton = (state, actions) => m('button.button.launchpad', {
     onclick: e => {
       actions.connect(state.name)
@@ -134,6 +145,7 @@ export const ConnectionPage = (state, actions) => ({
       return LaunchpadButton({name: i.name}, actions)
     }) : 'no Launchpads connected',
     // MidiSelector(state, actions),
-    // ConnectToggle(state, actions)
+    // ConnectToggle(state, actions),
+    LaunchpadSelector(state, actions),
   ])
 })
