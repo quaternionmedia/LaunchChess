@@ -171,7 +171,7 @@ export const LaunchpadMini = (state, actions) => {
 export const LaunchpadMk2 = (state, actions) => {
   state.top = range(104, 9)
   state.header = [2, 24]
-  state.changeLayout = 22
+  state.changeLayout = 34
   state.layout = [0, 2]
   return {
   ...Launchpad(state, actions),
