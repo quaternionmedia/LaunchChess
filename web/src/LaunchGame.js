@@ -24,14 +24,14 @@ export const LaunchGame = (state, actions) => ({
     } else {
       if (state.grid) actions.grid()
     }
-    state.output.send(CONTROL_CHANGE, [91, Math.min(state.history()+1, 3)])
-    state.output.send(CONTROL_CHANGE, [92, Math.min(state.history(), 3)])
-    state.output.send(CONTROL_CHANGE, [93, 67])
-    state.output.send(CONTROL_CHANGE, [95, state.invert ? 83 : 3])
-    state.output.send(CONTROL_CHANGE, [96, state.grid ? 3 : 1])
-    state.output.send(CONTROL_CHANGE, [97, state.pieces ? 53 : 82])
-    state.output.send(CONTROL_CHANGE, [98, state.influence ? 5 : 7])
-    state.output.send(CONTROL_CHANGE, [99, state.chess.turn() == 'w' ? 3 : 83])
+    state.output.send(CONTROL_CHANGE, [state.top[0], Math.min(state.history()+1, 3)])
+    state.output.send(CONTROL_CHANGE, [state.top[1], Math.min(state.history(), 3)])
+    state.output.send(CONTROL_CHANGE, [state.top[2], 67])
+    state.output.send(CONTROL_CHANGE, [state.top[4], state.invert ? 83 : 3])
+    state.output.send(CONTROL_CHANGE, [state.top[5], state.grid ? 3 : 1])
+    state.output.send(CONTROL_CHANGE, [state.top[6], state.pieces ? 53 : 82])
+    // state.output.send(CONTROL_CHANGE, [state.top[7], state.influence ? 5 : 7])
+    state.output.send(CONTROL_CHANGE, [state.top[state.top.length - 1], state.chess.turn() == 'w' ? 3 : 83])
   },
   togglePieces: (mode=null) => {
     state.pieces = mode ? mode : !state.pieces
@@ -114,46 +114,46 @@ export const LaunchGame = (state, actions) => ({
     if (message[2]) {
       console.log('cc', message)
       switch (message[1]) {
-        case 91: {
+        case state.top[0]: {
           // up arrow
           // increase history
           actions.incrementHistory()
           break
         }
-        case 92: {
+        case state.top[1]: {
           // down arrow
           // decreace history
           actions.decrementHistory()
           break
         }
-        case 93: {
+        case state.top[2]: {
           // left arrow
           // undo move
           actions.takeback()
           break
         }
-        case 95: {
+        case state.top[4]: {
           // Session button
           // flip board
           actions.flipBoard()
           m.redraw()
           break
         }
-        case 96: {
+        case state.top[5]: {
           // Custom button
           // Toggle grid
           state.grid = !state.grid
           actions.lightBoard()
           break
         }
-        case 97: {
+        case state.top[6]: {
           // Note button
           // Toggle pieces
           state.pieces = !state.pieces
           actions.lightBoard()
           break
         }
-        case 98: {
+        case state.top[7]: {
           // Custom Midi
           // toggle square influence / game
           actions.toggleInfluence()

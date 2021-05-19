@@ -5,6 +5,8 @@ import { uci } from './ChessMaths'
 import { playOtherSide } from './utils'
 import { auth } from './User'
 
+export const range = (start, end) => Array.apply(0, Array(end - 1)).map((element, index) => index + start)
+
 export const State = () => ({
   input: null, 
   output: null,
@@ -12,6 +14,7 @@ export const State = () => ({
   outputs: [],
   deviceName: null,
   connected: false,
+  top: range(91, 10),
   header: null,
   layout: null,
   changeLayout: null,

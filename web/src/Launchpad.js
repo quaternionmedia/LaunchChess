@@ -1,4 +1,5 @@
 import { getPieceLocations } from './ChessMaths'
+import { range } from './Actions'
 
 export const NOTE_ON = 144
 export const CONTROL_CHANGE = 176
@@ -168,6 +169,7 @@ export const LaunchpadMini = (state, actions) => {
 }
 
 export const LaunchpadMk2 = (state, actions) => {
+  state.top = range(104, 9)
   state.header = [2, 24]
   state.changeLayout = 22
   state.layout = [0, 2]
