@@ -1,7 +1,7 @@
 import m from 'mithril'
 import WebMidi from 'webmidi'
 import { StatusIcon, ConnectToggle } from './Toolbar'
-import { Launchpads, NOVATION, HEADERS } from './Launchpad'
+import { Launchpads, NOVATION, HEADERS, NAMES } from './Launchpad'
 import { onlineActions } from './index'
 
 const equals = (a, b) =>
@@ -16,14 +16,14 @@ export const Connector = (state, actions) => ({
     }
     state.output = WebMidi.getOutputByName(name || state.deviceName)
     state.input = WebMidi.getInputByName(name || state.deviceName)
-    state.connected = true
-    state.deviceName = name
     console.log('connected', state.input)
     if (state.input) {
       // send sysex to see if device is a launchpad
+      state.connected = true
+      state.deviceName = name
       actions.detectDevice(state.input, state.output)
     } else {
-      
+      state.connected = false
     }
   },
   disconnect: () => {
@@ -38,8 +38,19 @@ export const Connector = (state, actions) => ({
   },
   reloadInputs: () => {
     state.inputs(WebMidi.inputs.map(i => {
-      return i.name.startsWith('Launch') || i.name.startsWith('LP') ? i: null
+      return Object.keys(NAMES).includes(i.name) ? i : null
     }).filter(Boolean))
+    if (!state.connected && state.inputs().length == 1) {
+      let name = state.inputs()[0].name
+      console.log('single input: auto connecting', name)
+      let launchpad = NAMES[name]
+      console.log('auto connecting to ', name, launchpad)
+      Object.assign(actions, Launchpads[launchpad](state, actions))
+      Object.assign(onlineActions, Launchpads[launchpad](state, actions))
+      actions.connect(launchpad)
+      actions.toggleLive(state.connected)
+      m.redraw()
+    }
     m.redraw()
   },
   initConnector: () => {
@@ -47,7 +58,7 @@ export const Connector = (state, actions) => ({
       WebMidi.enable(function (err) {
         console.log(WebMidi.inputs)
         console.log(WebMidi.outputs)
-        actions.reloadInputs()
+        // actions.reloadInputs()
         console.log('inputs', state.inputs())
         
         WebMidi.addListener('connected', e => {
@@ -56,7 +67,12 @@ export const Connector = (state, actions) => ({
         })
         
         WebMidi.addListener('disconnected', e => {
-          console.log('device disconnected')
+          console.log('device disconnected', e)
+          if (e.port.name == state.deviceName) {
+            console.log('active device disconnected!')
+            state.connected = false
+            m.redraw()
+          }
           actions.reloadInputs()
         })
         
@@ -124,11 +140,15 @@ export const LaunchpadSelector = (state, actions) => m('select', {
   oninput: e => {
     let value = e.target.value
     console.log('selected', e, value)
-    actions.connect(value)
-    Object.assign(actions, Launchpads[value](state, actions))
-    Object.assign(onlineActions, Launchpads[value](state, actions))
-    state.input.removeListener('sysex')
-    actions.toggleLive(true)
+    if (state.connected) {
+      actions.connect(value)
+      Object.assign(actions, Launchpads[value](state, actions))
+      Object.assign(onlineActions, Launchpads[value](state, actions))
+      state.input.removeListener('sysex')
+      actions.toggleLive(true)
+    } else {
+      
+    }
   },
 }, Object.keys(HEADERS).map(h => m('option', {value: h}, h)))
 export const LaunchpadButton = (state, actions) => m('button.button.launchpad', {
@@ -146,6 +166,6 @@ export const ConnectionPage = (state, actions) => ({
     }) : 'no Launchpads connected',
     // MidiSelector(state, actions),
     // ConnectToggle(state, actions),
-    LaunchpadSelector(state, actions),
+    // LaunchpadSelector(state, actions),
   ])
 })
