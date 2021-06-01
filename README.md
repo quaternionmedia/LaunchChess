@@ -1,8 +1,8 @@
 # launchchess
 
-Play checss with your Novation Launchpad, or other compatible device!
+Play chess with your Novation Launchpad, or other compatible device!
 
-[launchchess.com](launchchess.com)
+[launchchess.com](https://launchchess.com)
 
 ## development
 Clone this repository
