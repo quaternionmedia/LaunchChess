@@ -14,8 +14,10 @@ export const Connector = (state, actions) => ({
     if (state.connected) {
       actions.disconnect()
     }
-    state.output = WebMidi.getOutputByName(name || state.deviceName)
-    state.input = WebMidi.getInputByName(name || state.deviceName)
+    state.output = WebMidi.getOutputByName(name || state.inputName)
+    state.outputName = state.output.name
+    state.input = WebMidi.getInputByName(name || state.outputName)
+    state.inputName = state.input.name
     console.log('connected', state.input)
     if (state.input) {
       // send sysex to see if device is a launchpad
@@ -193,6 +195,11 @@ export const ConnectionPage = (state, actions) => ({
   view: vnode => m('.ConnectionPage', {}, [
     m('h1', 'Connect your Launchpad'),
     StatusIcon(state),
+    state.inputs().length ? state.inputs().map(i => {
+      if (i.name in NAMES) {
+        return LaunchpadButton({name: i.name}, actions)
+      }
+    }) : 'no Launchpads detected',
     m('h3', {}, 'Input'),
     MidiInputSelector(state, actions),
     m('h3', {}, 'Output'),
