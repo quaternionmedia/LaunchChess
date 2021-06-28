@@ -132,7 +132,7 @@ export const Launchpad = (state, actions) => ({
     let piece_moves = state.chess.moves({square: square, verbose:true})
     console.log('possible moves', piece_moves)
     piece_moves.forEach((p, i) => {
-      console.log(p)
+      // console.log(p)
       if (state.chess.get(p.to)) {
         // piece at square. flash green
         // console.log('capture', actions.nToLaunch(actions.squareToN(p.to)))
@@ -177,7 +177,7 @@ export const LaunchpadMk2 = (state, actions) => {
   state.top = range(104, 9)
   state.header = [2, 24]
   state.changeLayout = 34
-  state.layout = [0, 2]
+  state.layout = [0, 0]
   return {
   ...Launchpad(state, actions),
   }
