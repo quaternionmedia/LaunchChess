@@ -26,6 +26,36 @@ export const Connector = (state, actions) => ({
       state.connected = false
     }
   },
+  connectInput: (id) => {
+    state.input = WebMidi.getInputById(id)
+    state.inputName = state.input.name
+    console.log('connected', state.input)
+    if (state.input) {
+      // send sysex to see if device is a launchpad
+      state.connected = true
+      
+    } else {
+      state.connected = false
+    }
+  },
+  
+  connectOutput: (id) => {
+    state.output = WebMidi.getOutputById(id)
+    state.outputName = state.output.name
+    console.log('connected', state.output)
+    if (state.output) {
+      // send sysex to see if device is a launchpad
+      state.connected = true
+      let launchpad = NAMES[state.output.name]
+      console.log('assigning ', launchpad)
+      Object.assign(actions, Launchpads[launchpad](state, actions))
+      Object.assign(onlineActions, Launchpads[launchpad](state, actions))
+      actions.toggleLive(state.connected)
+      
+    } else {
+      state.connected = false
+    }
+  },
   disconnect: () => {
     if (state.input) {
       if (state.connected) actions.toggleLive(false)
@@ -37,9 +67,8 @@ export const Connector = (state, actions) => ({
     
   },
   reloadInputs: () => {
-    state.inputs(WebMidi.inputs.map(i => {
-      return Object.keys(NAMES).includes(i.name) ? i : null
-    }).filter(Boolean))
+    state.inputs(WebMidi.inputs)
+    state.outputs(WebMidi.outputs)
     if (!state.connected && state.inputs().length == 1) {
       let name = state.inputs()[0].name
       console.log('single input: auto connecting', name)
@@ -130,15 +159,18 @@ export const Connector = (state, actions) => ({
   }
 })
 
-export const MidiSelector = (state, actions) => m('select', {
-  value: null,
-  oninput: e => actions.connect(e.target.value)}, state.inputs().map(c => {
-      return m('option', {value: c.name}, c.name)
+export const MidiInputSelector = (state, actions) => m('select', {
+  oninput: e => actions.connectInput(e.target.value)}, state.inputs().map(c => {
+      return m('option', {value: c.id, selected: c.name == state.inputName}, c.name)
+    }))
+export const MidiOutputSelector = (state, actions) => m('select', {
+  oninput: e => actions.connectOutput(e.target.value)}, state.outputs().map(c => {
+      return m('option', {value: c.id, selected: c.name == state.outputName}, c.name)
     }))
 export const LaunchpadSelector = (state, actions) => m('select', {
   value: state.deviceName,
   oninput: e => {
-    let value = e.target.value
+    let value = e.target._id
     console.log('selected', e, value)
     if (state.connected) {
       actions.connect(value)
@@ -161,10 +193,10 @@ export const ConnectionPage = (state, actions) => ({
   view: vnode => m('.ConnectionPage', {}, [
     m('h1', 'Connect your Launchpad'),
     StatusIcon(state),
-    state.inputs().length ? state.inputs().map(i => {
-      return LaunchpadButton({name: i.name}, actions)
-    }) : 'no Launchpads connected',
-    // MidiSelector(state, actions),
+    m('h3', {}, 'Input'),
+    MidiInputSelector(state, actions),
+    m('h3', {}, 'Output'),
+    MidiOutputSelector(state, actions),
     // ConnectToggle(state, actions),
     // LaunchpadSelector(state, actions),
   ])

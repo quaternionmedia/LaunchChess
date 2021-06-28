@@ -10,9 +10,11 @@ export const range = (start, end) => Array.apply(0, Array(end - 1)).map((element
 export const State = () => ({
   input: null, 
   output: null,
+  inputName: null,
+  outputName: null,
   inputs: Stream([]),
-  outputs: [],
-  deviceName: null,
+  outputs: Stream([]),
+  deviceId: null,
   connected: false,
   top: range(91, 10),
   header: null,
