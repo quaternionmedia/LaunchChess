@@ -7,22 +7,22 @@ elif [ $1 = "init" ]; then
   # install pip and npm requirements
   shift
   pip install -r requirements.txt
-  docker run -it -v $(pwd)/web:/app -w /app node:current-alpine yarn install "$@"
+  docker run -it -v $(pwd)/web:/app -w /app node yarn install "$@"
 
 elif [ $1 = "install" -o $1 = "i" ]; then
   # add a new package
   shift
-  docker run -it -v $(pwd)/web:/app -w /app node:current-alpine yarn add "$@"
+  docker run -it -v $(pwd)/web:/app -w /app node yarn add "$@"
 
 elif [ $1 = "build" ]; then
   # build js files, no dev server
   shift
-  docker run -it -v $(pwd)/web:/app -w /app -p 5555:5555 node:current-alpine yarn parcel watch --port 5555 --no-cache --dist-dir dist src/index.html
+  docker run -it -v $(pwd)/web:/app -w /app -p 5555:5555 node yarn parcel watch --port 5555 --no-cache --dist-dir dist src/index.html
 
 elif [ $1 = "dev" ]; then
   # start dev server (no https)
   shift
-  docker run -it -v $(pwd)/web:/app -w /app -p 5555:5555 node:current-alpine yarn parcel --port 5555 --no-cache --dist-dir dist src/index.html
+  docker run -it -v $(pwd)/web:/app -w /app -p 5555:5555 node yarn parcel --port 5555 --no-cache --dist-dir dist src/index.html
 
 elif [[ $1 = "run" || $1 =~ "serve" ]]; then
   # run local https server
@@ -34,7 +34,7 @@ elif [[ $1 = "prod" || $1 = "production" ]]; then
   # run production image
   shift
   docker-compose down
-  docker run -it -v $(pwd)/web:/app -w /app node:current-alpine yarn parcel build --no-cache src/index.html
+  docker run -it -v $(pwd)/web:/app -w /app node yarn parcel build --no-cache src/index.html
   # docker run -it --network host -v $(pwd):/app/ launchchess-server
   docker-compose up -d --build "$@"
 fi
