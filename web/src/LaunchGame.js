@@ -51,13 +51,23 @@ export const LaunchGame = (state, actions) => ({
     let attackers = calculateInfluence(fenForOtherSide(fen))
     
     console.log(fen, defenders, attackers)
-    let colorMap = defenders.map((s, i) => {
-      let v = s - attackers[i]
+    let heatMap = defenders.map((s, i) => {
+      return s - attackers[i]
+      
+    })
+    console.log('heatmap', heatMap)
+    let colorMap = heatMap.map((v, i) => {
       let c = Math.min(v+5, 9)
       return COLORS[state.chess.turn() == state.color ? c : 10 - c]
     })
-    if (state.invert != (state.color == 'b')) colorMap.reverse()
-    console.log(colorMap)
+    if (state.invert != (state.color == 'b')) {
+      colorMap.reverse()
+    }
+    // reverse ranks
+    colorMap = colorMap.map((s, i) => {
+      return colorMap[(7-Math.floor(i/8))*8 + i % 8 ]
+    })
+    console.log('colorMap', colorMap)
     actions.lightMatrix(colorMap)
   },
   newGame: () => {
