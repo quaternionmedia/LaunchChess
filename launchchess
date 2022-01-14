@@ -37,4 +37,11 @@ elif [[ $1 = "prod" || $1 = "production" ]]; then
   docker run -it -v $(pwd)/web:/app -w /app node:current-alpine yarn parcel build --no-cache src/index.html
   # docker run -it --network host -v $(pwd):/app/ launchchess-server
   docker-compose up -d --build "$@"
+
+elif [[ $1 = "cert" ]]; then
+  # generate a new self-signed certificate
+  shift
+  openssl req -x509 -newkey rsa:4096 -nodes -keyout testcert-key.pem -out testcert.pem -sha256 -days 365 && \
+  echo "Successfully generated certfiles!"
+
 fi
