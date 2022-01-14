@@ -34,7 +34,7 @@ elif [[ $1 = "prod" || $1 = "production" || $1 = "p" ]]; then
   # run production image
   shift
   docker-compose down
-  docker run -it -v $(pwd)/web:/app -w /app node:current-alpine yarn parcel build --no-cache src/index.html
+  docker run -it -v $(pwd)/web:/app -w /app node:current-alpine yarn parcel build --no-cache --dist-dir dist src/index.html
   # docker run -it --network host -v $(pwd):/app/ launchchess-server
   docker-compose up -d --build "$@"
 
