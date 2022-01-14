@@ -30,7 +30,7 @@ elif [[ $1 = "run" || $1 =~ "serve" ]]; then
   # uvicorn --reload --host 0.0.0.0 --port 5000 api:app
   uvicorn api:app --port 9999 --ssl-keyfile=./testcert-key.pem --ssl-certfile=./testcert.pem --reload
 
-elif [[ $1 = "prod" || $1 = "production" ]]; then
+elif [[ $1 = "prod" || $1 = "production" || $1 = "p" ]]; then
   # run production image
   shift
   docker-compose down
