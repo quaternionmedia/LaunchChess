@@ -1,12 +1,12 @@
 import { Chess } from 'chess.js'
 
-export const RANKS = 'abcdefgh'
+export const FILES = 'abcdefgh'
 
 let squares = []
-let ranks = [...RANKS]
-ranks.forEach(rank => {
-  for (let f=1; f<=8; f++) {
-      squares.push(rank + f)
+let files = [...FILES]
+files.forEach(f => {
+  for (let i=1; i<=8; i++) {
+      squares.push(f + i)
     }
   })
 
@@ -37,14 +37,11 @@ export function calculateInfluence(fen) {
 }
 
 export function fenForOtherSide(fen) {
-  let newFen = fen.search('w') >= 0 ?
-        fen.replace('w' , 'b') :
-        fen.replace('b', 'w')
-  let index = newFen.search(/w|b/g)
-  if (newFen[index + 2] != '-') {
-    // fix for en passant
-    newFen.replace( newFen.substr(index + 2, 2) , '-')
-  }
+  let tokens = fen.split(' ')
+  tokens[1] = tokens[1] == 'w' ? 'b' : 'w'
+  // fix for en passant
+  tokens[3] = '-'
+  let newFen = tokens.join(' ')
   return newFen
 }
 
@@ -69,7 +66,7 @@ export function getPieceLocations(chess, piece) {
   chess.board().map((rank, r) => {
     rank.map((p, f) => {
       if (p && p.type == piece.type && p.color == piece.color) {
-        res.push( RANKS[7-r] + String(f+1) )
+        res.push( FILES[f] + (8-r) )
       }
     })
   })  

@@ -1,49 +1,37 @@
 import m from 'mithril'
 import { User } from './User'
+import { StatusIcon } from './Toolbar'
 import { message } from 'alertifyjs'
-export function Link() {
-  return {
-    view: (vnode) => {
-      return m('.menu-item', [
-        m(m.route.Link, vnode.attrs, vnode.children)
-      ])
-    }
-  }
-}
 
-export function Links() {
-  return {
-    view: vnode => {
-      return [
-        // m(Link, {href:'/connect', id: 'connectButton'}, 'connect'),
-        m(Link, {href:'/board', id: 'boardButton'}, 'board'),
-        m(Link, {href:'/games', id: 'gamesButton'}, 'games'),
-        // m('.status', {class: User.username ? 'connected' : 'disconnected'}, ''),
-        User.username ? m(Link, {href: '/profile'}, User.username) : m(Link, {
-            href:'/login',
-            id: 'loginButton',
-          }, 'login'),
-      ]
-    }
+export const Link = () => ({
+  view: (vnode) => {
+    return m('.menu-item', [
+      m(m.route.Link, vnode.attrs, vnode.children)
+    ])
   }
-}
+})
 
-export function Menu() {
-  return {
-    view: vnode => {
-      return [m(Link, {href: '/'}, m('img.logo#logo', {src: '/static/logo.svg'})),
-      m(Links),]
-    }
-  }
-}
+export const Links = state => [
+  m(Link, {href:'/connect', id: 'connectButton'}, StatusIcon(state)),
+  m(Link, {href:'/otb', id: 'otbButton'}, 'Local'),
+  m(Link, {href:'/games', id: 'gamesButton'}, 'Online'),
+  // ,
+  User.username ? m(Link, {href: '/profile'}, User.username) : m(Link, {
+      href:'/login',
+      id: 'loginButton',
+    }, 'Login'),
+]
 
-export function Layout() {
-  return {
-    view: vnode => {
-      return m('main.layout', {}, [
-        m('nav.menu', {}, m(Menu)),
-        m('section', vnode.attrs, vnode.children)
-      ])
-    }
+export const Menu = state => [
+  m(Link, {href: '/'}, m('img.logo#logo', {src: '/static/logo.svg'})),
+  Links(state),
+]
+
+export const Layout = state => ({
+  view: vnode => {
+    return m('main.layout', {}, [
+      m('nav.menu', {}, Menu(state)),
+      m('section#main', vnode.attrs),
+    ])
   }
-}
+})

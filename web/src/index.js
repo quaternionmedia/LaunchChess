@@ -1,28 +1,46 @@
 import m from 'mithril'
 import { Layout } from './Menu'
-import { Connect } from './Connect'
+import { LaunchGame } from './LaunchGame'
 import { Login } from './Login'
 import './style.css'
 import { User } from './User'
-import { Game, Games } from './Games'
+import { GamePage, GamePageOnline, Games, getGames } from './Games'
 import { ProfilePage } from './Profile'
+import { Connector, ConnectionPage } from './Connector'
+import { State, Actions, OnlineActions } from './Actions'
+import { LaunchpadX } from './Launchpad'
+import { Home } from './Home'
 
-export function Home() {
-  return {
-    view: vnode => {
-      return m('#home', {}, 'LaunchChess')
-    }
-  }
-}
+
 console.log('launchchess started!')
 
-m.route(document.body, '/', {
-  '/': { render: () => m(Layout, m(Home))},
-  '/connect': { render: () => m(Layout, m(Connect))},
-  '/games': { render: () => m(Layout, m(Games))},
-  '/board': { render: () => m(Layout, m(Game))},
-  '/login': { render: () => m(Layout, m(Login))},
-  '/profile': { render: () => m(Layout, m(ProfilePage))},
+
+var state = State()
+export var actions = {}
+Object.assign(actions, Actions(state, actions))
+Object.assign(actions, LaunchGame(state, actions))
+Object.assign(actions, Connector(state, actions))
+Object.assign(actions, getGames(state, actions))
+export var onlineActions = {
+  ...actions,
+  ...OnlineActions(state, actions)
+}
+actions.initConnector()
+
+console.log(state, actions)
+
+
+m.mount(document.body, Layout(state))
+let main = document.getElementById('main')
+
+m.route(main, '/', {
+  '/': Home(state, actions),
+  '/connect': ConnectionPage(state, actions),
+  '/otb': GamePage(state, actions),
+  '/games': Games(state, actions),
+  '/online': GamePageOnline(state, onlineActions),
+  '/login': Login,
+  '/profile': ProfilePage,
 
 })
 
