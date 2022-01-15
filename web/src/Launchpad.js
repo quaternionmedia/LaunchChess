@@ -23,7 +23,19 @@ export const NAMES = {
 
 }
 
-const colors = {'p': 13,'r': 9,'n': 45,'b': 37,'q': 53,'k': 49}
+const colors = {
+  'p': 13,
+  'r': 9,
+  'n': 45,
+  'b': 37,
+  'q': 53,
+  'k': 49,
+  'white': 1,
+  'black': 0,
+  'movable': 21,
+  'moved': 89,
+  'check': 5,
+}
 
 export const Launchpad = (state, actions) => ({
 
@@ -107,11 +119,11 @@ export const Launchpad = (state, actions) => ({
       console.log('highlighting', lastMove, from_square, to_square)
       if (! state.chess.get(from_square)) {
         // if no piece currently on from square, send flashing neutral
-        state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(from_square)), 70])
+        state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(from_square)), colors.moved])
       }
       let path = findPath(from_square, to_square)
       path.forEach((step, i) => {
-        state.output.send(NOTE_ON | 2, [actions.nToLaunch(step.y*8 + step.x), 70])
+        state.output.send(NOTE_ON | 2, [actions.nToLaunch(step.y*8 + step.x), colors.moved])
       })
       if (state.chess.get(to_square)) {
         // if there is a piece, send flashing piece color
@@ -122,12 +134,12 @@ export const Launchpad = (state, actions) => ({
       if (state.chess.in_check()) {
         let k = getPieceLocations(state.chess, {type:'k', color: state.chess.turn() })[0]
         console.log('check!', k)
-        state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(k)), 5])
+        state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(k)), colors.check])
       }
       if (state.chess.in_checkmate()) {
         let k = getPieceLocations(state.chess, {type:'k', color: state.chess.turn() })[0]
         console.log('mate!', k)
-        state.output.send(NOTE_ON, [actions.nToLaunch(actions.squareToN(k)), 5])
+        state.output.send(NOTE_ON, [actions.nToLaunch(actions.squareToN(k)), colors.check])
       }
     }
 
@@ -135,7 +147,7 @@ export const Launchpad = (state, actions) => ({
   highlightAvailableMoves: square => {
     let s = actions.nToLaunch(actions.squareToN(square))
     console.log('highlighting', square, s, actions.squareToN(square))
-    state.output.send(NOTE_ON | 1, [s, 21])
+    state.output.send(NOTE_ON | 1, [s, colors.movable])
     let piece_moves = state.chess.moves({square: square, verbose:true})
     console.log('possible moves', piece_moves)
     piece_moves.forEach((p, i) => {
@@ -143,10 +155,10 @@ export const Launchpad = (state, actions) => ({
       if (state.chess.get(p.to)) {
         // piece at square. flash green
         // console.log('capture', actions.nToLaunch(actions.squareToN(p.to)))
-        state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(p.to)), 21])
+        state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(p.to)), colors.movable])
       } else {
         // console.log('regular move', p.to, actions.squareToN(p.to), actions.nToLaunch(actions.squareToN(p.to)))
-        state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(p.to)), 21])
+        state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(p.to)), colors.movable])
       }
     })
   }
