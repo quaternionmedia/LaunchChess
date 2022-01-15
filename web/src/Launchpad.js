@@ -1,5 +1,6 @@
 import { getPieceLocations } from './ChessMaths'
 import { range } from './Actions'
+import { findPath } from './utils'
 
 export const NOTE_ON = 144
 export const CONTROL_CHANGE = 176
@@ -108,6 +109,10 @@ export const Launchpad = (state, actions) => ({
         // if no piece currently on from square, send flashing neutral
         state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(from_square)), 70])
       }
+      let path = findPath(from_square, to_square)
+      path.forEach((step, i) => {
+        state.output.send(NOTE_ON | 2, [actions.nToLaunch(step.y*8 + step.x), 70])
+      })
       if (state.chess.get(to_square)) {
         // if there is a piece, send flashing piece color
         let c = colors[state.chess.get(to_square).type]
