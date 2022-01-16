@@ -27,6 +27,6 @@
   "devDependencies": {
     "@babel/cli": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
-    "parcel": "^2.0.0-nightly.570"
+    "parcel": "^2.2.0"
   }
 }

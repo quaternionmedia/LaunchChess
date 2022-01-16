@@ -18,6 +18,8 @@ export const HEADERS = {
 export const NAMES = {
   'Launchpad MK2 MIDI 1': 'LaunchpadMk2',
   'Launchpad X MIDI 2': 'LaunchpadX',
+  'Launchpad X LPX MIDI In': 'LaunchpadX',
+
 }
 
 const colors = {'p': 13,'r': 9,'n': 45,'b': 37,'q': 53,'k': 49}
@@ -72,7 +74,7 @@ export const Launchpad = (state, actions) => ({
       let piece
       let color = 0
       const l = actions.nToLaunch(i)
-      
+
       if (board[(63-i) >> 3][i % 8]) {
         piece = board[(63-i) >> 3][i % 8]
         // console.log('piece at i', i, piece)
@@ -84,11 +86,11 @@ export const Launchpad = (state, actions) => ({
         piece = null
         if (state.grid) color = (i + (i >> 3)) % 2 == 0 ? 0 : 1
       }
-      
+
       // console.log(i, piece, l)
-      
+
       // console.log(NOTE_ON, l, c)
-      
+
       state.output.send(NOTE_ON, [l, color])
     }
     let history = state.chess.history()
@@ -111,7 +113,7 @@ export const Launchpad = (state, actions) => ({
         let c = colors[state.chess.get(to_square).type]
         state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(to_square)), state.chess.get(to_square).color == 'w' ? c : c + 2])
       }
-      
+
       if (state.chess.in_check()) {
         let k = getPieceLocations(state.chess, {type:'k', color: state.chess.turn() })[0]
         console.log('check!', k)
@@ -123,7 +125,7 @@ export const Launchpad = (state, actions) => ({
         state.output.send(NOTE_ON, [actions.nToLaunch(actions.squareToN(k)), 5])
       }
     }
-    
+
   },
   highlightAvailableMoves: square => {
     let s = actions.nToLaunch(actions.squareToN(square))
