@@ -1,4 +1,6 @@
 #!/bin/bash
+# This script creates (or renews) a domain [$1] through certbot, then
+# copies the private key and certificate authority chain to a local file
 DIR=$(pwd)
 DOMAIN=launchchess.com
 docker-compose down
