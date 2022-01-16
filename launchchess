@@ -30,11 +30,17 @@ elif [[ $1 = "run" || $1 =~ "serve" ]]; then
   # uvicorn --reload --host 0.0.0.0 --port 5000 api:app
   uvicorn api:app --port 9999 --ssl-keyfile=./testcert-key.pem --ssl-certfile=./testcert.pem --reload
 
-elif [[ $1 = "prod" || $1 = "production" ]]; then
+elif [[ $1 = "prod" || $1 = "production" || $1 = "p" ]]; then
   # run production image
   shift
   docker-compose down
-  docker run -it -v $(pwd)/web:/app -w /app node yarn parcel build --no-cache src/index.html
-  # docker run -it --network host -v $(pwd):/app/ launchchess-server
+  docker run -it -v $(pwd)/web:/app -w /app node yarn parcel build --no-cache --dist-dir dist src/index.html
   docker-compose up -d --build "$@"
+
+elif [[ $1 = "cert" ]]; then
+  # generate a new self-signed certificate
+  shift
+  openssl req -x509 -newkey rsa:4096 -nodes -keyout testcert-key.pem -out testcert.pem -sha256 -days 365 && \
+  echo "Successfully generated certfiles!"
+
 fi

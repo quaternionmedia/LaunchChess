@@ -5,7 +5,7 @@ import { streamJson } from './ndjson'
 import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
 import { calculateInfluence, fenForOtherSide } from './ChessMaths'
-import { toDests, toColor, playOtherSide, setBoard, newGame } from './utils'
+import { toDests, toColor, playOtherSide, setBoard } from './utils'
 
 
 // let GREEN = [ 123, 23, 64, 22, 76, 87, 21, 122 ]
@@ -41,7 +41,7 @@ export const LaunchGame = (state, actions) => ({
   flipBoard: () => {
     state.invert = !state.invert
     actions.lightBoard()
-    // if (ground) 
+    // if (ground)
     state.ground.toggleOrientation()
     // m.redraw()
   },
@@ -49,7 +49,7 @@ export const LaunchGame = (state, actions) => ({
     let fen = state.chess.fen()
     let defenders = calculateInfluence(fen)
     let attackers = calculateInfluence(fenForOtherSide(fen))
-    
+
     console.log(fen, defenders, attackers)
     let heatMap = defenders.map((s, i) => {
       return s - attackers[i]
@@ -73,7 +73,7 @@ export const LaunchGame = (state, actions) => ({
   newGame: () => {
     state.chess = new Chess()
     setBoard(state.chess, state.ground)
-  },  
+  },
   onInput: message => {
     message = message.data
     console.log('input', message)
@@ -105,9 +105,9 @@ export const LaunchGame = (state, actions) => ({
         }
       } else if (state.selectedSquare) {
         // move selected to square
-        
+
         const move = {from: state.selectedSquare, to: square}
-        
+
         console.log('checking if ', move, ' is legal')
         const squares = state.chess.moves({square: state.selectedSquare, verbose: true}).map(legal_move => legal_move.to)
         if (squares.includes(move.to)) {
@@ -117,7 +117,7 @@ export const LaunchGame = (state, actions) => ({
         }
       }
     }
-    
+
   },
   onCC: message => {
     message = message.data
@@ -178,7 +178,7 @@ export const LaunchGame = (state, actions) => ({
   },
   streamGame: () => {
     streamJson(LICHESS_API_URL + 'board/game/stream/' + m.route.param('id'),
-      User.token, 
+      User.token,
       v => {
       console.log('calling back', v)
       if (v.type == 'gameFull') {
@@ -201,9 +201,9 @@ export const LaunchGame = (state, actions) => ({
       }
       let turn = state.chess.turn() == 'w' ? 'white' : 'black'
       console.log('updated. turn is', turn)
-      
+
       setBoard(state.chess, state.ground)
-      
+
       actions.lightBoard()
       m.redraw()
     })
@@ -216,10 +216,10 @@ export const LaunchGame = (state, actions) => ({
     actions.lightBoard()
   },
   makeMove: move => {
-    
+
     state.ground.move(move.from, move.to)
     state.ground.selectSquare(null)
-    
+
   },
   onmove: (orig, dest) => {
     let move = {from: orig, to: dest}
@@ -231,7 +231,7 @@ export const LaunchGame = (state, actions) => ({
     state.chess.move(move)
     console.log('moved', move, piece, state.chess.ascii())
     state.ground.set({fen: state.chess.fen()})
-    
+
     actions.lightBoard()
     playOtherSide(state.chess, state.ground)(orig, dest)
     m.redraw()
@@ -240,7 +240,7 @@ export const LaunchGame = (state, actions) => ({
     actions.initMidi(actions.onInput, actions.onCC, () => {
       actions.lightBoard()
     })
-    
+
   },
   takeback: () => {
     state.chess.undo()

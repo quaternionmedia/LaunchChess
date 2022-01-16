@@ -37,7 +37,7 @@ In order to play online, the server needs to be configured for https, meaning yo
 
 #### 1. generate a new certfile
 
-`openssl req -x509 -newkey rsa:4096 -keyout testcert-key.pem -out testcert.pem -days 365 -nodes`
+`./launchchess cert`
 
 Answer interactive prompt for location / contact info (for development purposes, empty answers are fine)
 
@@ -50,7 +50,7 @@ Answer interactive prompt for location / contact info (for development purposes,
 - Add the `client id` and `secret` from above to `config.py`.
 
 
-#### 3. secrets 
+#### 3. secrets
 Generate an `AUTH_SECRET_KEY` and a different `SESSION_SECRET` and  paste them into `config.py`
 
 `openssl rand -hex 32`
@@ -72,7 +72,7 @@ If you are running the uvicorn server and want to rebuild the js files (and auto
 `./launchchess build`
 
 ## python (offline only)
-LaunchChess can also be run as a standalone, headless python script (no website interface). 
+LaunchChess can also be run as a standalone, headless python script (no website interface).
 
 You need to have a [UCI](https://en.wikipedia.org/wiki/Universal_Chess_Interface) compatible chess engine, such as the [free stockfish engine](https://stockfishchess.org/download/).
 
