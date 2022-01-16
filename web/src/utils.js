@@ -46,7 +46,7 @@ export function setBoard(chess, ground) {
 }
 
 export function findPath(from, to) {
-  graph = new Graph(new Array(8).fill(new Array(8).fill(1)), { diagonal: true })
+  let graph = new Graph(new Array(8).fill(new Array(8).fill(1)), { diagonal: true })
   console.log('finding path', from, to, graph)
   let start = graph.grid[from.charCodeAt(0) - 97][from.charCodeAt(1) - 49]
   let end = graph.grid[to.charCodeAt(0) - 97][to.charCodeAt(1) - 49]
