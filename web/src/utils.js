@@ -51,6 +51,7 @@ export function findPath(from, to) {
   let start = graph.grid[from.charCodeAt(0) - 97][from.charCodeAt(1) - 49]
   let end = graph.grid[to.charCodeAt(0) - 97][to.charCodeAt(1) - 49]
   let path = astar.search(graph, start, end, { heuristic: astar.heuristics.diagonal })
+  path.unshift(start)
   console.log('found path', path)
   return path
 }

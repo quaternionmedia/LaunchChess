@@ -117,10 +117,7 @@ export const Launchpad = (state, actions) => ({
       let from_square = lastMove.from
       let to_square = lastMove.to
       console.log('highlighting', lastMove, from_square, to_square)
-      if (! state.chess.get(from_square)) {
-        // if no piece currently on from square, send flashing neutral
-        state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(from_square)), colors.moved])
-      }
+      // highligh path
       let path = findPath(from_square, to_square)
       path.forEach((step, i) => {
         state.output.send(NOTE_ON | 2, [actions.nToLaunch(step.y*8 + step.x), colors.moved])
