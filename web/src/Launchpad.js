@@ -129,17 +129,23 @@ export const Launchpad = (state, actions) => ({
       }
 
       if (state.chess.in_check()) {
-        let k = getPieceLocations(state.chess, {type:'k', color: state.chess.turn() })[0]
-        console.log('check!', k)
-        state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(k)), colors.check])
+        actions.highlightCheck()
       }
       if (state.chess.in_checkmate()) {
-        let k = getPieceLocations(state.chess, {type:'k', color: state.chess.turn() })[0]
-        console.log('mate!', k)
-        state.output.send(NOTE_ON, [actions.nToLaunch(actions.squareToN(k)), colors.check])
+        actions.highlightCheckmate()
       }
     }
 
+  },
+  highlightCheck: () => {
+    let k = getPieceLocations(state.chess, {type:'k', color: state.chess.turn() })[0]
+    console.log('check!', k)
+    state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(k)), colors.check])
+  },
+  highlightCheckmate: () => {
+    let k = getPieceLocations(state.chess, {type:'k', color: state.chess.turn() })[0]
+    console.log('mate!', k)
+    state.output.send(NOTE_ON, [actions.nToLaunch(actions.squareToN(k)), colors.check])
   },
   highlightAvailableMoves: square => {
     let s = actions.nToLaunch(actions.squareToN(square))
