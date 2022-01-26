@@ -14,12 +14,12 @@ import { toDests, toColor, playOtherSide, setBoard } from './utils'
 export const COLORS = [5, 121, 9, 11, 15, 1, 23, 37, 45, 49, 69]
 
 export const LaunchGame = (state, actions) => ({
-  lightBoard: () => {
+  lightBoard: (animate=false) => {
     if (state.chess) {
       if (state.influence) {
         actions.showInfluence()
       } else {
-        actions.lightGame()
+        actions.lightGame(animate)
       }
     } else {
       if (state.grid) actions.grid()
@@ -232,7 +232,7 @@ export const LaunchGame = (state, actions) => ({
     console.log('moved', move, piece, state.chess.ascii())
     state.ground.set({fen: state.chess.fen()})
 
-    actions.lightBoard()
+    actions.lightBoard(animate=true)
     playOtherSide(state.chess, state.ground)(orig, dest)
     m.redraw()
   },

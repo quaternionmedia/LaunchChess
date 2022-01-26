@@ -81,7 +81,7 @@ export const Launchpad = (state, actions) => ({
       }
     }
   },
-  lightGame: () => {
+  lightGame: (animate=false) => {
     const board = state.chess.board()
     for (let i=0; i<64; i++) {
       let piece
@@ -108,23 +108,23 @@ export const Launchpad = (state, actions) => ({
     }
     let history = state.chess.history()
       for (let i=0; i<Math.min(history.length, state.history()); i++) {
-        actions.highlightMove(i)
+        actions.highlightMove(i, animate=animate)
     }
   },
-  highlightMove: index => {
+  highlightMove: (index, animate=false) => {
     let lastMove = state.chess.history({verbose:true}).reverse()[index]
     if (lastMove) {
+      console.log('lastmove ', lastMove)
       let from_square = lastMove.from
       let to_square = lastMove.to
       console.log('highlighting', lastMove, from_square, to_square)
-      // highligh path
       let path = findPath(from_square, to_square)
       let piece = lastMove.piece
       let color = colors[piece]
       if (lastMove.color == 'b') color += 2
+      if (animate) {
         actions.animatePath(path, color, 0)
       }
-
       if (state.chess.in_check()) {
         actions.highlightCheck()
       }
@@ -132,7 +132,7 @@ export const Launchpad = (state, actions) => ({
         actions.highlightCheckmate()
       }
     }
-
+  },
   animatePath: (path, color, step) => {
     // console.log('animating path', path, step)
     let current = path.splice(step, 1)[0]
