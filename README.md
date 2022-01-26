@@ -71,6 +71,25 @@ Visit https://localhost:9999 and authorize your Lichess account with this server
 If you are running the uvicorn server and want to rebuild the js files (and auto rebuild future changes):
 `./launchchess build`
 
+## production
+Assuming a running [traefik](https://traefik.io/traefik/) docker instance as a reverse proxy:
+
+### certs
+Playing with the [Lichess Board API](https://lichess.org/api#tag/Board) requires a valid https certificate. In addition, this must be served by the server itself (not the reverse proxy) in order to successfully generate an oauth token. 
+
+This is performed with the following label to the `docker-compose` file:
+``` yml
+...
+    - labels:
+      - traefik.tcp.routers.launchchess.tls.passthrough=true
+```
+
+Copying the traefik certificate is performed with:
+`./renew-cert.sh`
+
+### run
+`./launchchess p`
+
 ## python (offline only)
 LaunchChess can also be run as a standalone, headless python script (no website interface).
 
