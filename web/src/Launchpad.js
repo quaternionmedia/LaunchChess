@@ -144,6 +144,10 @@ export const Launchpad = (state, actions) => ({
     // console.log('path', path.length)
     state.animations.push(setTimeout(actions.animatePath, state.animationDuration, path, color, (step + 1) % path.length))
   },
+  clearAnimations: () => {
+    state.animations.forEach((a, i) => {
+      clearTimeout(a)
+    })
   },
   highlightCheck: () => {
     let k = getPieceLocations(state.chess, {type:'k', color: state.chess.turn() })[0]

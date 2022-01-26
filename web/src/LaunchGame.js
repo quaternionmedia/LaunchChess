@@ -15,6 +15,7 @@ export const COLORS = [5, 121, 9, 11, 15, 1, 23, 37, 45, 49, 69]
 
 export const LaunchGame = (state, actions) => ({
   lightBoard: (animate=false) => {
+    actions.clearAnimations()
     if (state.chess) {
       if (state.influence) {
         actions.showInfluence()
