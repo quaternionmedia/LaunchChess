@@ -1,6 +1,7 @@
 import { Api } from 'chessground/api'
 import { Color, Key } from 'chessground/types'
 import { getPieceLocations } from './ChessMaths'
+import { Graph, astar } from 'javascript-astar'
 
 export function toDests(chess) {
   const dests = new Map()
@@ -34,7 +35,7 @@ export function setBoard(chess, ground) {
       dests: toDests(chess)
     }
   })
-  
+
   let hist = chess.history({verbose: true})
   if (hist.length) {
     let last = hist.pop()
@@ -42,4 +43,15 @@ export function setBoard(chess, ground) {
       lastMove: [last.from, last.to]
     })
   }
+}
+
+export function findPath(from, to) {
+  let graph = new Graph(new Array(8).fill(new Array(8).fill(1)), { diagonal: true })
+  console.log('finding path', from, to, graph)
+  let start = graph.grid[from.charCodeAt(0) - 97][from.charCodeAt(1) - 49]
+  let end = graph.grid[to.charCodeAt(0) - 97][to.charCodeAt(1) - 49]
+  let path = astar.search(graph, start, end, { heuristic: astar.heuristics.diagonal })
+  path.unshift(start)
+  console.log('found path', path)
+  return path
 }
