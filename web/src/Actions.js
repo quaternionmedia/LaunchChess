@@ -65,7 +65,7 @@ export const OnlineActions = (state, actions) => ({
     console.log('moved', move, piece, state.chess.ascii())
     state.ground.set({fen: state.chess.fen()})
     
-    actions.lightBoard()
+    actions.lightBoard(true)
     playOtherSide(state.chess, state.ground)(orig, dest)
     m.redraw()
     // send to lichess api

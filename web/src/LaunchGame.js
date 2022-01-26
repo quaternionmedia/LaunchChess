@@ -211,7 +211,7 @@ export const LaunchGame = (state, actions) => ({
 
       setBoard(state.chess, state.ground)
 
-      actions.lightBoard()
+      actions.lightBoard(true)
       m.redraw()
     })
   },
