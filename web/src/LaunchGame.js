@@ -104,7 +104,10 @@ export const LaunchGame = (state, actions) => ({
           state.ground.selectSquare(state.selectedSquare)
           actions.highlightAvailableMoves(state.selectedSquare)
         }
-      } else if (state.selectedSquare) {
+      } else if (state.chess.history().length && s == actions.squareToN(state.chess.history({verbose:true}).pop().to)) {
+        console.log('clear animations and resend current position')
+        actions.lightBoard()
+      } if (state.selectedSquare) {
         // move selected to square
 
         const move = {from: state.selectedSquare, to: square}
