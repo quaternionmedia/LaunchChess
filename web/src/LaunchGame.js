@@ -236,7 +236,7 @@ export const LaunchGame = (state, actions) => ({
     console.log('moved', move, piece, state.chess.ascii())
     state.ground.set({fen: state.chess.fen()})
 
-    actions.lightBoard(animate=true)
+    actions.lightBoard(true)
     playOtherSide(state.chess, state.ground)(orig, dest)
     m.redraw()
   },
