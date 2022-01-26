@@ -80,6 +80,9 @@ export const LaunchGame = (state, actions) => ({
     console.log('input', message)
     if (message[2]) {
       const s = actions.launchToN(message[1])
+      if (s === null) {
+        return
+      }
       const square = actions.nToSquare(s)
       console.log('touched', s)
       const legal_moves = state.chess.moves({verbose:true})

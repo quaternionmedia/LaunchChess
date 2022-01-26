@@ -51,6 +51,10 @@ export const Launchpad = (state, actions) => ({
   },
   launchToN: l => {
     // launchpad note mapped to 0-63
+    if ((l - 11) % 10 == 8) {
+      // fix for LaunchpadMk2 sending side buttons as NOTE_ON
+      return null
+    }
     const n = Math.floor((l-11)/ 10)*8 + (l-11) % 10
     return state.invert ? 63 - n : n
   },
