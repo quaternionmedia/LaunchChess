@@ -119,13 +119,10 @@ export const Launchpad = (state, actions) => ({
       console.log('highlighting', lastMove, from_square, to_square)
       // highligh path
       let path = findPath(from_square, to_square)
-      path.forEach((step, i) => {
-        state.output.send(NOTE_ON | 2, [actions.nToLaunch(step.y*8 + step.x), colors.moved])
-      })
-      if (state.chess.get(to_square)) {
-        // if there is a piece, send flashing piece color
-        let c = colors[state.chess.get(to_square).type]
-        state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(to_square)), state.chess.get(to_square).color == 'w' ? c : c + 2])
+      let piece = lastMove.piece
+      let color = colors[piece]
+      if (lastMove.color == 'b') color += 2
+        actions.animatePath(path, color, 0)
       }
 
       if (state.chess.in_check()) {
@@ -136,6 +133,17 @@ export const Launchpad = (state, actions) => ({
       }
     }
 
+  animatePath: (path, color, step) => {
+    // console.log('animating path', path, step)
+    let current = path.splice(step, 1)[0]
+    path.forEach((square, i) => {
+      state.output.send(NOTE_ON | 2, [actions.nToLaunch(square.y*8 + square.x), colors.moved])
+    })
+    state.output.send(NOTE_ON | 2, [actions.nToLaunch(current.y*8 + current.x), color])
+    path.splice(step, 0, current)
+    // console.log('path', path.length)
+    state.animations.push(setTimeout(actions.animatePath, state.animationDuration, path, color, (step + 1) % path.length))
+  },
   },
   highlightCheck: () => {
     let k = getPieceLocations(state.chess, {type:'k', color: state.chess.turn() })[0]

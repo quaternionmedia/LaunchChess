@@ -32,6 +32,8 @@ export const State = () => ({
   pieces: true,
   influence: false,
   history: Stream(1),
+  animationDuration: 400,
+  animations: [],
 })
 
 export const Actions = (state, actions) => ({
