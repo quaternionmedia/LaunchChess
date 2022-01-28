@@ -21,6 +21,9 @@ export const NAMES = {
   'Launchpad X MIDI 2': 'LaunchpadX',
   'Launchpad X LPX MIDI In': 'LaunchpadX',
 
+  'Launchpad X LPX MIDI Out': 'LaunchpadX',
+  'MIDIIN2 (LPX MIDI)': 'LaunchpadX',
+  'MIDIOUT2 (LPX MIDI)': 'LaunchpadX',
 }
 
 const colors = {
@@ -48,6 +51,10 @@ export const Launchpad = (state, actions) => ({
   },
   launchToN: l => {
     // launchpad note mapped to 0-63
+    if ((l - 11) % 10 == 8) {
+      // fix for LaunchpadMk2 sending side buttons as NOTE_ON
+      return null
+    }
     const n = Math.floor((l-11)/ 10)*8 + (l-11) % 10
     return state.invert ? 63 - n : n
   },
@@ -81,7 +88,7 @@ export const Launchpad = (state, actions) => ({
       }
     }
   },
-  lightGame: () => {
+  lightGame: (animate=false) => {
     const board = state.chess.board()
     for (let i=0; i<64; i++) {
       let piece
@@ -108,26 +115,23 @@ export const Launchpad = (state, actions) => ({
     }
     let history = state.chess.history()
       for (let i=0; i<Math.min(history.length, state.history()); i++) {
-        actions.highlightMove(i)
+        actions.highlightMove(i, animate=animate)
     }
   },
-  highlightMove: index => {
+  highlightMove: (index, animate=false) => {
     let lastMove = state.chess.history({verbose:true}).reverse()[index]
     if (lastMove) {
+      console.log('lastmove ', lastMove)
       let from_square = lastMove.from
       let to_square = lastMove.to
       console.log('highlighting', lastMove, from_square, to_square)
-      // highligh path
       let path = findPath(from_square, to_square)
-      path.forEach((step, i) => {
-        state.output.send(NOTE_ON | 2, [actions.nToLaunch(step.y*8 + step.x), colors.moved])
-      })
-      if (state.chess.get(to_square)) {
-        // if there is a piece, send flashing piece color
-        let c = colors[state.chess.get(to_square).type]
-        state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(to_square)), state.chess.get(to_square).color == 'w' ? c : c + 2])
+      let piece = lastMove.piece
+      let color = colors[piece]
+      if (lastMove.color == 'b') color += 2
+      if (animate) {
+        actions.animatePath(path, color, 0)
       }
-
       if (state.chess.in_check()) {
         actions.highlightCheck()
       }
@@ -135,7 +139,22 @@ export const Launchpad = (state, actions) => ({
         actions.highlightCheckmate()
       }
     }
-
+  },
+  animatePath: (path, color, step) => {
+    // console.log('animating path', path, step)
+    let current = path.splice(step, 1)[0]
+    path.forEach((square, i) => {
+      state.output.send(NOTE_ON | 2, [actions.nToLaunch(square.y*8 + square.x), colors.moved])
+    })
+    state.output.send(NOTE_ON | 2, [actions.nToLaunch(current.y*8 + current.x), color])
+    path.splice(step, 0, current)
+    // console.log('path', path.length)
+    state.animations.push(setTimeout(actions.animatePath, state.animationDuration, path, color, (step + 1) % path.length))
+  },
+  clearAnimations: () => {
+    state.animations.forEach((a, i) => {
+      clearTimeout(a)
+    })
   },
   highlightCheck: () => {
     let k = getPieceLocations(state.chess, {type:'k', color: state.chess.turn() })[0]

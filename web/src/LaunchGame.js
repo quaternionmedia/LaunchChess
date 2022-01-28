@@ -14,12 +14,13 @@ import { toDests, toColor, playOtherSide, setBoard } from './utils'
 export const COLORS = [5, 121, 9, 11, 15, 1, 23, 37, 45, 49, 69]
 
 export const LaunchGame = (state, actions) => ({
-  lightBoard: () => {
+  lightBoard: (animate=false) => {
+    actions.clearAnimations()
     if (state.chess) {
       if (state.influence) {
         actions.showInfluence()
       } else {
-        actions.lightGame()
+        actions.lightGame(animate)
       }
     } else {
       if (state.grid) actions.grid()
@@ -79,6 +80,9 @@ export const LaunchGame = (state, actions) => ({
     console.log('input', message)
     if (message[2]) {
       const s = actions.launchToN(message[1])
+      if (s === null) {
+        return
+      }
       const square = actions.nToSquare(s)
       console.log('touched', s)
       const legal_moves = state.chess.moves({verbose:true})
@@ -103,7 +107,10 @@ export const LaunchGame = (state, actions) => ({
           state.ground.selectSquare(state.selectedSquare)
           actions.highlightAvailableMoves(state.selectedSquare)
         }
-      } else if (state.selectedSquare) {
+      } else if (state.chess.history().length && s == actions.squareToN(state.chess.history({verbose:true}).pop().to)) {
+        console.log('clear animations and resend current position')
+        actions.lightBoard()
+      } if (state.selectedSquare) {
         // move selected to square
 
         const move = {from: state.selectedSquare, to: square}
@@ -204,7 +211,7 @@ export const LaunchGame = (state, actions) => ({
 
       setBoard(state.chess, state.ground)
 
-      actions.lightBoard()
+      actions.lightBoard(true)
       m.redraw()
     })
   },
@@ -232,7 +239,7 @@ export const LaunchGame = (state, actions) => ({
     console.log('moved', move, piece, state.chess.ascii())
     state.ground.set({fen: state.chess.fen()})
 
-    actions.lightBoard()
+    actions.lightBoard(true)
     playOtherSide(state.chess, state.ground)(orig, dest)
     m.redraw()
   },
