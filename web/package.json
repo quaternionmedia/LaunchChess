@@ -1,7 +1,7 @@
 {
   "name": "LaunchChess",
-  "version": "0.1.0",
-  "description": "electronic chess board",
+  "version": "0.1.1",
+  "description": "Chess on a Launchpad",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
