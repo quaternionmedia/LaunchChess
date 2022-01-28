@@ -1,12 +1,8 @@
-chess
-python-rtmidi
-uvicorn
 fastapi
 aiofiles
+uvicorn
 itsdangerous
 authlib
 httpx
+requests
 tinydb
-pyjwt
-passlib
-python-multipart
