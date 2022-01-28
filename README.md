@@ -4,6 +4,8 @@ Play chess with your Novation Launchpad, or other compatible device!
 
 [launchchess.com](https://launchchess.com)
 
+**Note** This repository holds the code for the online version of LaunchChess. For the standalone python library, see [launchchess-python](https://github.com/quaternionmedia/launchchess-python).
+
 ## development
 Clone this repository
 `git clone https://github.com/quaternionmedia/launchchess.git`
@@ -89,13 +91,3 @@ Copying the traefik certificate is performed with:
 
 ### run
 `./launchchess p`
-
-## python (offline only)
-LaunchChess can also be run as a standalone, headless python script (no website interface).
-
-You need to have a [UCI](https://en.wikipedia.org/wiki/Universal_Chess_Interface) compatible chess engine, such as the [free stockfish engine](https://stockfishchess.org/download/).
-
-Save the engine file and add the location in `config.py`. Then, run:
-`pip install -r requirements.txt`
-
-`python3 launchchess.py`
