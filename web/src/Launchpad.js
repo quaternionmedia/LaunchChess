@@ -115,7 +115,7 @@ export const Launchpad = (state, actions) => ({
     }
     let history = state.chess.history()
       for (let i=0; i<Math.min(history.length, state.history()); i++) {
-        actions.highlightMove(i, animate=animate)
+        actions.highlightMove(i, animate)
     }
   },
   highlightMove: (index, animate=false) => {

@@ -61,7 +61,6 @@ export var User = {
   logout: () => {
     console.log('logging out', User)
     // don't need to use auth() because cookie is enough here
-    m.request('/logout', {method: 'post'})
     m.request('/oauth/logout')
     User.username = null
     User.token = null
