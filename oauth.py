@@ -49,8 +49,10 @@ async def authorize(request: Request):
 
 @app.get('/logout', response_class = RedirectResponse)
 async def logout(request: Request):
-    users.remove(Query().username == request.session['user'])
-    request.session['user'] = None
+    username = request.session['user']
+    if username:
+        users.remove(Query().username == username)
+        request.session['user'] = None
     return '/'
 
 @app.get('/token')
@@ -59,7 +61,7 @@ async def getToken(request: Request):
     if username:
         user = users.get(Query().username == username)
         if user:
-            return user['token']
+            return Token(**user['token'])
 
 @app.get('/profile')
 def getProfile(request: Request):
