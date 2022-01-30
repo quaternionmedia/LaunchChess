@@ -7,8 +7,14 @@ from authlib.integrations.starlette_client import OAuth
 from db import users
 from requests import get
 from tinydb import Query
+from pydantic import BaseModel
 
-def getLiProfile(token):
+class Token(BaseModel):
+    token_type: str
+    access_token: str
+
+
+def getLiProfile(token: Token):
     return get(config.LICHESS_API_URL + '/account', headers={
         'Authorization': token['token_type'] + ' ' + token['access_token']
     }).json()
