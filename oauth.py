@@ -46,7 +46,7 @@ async def authorize(request: Request):
 
 @app.route('/logout')
 async def logout(request: Request):
-    del request.session['user']
+    users.remove(Query().username == request.session['user'])
     return RedirectResponse('/')
 
 @app.get('/token')
