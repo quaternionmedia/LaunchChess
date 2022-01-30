@@ -55,13 +55,13 @@ async def logout(request: Request):
         request.session['user'] = None
     return '/'
 
-@app.get('/token')
+@app.get('/token', response_model = Token)
 async def getToken(request: Request):
     username = request.session.get('user')
     if username:
         user = users.get(Query().username == username)
         if user:
-            return Token(**user['token'])
+            return user['token']
 
 @app.get('/profile')
 def getProfile(request: Request):
