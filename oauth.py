@@ -44,10 +44,11 @@ async def authorize(request: Request):
     users.upsert({'token': token , 'profile': r, 'username': username}, Query().username == username)
     return RedirectResponse('/')
 
-@app.route('/logout')
+@app.get('/logout', response_class=RedirectResponse)
 async def logout(request: Request):
     users.remove(Query().username == request.session['user'])
-    return RedirectResponse('/')
+    request.session['user'] = None
+    return '/'
 
 @app.get('/token')
 def getToken(request: Request):
