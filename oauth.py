@@ -7,6 +7,7 @@ from authlib.integrations.starlette_client import OAuth
 from db import users
 from requests import get
 from tinydb import Query
+from secrets import token_urlsafe
 
 def getLiProfile(token):
     return get(config.LICHESS_API_URL + '/account', headers={
@@ -40,26 +41,32 @@ async def authorize(request: Request):
     print(token)
     r = getLiProfile(token)
     username = r['username']
-    request.session['user'] = username
-    users.upsert({'token': token , 'profile': r, 'username': username}, Query().username == username)
+    mcguffin = token_urlsafe()
+    request.session['mcguffin'] = mcguffin
+    users.upsert({
+        'token': token,
+        'profile': r,
+        'username': username,
+        'mcguffin': mcguffin
+        }, Query().username == username)
     return RedirectResponse('/')
 
 @app.route('/logout')
 async def logout(request: Request):
-    del request.session['user']
+    del request.session['mcguffin']
     return RedirectResponse('/')
 
 @app.get('/token')
 def getToken(request: Request):
-    user = request.session.get('user')
-    if user:
-        return users.get(Query().username == user)['token']
+    mcguffin = request.session.get('mcguffin')
+    if mcguffin:
+        return users.get(Query().mcguffin == mcguffin)['token']
 
 @app.get('/profile')
 def getProfile(request: Request):
-    user = request.session.get('user')
-    if user:
-        q = Query().username == user
+    mcguffin = request.session.get('mcguffin')
+    if mcguffin:
+        q = Query().mcguffin == mcguffin
         u = users.get(q)
         print('got user', u)
         r = getLiProfile(u['token'])
