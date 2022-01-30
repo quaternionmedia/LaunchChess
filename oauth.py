@@ -51,9 +51,12 @@ async def logout(request: Request):
 
 @app.get('/token')
 def getToken(request: Request):
-    user = request.session.get('user')
-    if user:
-        return users.get(Query().username == user)['token']
+    username = request.session.get('user')
+    if username:
+        user = users.get(Query().username == username)
+        if user:
+            return user['token']
+            
 
 @app.get('/profile')
 def getProfile(request: Request):
