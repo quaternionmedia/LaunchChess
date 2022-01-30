@@ -47,7 +47,7 @@ async def authorize(request: Request):
     users.upsert({'token': token , 'profile': r, 'username': username}, Query().username == username)
     return RedirectResponse('/')
 
-@app.get('/logout', response_class=RedirectResponse)
+@app.get('/logout', response_class = RedirectResponse)
 async def logout(request: Request):
     users.remove(Query().username == request.session['user'])
     request.session['user'] = None
@@ -60,7 +60,6 @@ def getToken(request: Request):
         user = users.get(Query().username == username)
         if user:
             return user['token']
-            
 
 @app.get('/profile')
 def getProfile(request: Request):
