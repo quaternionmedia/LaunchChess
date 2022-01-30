@@ -54,7 +54,7 @@ async def logout(request: Request):
     return '/'
 
 @app.get('/token')
-def getToken(request: Request):
+async def getToken(request: Request):
     username = request.session.get('user')
     if username:
         user = users.get(Query().username == username)
