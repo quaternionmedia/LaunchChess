@@ -25,20 +25,17 @@ app.add_middleware(SessionMiddleware, secret_key=config.SESSION_SECRET, https_on
 
 oauth = OAuth()
 oauth.register('lichess',
-    client_id=config.LICHESS_CLIENT_ID,
-    client_secret=config.LICHESS_CLIENT_SECRET,
     authorize_url=config.LICHESS_AUTHORIZE_URL,
-    access_token_url=config.LICHESS_TOKEN_URL,
-    api_base_url=config.LICHESS_API_URL,
+    access_token_url=config.LICHESS_ACCESS_TOKEN_URL,
     client_kwargs={
-        'scope': 'board:play'
+        'code_challenge_method': 'S256'
     }
 )
 
 @app.route('/')
 async def login(request: Request):
     redirect_uri = request.url_for('authorize')
-    return await oauth.lichess.authorize_redirect(request, redirect_uri)
+    return await oauth.lichess.authorize_redirect(request, redirect_uri, scope='board:play')
 
 @app.route('/authorize')
 async def authorize(request: Request):
