@@ -42,6 +42,14 @@ a {
 .gamethumb:hover {
   background-color: #aaa;
 }
+.selector {
+  display: grid;
+  grid-template-columns: repeat(8,1fr);
+  grid-template-rows: repeat(8,1fr);
+  border: burlywood;
+  border-style: groove;
+  width: fit-content;
+}
 .profile {
   padding-bottom: 1em;
 }
