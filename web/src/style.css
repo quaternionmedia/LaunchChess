@@ -38,6 +38,8 @@ a {
   border-style: outset;
   margin: 4px;
   padding: 4px;
+  width: 100%;
+  min-width: -webkit-fill-available;
 }
 .gamethumb:hover {
   background-color: #aaa;
