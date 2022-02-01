@@ -50,6 +50,9 @@ a {
   border-style: groove;
   width: fit-content;
 }
+.myturn {
+  background: #777;
+}
 .profile {
   padding-bottom: 1em;
 }

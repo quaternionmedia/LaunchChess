@@ -35,7 +35,7 @@ export const getGames = (state, actions) => ({
 })
 
 
-export const GameThumb = (state, game) => m('.gamethumb', {}, [
+export const GameThumb = (state, game) => m(game.isMyTurn ? '.gamethumb.myturn': '.gamethumb', {}, [
       game.opponent.username,
       m(Board, {
         class: 'thumb',
