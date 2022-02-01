@@ -40,9 +40,12 @@ a {
   padding: 4px;
   width: 100%;
   min-width: -webkit-fill-available;
+  overflow: hidden;
 }
 .gamethumb:hover {
   background-color: #aaa;
+  overflow: visible;
+  color: white;
 }
 .selector {
   display: grid;
