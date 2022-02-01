@@ -33,13 +33,13 @@ a {
   top: 0px;
   bottom: 0px;
 }
-.gamecontainer {
+.gamethumb {
   border: wheat;
   border-style: outset;
   width: fit-content;
   padding: 1em;
 }
-.gamecontainer:hover {
+.gamethumb:hover {
   background-color: #aaa;
 }
 .profile {

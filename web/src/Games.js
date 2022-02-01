@@ -34,6 +34,26 @@ export const getGames = (state, actions) => ({
   }
 })
 
+
+export const GameThumb = (state, game) => m('.gamethumb', {}, [
+      game.opponent.username,
+      m(Board, {
+        class: 'thumb',
+        config: {
+          fen: game.fen,
+          viewOnly: true,
+          orientation: game.color,
+          lastMove: [game.lastMove.slice(0,2), game.lastMove.slice(2)],
+          },
+        onclick: e => {
+          console.log('game clicked', game)
+          state.game = game
+          m.route.set('/online', {id: game.gameId})
+        },
+    })
+  ])
+
+
 export const Games = (state, actions) => ({
   oninit: vnode => {
     if (!User.username) {
@@ -48,25 +68,11 @@ export const Games = (state, actions) => ({
     m('i.material-icons', {onclick: actions.getGames}, 'refresh'),
     m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, m('i', {}, 'create game on lichess')),
   ]),
-  state.games().map(g => {
-    return m('.gamecontainer', {}, [
-      g.opponent.username,
-      m(Board, {
-        class: 'thumb',
-        config: {
-          fen: g.fen,
-          viewOnly: true,
-          orientation: g.color,
-          lastMove: [g.lastMove.slice(0,2), g.lastMove.slice(2)],
-          },
-        onclick: e => {
-          console.log('game clicked', g)
-          state.game = g
-          m.route.set('/online', {id: g.gameId})
-        },
-    })
-    ])
-  }),
+  m('.selector', {}, [
+    state.games().map(g => {
+      return GameThumb(state, g)
+    }),
+  ]),
   state.games().map(g => {
     return m('', {}, JSON.stringify(g))
   })
