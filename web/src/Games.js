@@ -8,6 +8,7 @@ import { Board } from './Board'
 import { Toolbar, OnlineToolbar } from './Toolbar'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 import { toDests, toColor, playOtherSide } from './utils'
+import { NOTE_ON, CONTROL_CHANGE } from './Launchpad'
 
 export const getGames = (state, actions) => ({
   getGames: () => {
@@ -65,7 +66,25 @@ export const Games = (state, actions) => ({
     if (!User.username) {
       m.route.set('/login')
     }
-    actions.getGames()
+    actions.getGames().then(e => {
+      console.log('got games', e)
+      actions.initMidi(m => {
+        console.log('connector got message', m)
+        let n = actions.launchToN(m.data[1])
+        let g = n - Math.floor(n/8)*8
+        if (g < state.games().length) {
+          console.log('selected game', g)
+        }
+      }, ()=>{}, ()=>{
+          state.games().map((g, i) => {
+            console.log('sending', g, i)
+            let note = g.isMyTurn ? NOTE_ON | 2 : NOTE_ON
+            state.output.send(note, [actions.nToLaunch((7-Math.floor(i/8))*8+i), g.color == 'white' ? 15 : 83])
+          })
+      })
+    })
+    actions.clearAnimations()
+    actions.clear()
     
   },
   view: vnode => [
@@ -79,9 +98,6 @@ export const Games = (state, actions) => ({
       return GameThumb(state, g)
     }),
   ]),
-  state.games().map(g => {
-    return m('', {}, JSON.stringify(g))
-  })
 ]})
 
 let config = {
