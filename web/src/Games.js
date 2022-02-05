@@ -11,16 +11,20 @@ import { toDests, toColor, playOtherSide } from './utils'
 
 export const getGames = (state, actions) => ({
   getGames: () => {
-    auth(LICHESS_API_URL + 'account/playing').then(res => res.nowPlaying).then(state.games).then( res =>{
-      console.log('currently playing games', res)
-      if (res.length == 1) {
-        console.log('one active game. loading now!')
-        state.game = res[0]
-        m.route.set('/online', {id: state.game.gameId})
-      } else if (res.length == 0) {
-        actions.streamGames()
-      }
+    let promise = new Promise((resolve, reject) => {
+      auth(LICHESS_API_URL + 'account/playing').then(res => res.nowPlaying).then(state.games).then( res =>{
+        console.log('currently playing games', res)
+        if (res.length == 1) {
+          console.log('one active game. loading now!')
+          state.game = res[0]
+          m.route.set('/online', {id: state.game.gameId})
+        } else if (res.length == 0) {
+          actions.streamGames()
+        }
+        resolve()
+      })
     })
+    return promise
     
   },
   streamGames: () => {
@@ -50,8 +54,10 @@ export const GameThumb = (state, game) => m(game.isMyTurn ? '.gamethumb.myturn':
           state.game = game
           m.route.set('/online', {id: game.gameId})
         },
-    })
-  ])
+      }
+    ),
+  ]
+)
 
 
 export const Games = (state, actions) => ({
