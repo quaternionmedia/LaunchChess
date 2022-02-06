@@ -78,6 +78,9 @@ export const Launchpad = (state, actions) => ({
     for (var i = 0; i<64; i++) {
       state.output.send(NOTE_ON, [actions.nToLaunch(i), 0])
     }
+    state.top.forEach((b, i) => {
+      state.output.send(CONTROL_CHANGE, [b, 0])
+    })
   },
   grid: () => {
     for (let y=0; y<8; y++) {
