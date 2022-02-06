@@ -66,14 +66,16 @@ export const Games = (state, actions) => ({
     if (!User.username) {
       m.route.set('/login')
     }
+    state.invert = false
     actions.getGames().then(e => {
       console.log('got games', e)
-      actions.initMidi(m => {
-        console.log('connector got message', m)
-        let n = actions.launchToN(m.data[1])
+      actions.initMidi(message => {
+        console.log('connector got message', message)
+        let n = actions.launchToN(message.data[1])
         let g = n - Math.floor(n/8)*8
         if (g < state.games().length) {
           console.log('selected game', g)
+          m.route.set('/online', {id: state.games()[g].gameId})
         }
       }, ()=>{}, ()=>{
           state.games().map((g, i) => {
