@@ -1,6 +1,6 @@
 import m from 'mithril'
 import { Chess } from 'chess.js'
-import { NOTE_ON, CONTROL_CHANGE } from './Launchpad'
+import { NOTE_ON, CONTROL_CHANGE, COLORS } from './Launchpad'
 import { streamJson } from './ndjson'
 import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
@@ -11,7 +11,7 @@ import { toDests, toColor, playOtherSide, setBoard } from './utils'
 // let GREEN = [ 123, 23, 64, 22, 76, 87, 21, 122 ]
 // let RED = [121, 7, 106, 6, 120, 5]
 // let BLUE = [47, 46, 45, ]
-export const COLORS = [5, 121, 9, 11, 15, 1, 23, 37, 45, 49, 69]
+export const INFLUENCE_COLORS = [5, 121, 9, 11, 15, 1, 23, 37, 45, 49, 69]
 
 export const LaunchGame = (state, actions) => ({
   lightBoard: (animate=false) => {
@@ -28,11 +28,11 @@ export const LaunchGame = (state, actions) => ({
     state.output.send(CONTROL_CHANGE, [state.top[0], Math.min(state.history()+1, 3)])
     state.output.send(CONTROL_CHANGE, [state.top[1], Math.min(state.history(), 3)])
     state.output.send(CONTROL_CHANGE, [state.top[2], 67])
-    state.output.send(CONTROL_CHANGE, [state.top[4], state.invert ? 83 : 3])
-    state.output.send(CONTROL_CHANGE, [state.top[5], state.grid ? 3 : 1])
-    state.output.send(CONTROL_CHANGE, [state.top[6], state.pieces ? 53 : 82])
+    state.output.send(CONTROL_CHANGE, [state.top[4], state.invert ? COLORS.brown : 3])
+    state.output.send(CONTROL_CHANGE, [state.top[5], state.grid ? COLORS.white : COLORS.dim_white])
+    state.output.send(CONTROL_CHANGE, [state.top[6], state.pieces ? COLORS.q : 82])
     // state.output.send(CONTROL_CHANGE, [state.top[7], state.influence ? 5 : 7])
-    state.output.send(CONTROL_CHANGE, [state.top[state.top.length - 1], state.chess.turn() == 'w' ? 3 : 83])
+    state.output.send(CONTROL_CHANGE, [state.top[state.top.length - 1], state.chess.turn() == 'w' ? 3 : COLORS.brown])
   },
   togglePieces: (mode=null) => {
     state.pieces = mode ? mode : !state.pieces
@@ -59,7 +59,7 @@ export const LaunchGame = (state, actions) => ({
     console.log('heatmap', heatMap)
     let colorMap = heatMap.map((v, i) => {
       let c = Math.min(v+5, 9)
-      return COLORS[state.chess.turn() == state.color ? c : 10 - c]
+      return INFLUENCE_COLORS[state.chess.turn() == state.color ? c : 10 - c]
     })
     if (state.invert != (state.color == 'b')) {
       colorMap.reverse()
