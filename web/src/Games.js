@@ -87,6 +87,7 @@ export const Games = (state, actions) => ({
     })
     actions.clearAnimations()
     actions.clear()
+    state.output.send(NOTE_ON, [state.top[state.top.length - 1], COLORS['q']])
     
   },
   view: vnode => [
