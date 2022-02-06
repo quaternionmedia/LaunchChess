@@ -72,7 +72,7 @@ export const Games = (state, actions) => ({
       actions.initMidi(message => {
         console.log('connector got message', message)
         let n = actions.launchToN(message.data[1])
-        let g = n - Math.floor(n/8)*8
+        let g = n % 8 + (7- Math.floor(n/8))*8
         if (g < state.games().length) {
           console.log('selected game', g)
           m.route.set('/online', {id: state.games()[g].gameId})
