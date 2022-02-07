@@ -3,6 +3,7 @@ import WebMidi from 'webmidi'
 import { StatusIcon, ConnectToggle } from './Toolbar'
 import { Launchpads, NOVATION, HEADERS, NAMES } from './Launchpad'
 import { onlineActions } from './index'
+import { ColorSelector } from './Color'
 
 const equals = (a, b) =>
   a.length === b.length &&
@@ -206,5 +207,6 @@ export const ConnectionPage = (state, actions) => ({
     MidiOutputSelector(state, actions),
     // ConnectToggle(state, actions),
     // LaunchpadSelector(state, actions),
+    ColorSelector(state),
   ])
 })

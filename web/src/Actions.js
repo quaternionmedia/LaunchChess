@@ -1,6 +1,7 @@
 import m from 'mithril'
 let Stream = require("mithril/stream")
 import { Chess } from 'chess.js'
+import { COLORS } from './Launchpad'
 import { uci } from './ChessMaths'
 import { playOtherSide } from './utils'
 import { auth } from './User'
@@ -34,6 +35,7 @@ export const State = () => ({
   history: Stream(1),
   animationDuration: 400,
   animations: [],
+  colors: COLORS,
 })
 
 export const Actions = (state, actions) => ({
