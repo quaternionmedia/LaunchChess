@@ -2,7 +2,7 @@ import m from 'mithril'
 import './color.css'
 
 export const Color = color => m('input[type=color]', {
-  value: color
+  value: LAUNCHPAD_COLORS[color]
 }, )
 
 export const ColorSelector = state => m('.colors', {}, [

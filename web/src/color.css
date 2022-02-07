@@ -7,3 +7,12 @@
   grid-template-columns: repeat(8,1fr);
   grid-template-rows: repeat(auto-fill, minmax(0px, 1fr));
 }
+
+.colorchoice {
+  height: 10vw;
+  opacity: .8;
+}
+
+.colorchoice:hover {
+  opacity: 1;
+}
