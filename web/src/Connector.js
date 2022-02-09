@@ -81,7 +81,6 @@ export const Connector = (state, actions) => ({
       Object.assign(onlineActions, Launchpads[launchpad](state, actions))
       actions.connect(launchpad)
       actions.toggleLive(state.connected)
-      m.redraw()
     }
     m.redraw()
   },

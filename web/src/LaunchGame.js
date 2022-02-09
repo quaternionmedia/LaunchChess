@@ -212,7 +212,6 @@ export const LaunchGame = (state, actions) => ({
       setBoard(state.chess, state.ground)
 
       actions.lightBoard(true)
-      m.redraw()
     })
   },
   newGame: () => {
@@ -241,7 +240,6 @@ export const LaunchGame = (state, actions) => ({
 
     actions.lightBoard(true)
     playOtherSide(state.chess, state.ground)(orig, dest)
-    m.redraw()
   },
   afterInit: () => {
     actions.initMidi(actions.onInput, actions.onCC, () => {

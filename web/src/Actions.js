@@ -42,12 +42,12 @@ export const Actions = (state, actions) => ({
   incrementHistory: () => {
     state.history(state.history() + 1)
     actions.lightBoard()
-    m.redraw()
+    // m.redraw()
   },
   decrementHistory: () => {
     state.history(Math.max(0, state.history() - 1))
     actions.lightBoard()
-    m.redraw()
+    // m.redraw()
   },
 })
 
