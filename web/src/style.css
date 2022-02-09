@@ -1,15 +1,38 @@
-body {
-  background: #222;
+.dark {
+  background-color: #222;
   color: #ddd;
 }
 
-a {
+.dark h1, .dark h2, .dark h3 {
+  color: #fff;
+}
+
+
+.dark h4 {
+  color: #888;
+}
+.dark a {
+  color: #aac;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+.dark a:hover {
   color: white;
+}
+nav a {
+  color: black;
+}
+.dark nav a {
+  color: #ccc;
   text-decoration: none;
 
 }
+
 .layout {
-  margin: 1em auto;
+  display: grid;
 }
 
 .menu {
@@ -59,9 +82,6 @@ a {
 }
 .myturn {
   background: #777;
-}
-.profile {
-  padding-bottom: 1em;
 }
 section {
   padding: 1em;
@@ -118,12 +138,16 @@ i:active {
   width: 1em;
 }
 .profile {
+  padding-bottom: 1em;
   display: grid;
-  background: #444;
   margin: 1em;
   padding: 1em;
   border-radius: 1em;
   overflow: auto;
+  background: #88888833
+}
+.dark .profile {
+  background: #444;
 }
 .toolbar {
   margin-bottom: 1em;

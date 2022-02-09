@@ -2,6 +2,7 @@ import m from 'mithril'
 import { Layout } from './Menu'
 import { LaunchGame } from './LaunchGame'
 import { Login } from './Login'
+import 'construct-ui/lib/index.css'
 import './style.css'
 import { User } from './User'
 import { GamePage, GamePageOnline, Games, getGames } from './Games'
@@ -32,7 +33,7 @@ console.log(state, actions)
 
 m.mount(document.body, Layout(state))
 let main = document.getElementById('main')
-
+document.body.className += state.theme
 m.route(main, '/', {
   '/': Home(state, actions),
   '/connect': ConnectionPage(state, actions),

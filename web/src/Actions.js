@@ -9,6 +9,7 @@ import { auth } from './User'
 export const range = (start, end) => Array.apply(0, Array(end - 1)).map((element, index) => index + start)
 
 export const State = () => ({
+  theme: 'dark',
   input: null, 
   output: null,
   inputName: null,

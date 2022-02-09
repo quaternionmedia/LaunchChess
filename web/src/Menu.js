@@ -2,6 +2,7 @@ import m from 'mithril'
 import { User } from './User'
 import { StatusIcon } from './Toolbar'
 import { message } from 'alertifyjs'
+import { Switch } from 'construct-ui'
 
 export const Link = () => ({
   view: (vnode) => {
@@ -15,6 +16,18 @@ export const Links = state => [
   m(Link, {href:'/connect', id: 'connectButton'}, StatusIcon(state)),
   m(Link, {href:'/otb', id: 'otbButton'}, 'Local'),
   m(Link, {href:'/games', id: 'gamesButton'}, 'Online'),
+  m(Switch, {
+    checked: state.theme,
+    onclick: e => {
+      console.log('switched', e)
+      if (state.theme) {
+        document.body.className = document.body.className.replace('dark', '')
+        state.theme = null
+      } else {
+        state.theme = 'dark'
+        document.body.className += state.theme
+      }
+    }}),
   // ,
   User.username ? m(Link, {href: '/profile'}, User.username) : m(Link, {
       href:'/login',
