@@ -155,7 +155,7 @@ i:active {
   grid-column-start: 1;
 }
 .inline {
-  display: inline;
+  display: inline-grid;
 }
 .tool {  
   margin-right: 1em;

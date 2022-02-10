@@ -74,27 +74,27 @@ export const Launchpad = (state, actions) => ({
     } else {
       state.connected = !state.connected
     }
-    state.output.sendSysex(NOVATION, [...state.header, state.changeLayout, state.connected ? state.layout[1] : state.layout[0]])
+    actions.sendSysex(NOVATION, [...state.header, state.changeLayout, state.connected ? state.layout[1] : state.layout[0]])
   },
   clear: () => {
     for (var i = 0; i<64; i++) {
-      state.output.send(NOTE_ON, [actions.nToLaunch(i), 0])
+      actions.send(NOTE_ON, [actions.nToLaunch(i), 0])
     }
     state.top.forEach((b, i) => {
-      state.output.send(CONTROL_CHANGE, [b, 0])
+      actions.send(CONTROL_CHANGE, [b, 0])
     })
   },
   grid: () => {
     for (let y=0; y<8; y++) {
       for (let x=0; x<8; x++) {
-        state.output.send(NOTE_ON, [11+x+y*10, (x+y) % 2 == 0 ? 0 : 1])
+        actions.send(NOTE_ON, [11+x+y*10, (x+y) % 2 == 0 ? 0 : 1])
       }
     }
   },
   lightMatrix: m => {
     for (let y=0; y<8; y++) {
       for (let x=0; x<8; x++) {
-        state.output.send(NOTE_ON, [11+x+y*10, m[x+y*8]])
+        actions.send(NOTE_ON, [11+x+y*10, m[x+y*8]])
       }
     }
   },
@@ -121,7 +121,7 @@ export const Launchpad = (state, actions) => ({
 
       // console.log(NOTE_ON, l, c)
 
-      state.output.send(NOTE_ON, [l, color])
+      actions.send(NOTE_ON, [l, color])
     }
     let history = state.chess.history()
       for (let i=0; i<Math.min(history.length, state.history()); i++) {
@@ -155,9 +155,9 @@ export const Launchpad = (state, actions) => ({
     // console.log('animating path', path, step)
     let current = path.splice(step, 1)[0]
     path.forEach((square, i) => {
-      state.output.send(NOTE_ON | 2, [actions.nToLaunch(square.y*8 + square.x), COLORS.moved])
+      actions.send(NOTE_ON | 2, [actions.nToLaunch(square.y*8 + square.x), COLORS.moved])
     })
-    state.output.send(NOTE_ON | 2, [actions.nToLaunch(current.y*8 + current.x), color])
+    actions.send(NOTE_ON | 2, [actions.nToLaunch(current.y*8 + current.x), color])
     path.splice(step, 0, current)
     // console.log('path', path.length)
     state.animations.push(setTimeout(actions.animatePath, state.animationDuration, path, color, (step + 1) % path.length))
@@ -170,17 +170,17 @@ export const Launchpad = (state, actions) => ({
   highlightCheck: () => {
     let k = getPieceLocations(state.chess, {type:'k', color: state.chess.turn() })[0]
     console.log('check!', k)
-    state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(k)), COLORS.check])
+    actions.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(k)), COLORS.check])
   },
   highlightCheckmate: () => {
     let k = getPieceLocations(state.chess, {type:'k', color: state.chess.turn() })[0]
     console.log('mate!', k)
-    state.output.send(NOTE_ON, [actions.nToLaunch(actions.squareToN(k)), COLORS.check])
+    actions.send(NOTE_ON, [actions.nToLaunch(actions.squareToN(k)), COLORS.check])
   },
   highlightAvailableMoves: square => {
     let s = actions.nToLaunch(actions.squareToN(square))
     console.log('highlighting', square, s, actions.squareToN(square))
-    state.output.send(NOTE_ON | 1, [s, COLORS.movable])
+    actions.send(NOTE_ON | 1, [s, COLORS.movable])
     let piece_moves = state.chess.moves({square: square, verbose:true})
     console.log('possible moves', piece_moves)
     piece_moves.forEach((p, i) => {
@@ -188,10 +188,10 @@ export const Launchpad = (state, actions) => ({
       if (state.chess.get(p.to)) {
         // piece at square. flash green
         // console.log('capture', actions.nToLaunch(actions.squareToN(p.to)))
-        state.output.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(p.to)), COLORS.movable])
+        actions.send(NOTE_ON | 1, [actions.nToLaunch(actions.squareToN(p.to)), COLORS.movable])
       } else {
         // console.log('regular move', p.to, actions.squareToN(p.to), actions.nToLaunch(actions.squareToN(p.to)))
-        state.output.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(p.to)), COLORS.movable])
+        actions.send(NOTE_ON | 2, [actions.nToLaunch(actions.squareToN(p.to)), COLORS.movable])
       }
     })
   }
@@ -253,12 +253,12 @@ export const Launchpad1 = (state, actions) => ({
     } else {
       state.connected = !state.connected
     }
-    state.output.send(CONTROL_CHANGE, [0, state.connected ? 1 : 2])
+    actions.send(CONTROL_CHANGE, [0, state.connected ? 1 : 2])
   },
   lightMatrix: (m) => {
     for (let y=0; y<8; y++) {
       for (let x=0; x<8; x++) {
-        state.output.send(NOTE_ON, [actions.nToLaunch(x+y*8), m[x+y*8]])
+        actions.send(NOTE_ON, [actions.nToLaunch(x+y*8), m[x+y*8]])
       }
     }
   }

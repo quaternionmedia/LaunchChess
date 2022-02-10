@@ -81,13 +81,13 @@ export const Games = (state, actions) => ({
           state.games().map((g, i) => {
             console.log('sending', g, i)
             let note = g.isMyTurn ? NOTE_ON | 2 : NOTE_ON
-            state.output.send(note, [actions.nToLaunch((7-Math.floor(i/8))*8+i), g.color == 'white' ? 15 : 83])
+            actions.send(note, [actions.nToLaunch((7-Math.floor(i/8))*8+i), g.color == 'white' ? 15 : 83])
           })
       })
     })
     actions.clearAnimations()
     actions.clear()
-    state.output.send(NOTE_ON, [state.top[state.top.length - 1], COLORS['q']])
+    actions.send(NOTE_ON, [state.top[state.top.length - 1], COLORS['q']])
     
   },
   view: vnode => [
