@@ -94,7 +94,10 @@ export const Games = (state, actions) => ({
     
   m('.toolbar', {}, [
     m('i.material-icons', {onclick: actions.getGames}, 'refresh'),
-    m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, m('i', {}, 'create game on lichess')),
+    m('a.inline', {href:'https://lichess.org/setup/ai', target:"_blank"}, 
+      m('i.material-icons', {
+        title: 'create new game on Lichess.com',
+      }, m('img.svgicon', {src: state.theme == 'dark' ? 'static/lichess-logo-white.svg' : 'static/lichess-logo.svg'}))),
   ]),
   m('.selector', {}, [
     state.games().map(g => {
