@@ -42,10 +42,11 @@ nav a {
   padding: .5em 1em;
   background: #8883;
 } 
-
+.board {
+  padding-bottom: 100%;
+}
 .gamePage .board {
   height: 0;
-  padding-bottom: 100%;
   grid-column-start: 1;
   grid-column-end: 9;
   grid-row-start: 2;
@@ -101,9 +102,6 @@ section {
 .fullscreen {
   height: 75vh;
   max-width: 75vh;
-}
-.thumb {
-  height: 8em;
 }
 .status {
   display: inline-flex;
@@ -172,7 +170,6 @@ i:active {
   border-left: thick solid #393939;
 }
 .turn {
-  
   padding: .5rem;
   min-width: 2em;
   min-height: 2em;
