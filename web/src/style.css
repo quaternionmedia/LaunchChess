@@ -72,9 +72,18 @@ nav a {
   overflow: hidden;
 }
 .gamethumb:hover {
-  background-color: #aaa;
+  background: #fff;
   overflow: visible;
+}
+.dark .gamethumb:hover {
   color: white;
+  background: ##fffdea;
+}
+.myturn {
+  background: #e5e0b6;
+}
+.dark .myturn {
+  background: #777;
 }
 .selector {
   display: grid;
@@ -85,9 +94,6 @@ nav a {
   border: burlywood;
   border-style: groove;
   width: fit-content;
-}
-.myturn {
-  background: #777;
 }
 section {
   padding: 1em;
