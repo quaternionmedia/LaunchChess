@@ -185,6 +185,6 @@ i:active {
   grid-template-columns: repeat(9,1fr);
   grid-template-rows: repeat(10,1fr);
 }
-.hidepieces {
+.svgicon {
   width: 1.5rem;
 }

@@ -61,7 +61,7 @@ export const GridToggle = (state, actions) => m('i.material-icons', {
 export const PiecesToggle = (state, actions) => m('i.material-icons', {
   title: state.pieces ? 'hide pieces' : 'show pieces',
   onclick: e => actions.togglePieces(),
-}, m('img.hidepieces', {src: 'static/Chess_tile_ql.svg'}))
+}, m('img.svgicon', {src: 'static/Chess_tile_ql.svg'}))
 
 export const HistoryIncrement = (state, actions) => m('i.material-icons', {
   title: 'increace history',
