@@ -33,14 +33,32 @@ a {
   top: 0px;
   bottom: 0px;
 }
-.gamecontainer {
+.gamethumb {
   border: wheat;
   border-style: outset;
-  width: fit-content;
-  padding: 1em;
+  margin: 4px;
+  padding: 4px;
+  width: 100%;
+  min-width: -webkit-fill-available;
+  overflow: hidden;
 }
-.gamecontainer:hover {
+.gamethumb:hover {
   background-color: #aaa;
+  overflow: visible;
+  color: white;
+}
+.selector {
+  display: grid;
+  grid-template-columns: repeat(8,1fr);
+  grid-template-rows: repeat(auto-fill, minmax(0px, 1fr));
+  grid-column-gap: 10px;
+  grid-row-gap: 10px;
+  border: burlywood;
+  border-style: groove;
+  width: fit-content;
+}
+.myturn {
+  background: #777;
 }
 .profile {
   padding-bottom: 1em;

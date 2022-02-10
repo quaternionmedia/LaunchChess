@@ -8,19 +8,24 @@ import { Board } from './Board'
 import { Toolbar, OnlineToolbar } from './Toolbar'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 import { toDests, toColor, playOtherSide } from './utils'
+import { NOTE_ON, CONTROL_CHANGE } from './Launchpad'
 
 export const getGames = (state, actions) => ({
   getGames: () => {
-    auth(LICHESS_API_URL + 'account/playing').then(res => res.nowPlaying).then(state.games).then( res =>{
-      console.log('currently playing games', res)
-      if (res.length == 1) {
-        console.log('one active game. loading now!')
-        state.game = res[0]
-        m.route.set('/online', {id: state.game.gameId})
-      } else if (res.length == 0) {
-        actions.streamGames()
-      }
+    let promise = new Promise((resolve, reject) => {
+      auth(LICHESS_API_URL + 'account/playing').then(res => res.nowPlaying).then(state.games).then( res =>{
+        console.log('currently playing games', res)
+        if (res.length == 1) {
+          console.log('one active game. loading now!')
+          state.game = res[0]
+          m.route.set('/online', {id: state.game.gameId})
+        } else if (res.length == 0) {
+          actions.streamGames()
+        }
+        resolve()
+      })
     })
+    return promise
     
   },
   streamGames: () => {
@@ -34,12 +39,54 @@ export const getGames = (state, actions) => ({
   }
 })
 
+
+export const GameThumb = (state, game) => m(game.isMyTurn ? '.gamethumb.myturn': '.gamethumb', {}, [
+      game.opponent.username,
+      m(Board, {
+        class: 'thumb',
+        config: {
+          fen: game.fen,
+          viewOnly: true,
+          orientation: game.color,
+          lastMove: [game.lastMove.slice(0,2), game.lastMove.slice(2)],
+          },
+        onclick: e => {
+          console.log('game clicked', game)
+          state.game = game
+          m.route.set('/online', {id: game.gameId})
+        },
+      }
+    ),
+  ]
+)
+
+
 export const Games = (state, actions) => ({
   oninit: vnode => {
     if (!User.username) {
       m.route.set('/login')
     }
-    actions.getGames()
+    state.invert = false
+    actions.getGames().then(e => {
+      console.log('got games', e)
+      actions.initMidi(message => {
+        console.log('connector got message', message)
+        let n = actions.launchToN(message.data[1])
+        let g = n % 8 + (7- Math.floor(n/8))*8
+        if (g < state.games().length) {
+          console.log('selected game', g)
+          m.route.set('/online', {id: state.games()[g].gameId})
+        }
+      }, ()=>{}, ()=>{
+          state.games().map((g, i) => {
+            console.log('sending', g, i)
+            let note = g.isMyTurn ? NOTE_ON | 2 : NOTE_ON
+            state.output.send(note, [actions.nToLaunch((7-Math.floor(i/8))*8+i), g.color == 'white' ? 15 : 83])
+          })
+      })
+    })
+    actions.clearAnimations()
+    actions.clear()
     
   },
   view: vnode => [
@@ -48,28 +95,11 @@ export const Games = (state, actions) => ({
     m('i.material-icons', {onclick: actions.getGames}, 'refresh'),
     m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, m('i', {}, 'create game on lichess')),
   ]),
-  state.games().map(g => {
-    return m('.gamecontainer', {}, [
-      g.opponent.username,
-      m(Board, {
-        class: 'thumb',
-        config: {
-          fen: g.fen,
-          viewOnly: true,
-          orientation: g.color,
-          lastMove: [g.lastMove.slice(0,2), g.lastMove.slice(2)],
-          },
-        onclick: e => {
-          console.log('game clicked', g)
-          state.game = g
-          m.route.set('/online', {id: g.gameId})
-        },
-    })
-    ])
-  }),
-  state.games().map(g => {
-    return m('', {}, JSON.stringify(g))
-  })
+  m('.selector', {}, [
+    state.games().map(g => {
+      return GameThumb(state, g)
+    }),
+  ]),
 ]})
 
 let config = {

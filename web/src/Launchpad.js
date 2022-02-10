@@ -74,6 +74,11 @@ export const Launchpad = (state, actions) => ({
     }
     state.output.sendSysex(NOVATION, [...state.header, state.changeLayout, state.connected ? state.layout[1] : state.layout[0]])
   },
+  clear: () => {
+    for (var i = 0; i<64; i++) {
+      state.output.send(NOTE_ON, [actions.nToLaunch(i), 0])
+    }
+  },
   grid: () => {
     for (let y=0; y<8; y++) {
       for (let x=0; x<8; x++) {
