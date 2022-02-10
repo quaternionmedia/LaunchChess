@@ -43,7 +43,7 @@ nav a {
   background: #8883;
 } 
 
-.board {
+.gamePage .board {
   height: 0;
   padding-bottom: 100%;
   grid-column-start: 1;
