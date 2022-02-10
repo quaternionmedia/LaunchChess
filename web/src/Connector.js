@@ -1,5 +1,5 @@
 import m from 'mithril'
-import WebMidi from 'webmidi'
+import { WebMidi} from 'webmidi'
 import { StatusIcon, ConnectToggle } from './Toolbar'
 import { Launchpads, NOVATION, HEADERS, NAMES } from './Launchpad'
 import { onlineActions } from './index'
@@ -87,10 +87,9 @@ export const Connector = (state, actions) => ({
   initConnector: () => {
     try {
       WebMidi.enable(function (err) {
-        console.log(WebMidi.inputs)
-        console.log(WebMidi.outputs)
-        // actions.reloadInputs()
-        console.log('inputs', state.inputs())
+        console.debug(WebMidi.inputs)
+        console.debug(WebMidi.outputs)
+        actions.reloadInputs()
         
         WebMidi.addListener('connected', e => {
           console.log('device connected')
