@@ -153,6 +153,8 @@ i:active {
   grid-template-columns: repeat(9,1fr);
   grid-column-end: 10;
   grid-column-start: 1;
+  align-items: center;
+  justify-items: center;
 }
 .inline {
   display: inline-grid;
