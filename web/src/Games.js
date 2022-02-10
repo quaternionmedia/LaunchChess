@@ -63,7 +63,7 @@ export const GameThumb = (state, game) => m(game.isMyTurn ? '.gamethumb.myturn':
 
 export const Games = (state, actions) => ({
   oninit: vnode => {
-    if (!User.username) {
+    if (!User.loggedIn) {
       m.route.set('/login')
     }
     state.invert = false
