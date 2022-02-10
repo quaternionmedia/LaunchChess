@@ -110,7 +110,7 @@ let config = {
   },
 }
 
-export const Game = (state, actions) => m('.board.fullscreen', {
+export const Game = (state, actions) => m('.board', {
     oninit: vnode => {
       console.log('game loading', vnode.attrs, state.chess.ascii())
       actions.afterInit()
@@ -152,10 +152,10 @@ export const Player = () => m('', {}, User.username)
 export const Opponent = state => m('', {}, state.game ? JSON.stringify(state.game.opponent) : '?' )
 
 export const GamePageOnline = (state, actions) => ({
-  view: vnode => [
+  view: vnode => m('.gamePage', {}, [
     OnlineToolbar(state, actions),
     state.invert != (toColor(state.chess) == 'w') ? Player() : Opponent(state),
     Game(state, actions),
     state.invert != (toColor(state.chess) == 'w') ? Opponent(state) : Player(),
-  ]
+  ])
 })

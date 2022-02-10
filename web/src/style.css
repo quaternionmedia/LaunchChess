@@ -44,7 +44,13 @@ nav a {
 } 
 
 .board {
-  height: 100%;
+  height: 0;
+  padding-bottom: 100%;
+  grid-column-start: 1;
+  grid-column-end: 9;
+  grid-row-start: 2;
+  grid-row-end: 9;
+
 }
 .cg-wrap coords.ranks {
   right: 0px;
@@ -116,12 +122,8 @@ i {
   border-style: solid;
   border-color: #393939;
   border-radius: 10px;
-  padding: 6px;
-  margin-right: .5em;
-  width: 1em;
-  height: 1em;
-  text-align: center;
-  font-style: normal;
+  padding: .5rem;
+  width: fit-content;
 }
 i:hover {
   background-color: #393939;
@@ -133,9 +135,6 @@ i:active {
   border-style: solid;
   border-color: #393939;
   border-radius: 10px;
-}
-.oneem {
-  width: 1em;
 }
 .profile {
   padding-bottom: 1em;
@@ -150,7 +149,10 @@ i:active {
   background: #444;
 }
 .toolbar {
-  margin-bottom: 1em;
+  display: grid;
+  grid-template-columns: repeat(9,1fr);
+  grid-column-end: 10;
+  grid-column-start: 1;
 }
 .inline {
   display: inline;
@@ -162,20 +164,10 @@ i:active {
   border-left: thick solid #393939;
 }
 .turn {
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-  size: 1em;
-  /* border-color: #888; */
-  /* border-style: solid; */
-  border-width: 0px;
-  border-radius: 4px;
-  padding: 6px;
-  margin-right: .5em;
+  
+  padding: .5rem;
   min-width: 2em;
   min-height: 2em;
-  position: absolute;
-  text-align: center;
 }
 .w {
   background-color: white;
@@ -184,4 +176,15 @@ i:active {
 .b {
   background-color: black;
   color: white;
+}
+.gamePage {
+  width: 100%;
+  max-width: min(82vw, 82vh);
+  height: 70vh;
+  display: grid;
+  grid-template-columns: repeat(9,1fr);
+  grid-template-rows: repeat(10,1fr);
+}
+.hidepieces {
+  width: 1.5rem;
 }

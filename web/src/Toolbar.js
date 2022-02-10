@@ -4,7 +4,7 @@ import '../node_modules/material-design-icons-iconfont/dist/material-design-icon
 
 export const StatusIcon = state => m('.status', {class: state.connected ? 'connected' : 'disconnected', title: state.connected ? 'connected' : 'disconnected'}, '')
 
-export const TurnIndicator = state => m('em.turn', {
+export const TurnIndicator = state => m('p.turn', {
   class: state.chess.turn(),
   title: state.chess.turn() == 'w' ? "white's turn" : "black's turn",
 }, state.chess.turn())
@@ -61,7 +61,7 @@ export const GridToggle = (state, actions) => m('i.material-icons', {
 export const PiecesToggle = (state, actions) => m('i.material-icons', {
   title: state.pieces ? 'hide pieces' : 'show pieces',
   onclick: e => actions.togglePieces(),
-}, m('img.oneem', {src: 'static/Chess_tile_ql.svg'}))
+}, m('img.hidepieces', {src: 'static/Chess_tile_ql.svg'}))
 
 export const HistoryIncrement = (state, actions) => m('i.material-icons', {
   title: 'increace history',
@@ -94,15 +94,12 @@ export const Tools = (state, actions) => [
   InfluenceToggle(state, actions),
   TurnIndicator(state),
 ]
-export const Toolbar = (state, actions) => m('.toolbar', {}, [
-  NewGame(state, actions),
+export const Toolbar = (state, actions) => m('span.toolbar', {}, [
   // StatusIcon(state),
   // ConnectToggle(state, actions),
-  m('.inline.tool', {title: 'history'}, state.history()),
   ...Tools(state, actions)
 ])
 
 export const OnlineToolbar = (state, actions) => m('.toolbar', {}, [
-  m('.inline.tool', {title: 'history'}, state.history()),
   ...Tools(state, actions)
 ])

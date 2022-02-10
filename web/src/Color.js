@@ -10,7 +10,6 @@ export const ColorSelector = state => m('.colors', {}, [
     m('p.type', {}, k),
     Color(state.colors[k]),
   ])),
-  ColorGrid(),
 ])
 
 export const LAUNCHPAD_COLORS = [
