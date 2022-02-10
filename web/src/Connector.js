@@ -126,11 +126,10 @@ export const Connector = (state, actions) => ({
       state.input.removeListener()
       state.input.addListener('noteon', "all", noteCallback)
       state.input.addListener('controlchange', "all", ccCallback)
-      
-      afterInit()      
     } else {
       console.log('error, not connected')
     }
+    afterInit()
   },
   detectDevice: (input, output) => {
     input.addListener('sysex', 'all', sysex => {
