@@ -72,16 +72,18 @@ export const Games = (state, actions) => ({
       actions.initMidi(message => {
         console.log('connector got message', message)
         let n = actions.launchToN(message.data[1])
-        let g = n - Math.floor(n/8)*8
+        let g = (n % 8) + (7 - Math.floor(n/8))*8
+        console.log('selected game', g)
         if (g < state.games().length) {
-          console.log('selected game', g)
           m.route.set('/online', {id: state.games()[g].gameId})
         }
       }, ()=>{}, ()=>{
           state.games().map((g, i) => {
-            console.log('sending', g, i)
             let note = g.isMyTurn ? NOTE_ON | 2 : NOTE_ON
-            actions.send(note, [actions.nToLaunch((7-Math.floor(i/8))*8+i), g.color == 'white' ? 15 : 83])
+            let n = (i % 8) + 8 * (7 - Math.floor(i/8))
+            let l = actions.nToLaunch(n)
+            console.log('sending', g, i, l)
+            actions.send(note, [l, g.color == 'white' ? 15 : 83])
           })
       })
     })
