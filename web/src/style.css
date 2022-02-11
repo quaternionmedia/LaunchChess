@@ -135,10 +135,15 @@ i:hover {
 i:active {
   animation: blinker .2s 1;
 }
-.button {
+.cui-button {
+  border-radius: 5px;
+}
+.dark .cui-button {
   border-style: solid;
   border-color: #393939;
-  border-radius: 10px;
+  background: linear-gradient(to bottom, #3c3934, #33312e 100%);
+  color: #aaa;
+  box-shadow: 0px 0px 3px 1px #d753bb;
 }
 .profile {
   padding-bottom: 1em;
