@@ -1,6 +1,7 @@
 import m from 'mithril'
 import { WebMidi} from 'webmidi'
 import { StatusIcon, ConnectToggle } from './Toolbar'
+import { Button } from 'construct-ui'
 import { Launchpads, NOVATION, HEADERS, NAMES } from './Launchpad'
 import { onlineActions } from './index'
 import { ColorSelector } from './Color'
@@ -183,11 +184,13 @@ export const LaunchpadSelector = (state, actions) => m('select', {
     }
   },
 }, Object.keys(HEADERS).map(h => m('option', {value: h}, h)))
-export const LaunchpadButton = (state, actions) => m('button.button.launchpad', {
+
+export const LaunchpadButton = (name, actions) => m(Button, {
+    label: name,
     onclick: e => {
-      actions.connect(state.name)
+      actions.connect(name)
     },
-}, state.name)
+  }, name)
 
 export const ConnectionPage = (state, actions) => ({
   view: vnode => m('.ConnectionPage', {}, [
@@ -195,7 +198,7 @@ export const ConnectionPage = (state, actions) => ({
     StatusIcon(state),
     state.inputs().length ? state.inputs().map(i => {
       if (i.name in NAMES) {
-        return LaunchpadButton({name: i.name}, actions)
+        return LaunchpadButton(i.name, actions)
       }
     }) : 'no Launchpads detected',
     m('h3', {}, 'Input'),
