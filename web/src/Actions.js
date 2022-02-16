@@ -43,21 +43,35 @@ export const Actions = (state, actions) => ({
   incrementHistory: () => {
     state.history(state.history() + 1)
     actions.lightBoard()
-    // m.redraw()
   },
   decrementHistory: () => {
     state.history(Math.max(0, state.history() - 1))
     actions.lightBoard()
-    // m.redraw()
   },
+  send: (type, message) => {
+    try {
+      state.output.send(type, message)
+    } catch (error) {
+      console.debug('failed to send message', error)
+    }
+  },
+  sendSysex: (header, message) => {
+    try {
+      state.output.sendSysex(header, message)
+    } catch (error) {
+      console.debug('failed to send sysex', error)
+    }
+  },
+  lightMatrix: () => null,
+  lightGame: () => null,
+  clearAnimations: () => null,
+  clear: () => null,
+  highlightAvailableMoves: () => null,
 })
 
 
 export const OnlineActions = (state, actions) => ({
   onmove: (orig, dest) => {
-    // actions.onmove(orig, dest)
-    
-    
     let move = {from: orig, to: dest}
     let piece = state.chess.get(move.from)
     if (piece.type == 'p' && ((piece.color == 'w' && move.to.charAt(1) == 8 ) || (piece.color == 'b' && move.to.charAt(1) == 1 ))) {

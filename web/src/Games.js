@@ -63,7 +63,7 @@ export const GameThumb = (state, game) => m(game.isMyTurn ? '.gamethumb.myturn':
 
 export const Games = (state, actions) => ({
   oninit: vnode => {
-    if (!User.username) {
+    if (!User.loggedIn) {
       m.route.set('/login')
     }
     state.invert = false
@@ -72,29 +72,34 @@ export const Games = (state, actions) => ({
       actions.initMidi(message => {
         console.log('connector got message', message)
         let n = actions.launchToN(message.data[1])
-        let g = n % 8 + (7- Math.floor(n/8))*8
+        let g = (n % 8) + (7 - Math.floor(n/8))*8
+        console.log('selected game', g)
         if (g < state.games().length) {
-          console.log('selected game', g)
           m.route.set('/online', {id: state.games()[g].gameId})
         }
       }, ()=>{}, ()=>{
           state.games().map((g, i) => {
-            console.log('sending', g, i)
             let note = g.isMyTurn ? NOTE_ON | 2 : NOTE_ON
-            state.output.send(note, [actions.nToLaunch((7-Math.floor(i/8))*8+i), g.color == 'white' ? 15 : 83])
+            let n = (i % 8) + 8 * (7 - Math.floor(i/8))
+            let l = actions.nToLaunch(n)
+            console.log('sending', g, i, l)
+            actions.send(note, [l, g.color == 'white' ? 15 : 83])
           })
       })
     })
     actions.clearAnimations()
     actions.clear()
-    state.output.send(NOTE_ON, [state.top[state.top.length - 1], COLORS['q']])
+    actions.send(NOTE_ON, [state.top[state.top.length - 1], COLORS['q']])
     
   },
   view: vnode => [
     
   m('.toolbar', {}, [
     m('i.material-icons', {onclick: actions.getGames}, 'refresh'),
-    m('a', {href:'https://lichess.org/setup/ai', target:"_blank"}, m('i', {}, 'create game on lichess')),
+    m('a.inline', {href:'https://lichess.org/setup/ai', target:"_blank"}, 
+      m('i.material-icons', {
+        title: 'create new game on Lichess.com',
+      }, m('img.svgicon', {src: state.theme == 'dark' ? 'static/lichess-logo-white.svg' : 'static/lichess-logo.svg'}))),
   ]),
   m('.selector', {}, [
     state.games().map(g => {
@@ -110,7 +115,7 @@ let config = {
   },
 }
 
-export const Game = (state, actions) => m('.board.fullscreen', {
+export const Game = (state, actions) => m('.board', {
     oninit: vnode => {
       console.log('game loading', vnode.attrs, state.chess.ascii())
       actions.afterInit()
@@ -152,10 +157,10 @@ export const Player = () => m('', {}, User.username)
 export const Opponent = state => m('', {}, state.game ? JSON.stringify(state.game.opponent) : '?' )
 
 export const GamePageOnline = (state, actions) => ({
-  view: vnode => [
+  view: vnode => m('.gamePage', {}, [
     OnlineToolbar(state, actions),
     state.invert != (toColor(state.chess) == 'w') ? Player() : Opponent(state),
     Game(state, actions),
     state.invert != (toColor(state.chess) == 'w') ? Opponent(state) : Player(),
-  ]
+  ])
 })

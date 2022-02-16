@@ -46,7 +46,7 @@ m.route(main, '/', {
 })
 
 // auto login
-if (!User.username) {
+if (!User.loggedIn) {
   m.request('/oauth/token').then(res => {
     if (res) {
       console.log('session continued', res)

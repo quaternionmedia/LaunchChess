@@ -25,14 +25,14 @@ export const LaunchGame = (state, actions) => ({
     } else {
       if (state.grid) actions.grid()
     }
-    state.output.send(CONTROL_CHANGE, [state.top[0], Math.min(state.history()+1, 3)])
-    state.output.send(CONTROL_CHANGE, [state.top[1], Math.min(state.history(), 3)])
-    state.output.send(CONTROL_CHANGE, [state.top[2], 67])
-    state.output.send(CONTROL_CHANGE, [state.top[4], state.invert ? COLORS.brown : 3])
-    state.output.send(CONTROL_CHANGE, [state.top[5], state.grid ? COLORS.white : COLORS.dim_white])
-    state.output.send(CONTROL_CHANGE, [state.top[6], state.pieces ? COLORS.q : 82])
-    // state.output.send(CONTROL_CHANGE, [state.top[7], state.influence ? 5 : 7])
-    state.output.send(CONTROL_CHANGE, [state.top[state.top.length - 1], state.chess.turn() == 'w' ? 3 : COLORS.brown])
+    actions.send(CONTROL_CHANGE, [state.top[0], Math.min(state.history()+1, 3)])
+    actions.send(CONTROL_CHANGE, [state.top[1], Math.min(state.history(), 3)])
+    actions.send(CONTROL_CHANGE, [state.top[2], 67])
+    actions.send(CONTROL_CHANGE, [state.top[4], state.invert ? COLORS.brown : 3])
+    actions.send(CONTROL_CHANGE, [state.top[5], state.grid ? COLORS.white : COLORS.dim_white])
+    actions.send(CONTROL_CHANGE, [state.top[6], state.pieces ? COLORS.q : 82])
+    // actions.send(CONTROL_CHANGE, [state.top[7], state.influence ? 5 : 7])
+    actions.send(CONTROL_CHANGE, [state.top[state.top.length - 1], state.chess.turn() == 'w' ? 3 : COLORS.brown])
   },
   togglePieces: (mode=null) => {
     state.pieces = mode ? mode : !state.pieces
