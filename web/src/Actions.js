@@ -30,7 +30,7 @@ export const State = () => ({
   color: 'w',
   selectedSquare: null,
   selectedPiece: null,
-  invert: false,
+  invert: Stream(false),
   grid: true,
   pieces: true,
   influence: false,

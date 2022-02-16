@@ -67,7 +67,7 @@ export const Games = (state, actions) => ({
     if (!User.loggedIn) {
       m.route.set('/login')
     }
-    state.invert = false
+    state.invert(false)
     actions.getGames().then(e => {
       console.log('got games', e)
       actions.initMidi(message => {
@@ -125,7 +125,7 @@ export const Game = (state, actions) => m('.board', {
       state.ground = Chessground(vnode.dom, {...config, ...vnode.attrs.config})
       state.ground.set({
         fen: state.chess.fen(),
-        orientation: state.invert ? 'black': 'white',
+        orientation: state.invert() ? 'black': 'white',
         movable: {
           dests: toDests(state.chess),
         },
@@ -160,8 +160,8 @@ export const Opponent = state => state.opponent ? m('.opponent', {}, JSON.string
 export const GamePageOnline = (state, actions) => ({
   view: vnode => m('.gamePage', {}, [
     OnlineToolbar(state, actions),
-    state.invert != (toColor(state.chess) == 'w') ? Player() : Opponent(state),
+      state.invert() != (state.color == 'b') ? Player() : Opponent(state),
     Game(state, actions),
-    state.invert != (toColor(state.chess) == 'w') ? Opponent(state) : Player(),
+      state.invert() != (state.color == 'b') ? Opponent(state) : Player(),
   ])
 })

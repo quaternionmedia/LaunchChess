@@ -28,7 +28,7 @@ export const LaunchGame = (state, actions) => ({
     actions.send(CONTROL_CHANGE, [state.top[0], Math.min(state.history()+1, 3)])
     actions.send(CONTROL_CHANGE, [state.top[1], Math.min(state.history(), 3)])
     actions.send(CONTROL_CHANGE, [state.top[2], 67])
-    actions.send(CONTROL_CHANGE, [state.top[4], state.invert ? COLORS.brown : 3])
+    actions.send(CONTROL_CHANGE, [state.top[4], state.invert() ? COLORS.brown : 3])
     actions.send(CONTROL_CHANGE, [state.top[5], state.grid ? COLORS.white : COLORS.dim_white])
     actions.send(CONTROL_CHANGE, [state.top[6], state.pieces ? COLORS.q : 82])
     // actions.send(CONTROL_CHANGE, [state.top[7], state.influence ? 5 : 7])
@@ -40,7 +40,7 @@ export const LaunchGame = (state, actions) => ({
     actions.lightBoard()
   },
   flipBoard: () => {
-    state.invert = !state.invert
+    state.invert(!state.invert())
     actions.lightBoard()
     // if (ground)
     state.ground.toggleOrientation()
@@ -61,7 +61,7 @@ export const LaunchGame = (state, actions) => ({
       let c = Math.min(v+5, 9)
       return INFLUENCE_COLORS[state.chess.turn() == state.color ? c : 10 - c]
     })
-    if (state.invert != (state.color == 'b')) {
+    if (state.invert() != (state.color == 'b')) {
       colorMap.reverse()
     }
     // reverse ranks
@@ -194,7 +194,7 @@ export const LaunchGame = (state, actions) => ({
         // m.redraw()
         console.log('loading game', v.state.moves)
         console.log('loaded?', state.chess.load_pgn(v.state.moves, {sloppy: true}))
-        if (v.black.id == User.profile.id && !state.invert) {
+        if (v.black.id == User.profile.id && !state.invert()) {
           // if playing black, and not already inverted, flip board
           actions.flipBoard()
           state.color = 'b'

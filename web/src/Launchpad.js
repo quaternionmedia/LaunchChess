@@ -46,7 +46,7 @@ export const Launchpad = (state, actions) => ({
 
   nToLaunch: n => {
     // 0-63 mapped to launchpad notes
-    if (state.invert) {
+    if (state.invert()) {
       n = 63 - n
     }
     return 11 + (n>>3)*10 + n%8
@@ -58,7 +58,7 @@ export const Launchpad = (state, actions) => ({
       return null
     }
     const n = Math.floor((l-11)/ 10)*8 + (l-11) % 10
-    return state.invert ? 63 - n : n
+    return state.invert() ? 63 - n : n
   },
   squareToN: sq => {
     return (Number(sq[1]) - 1)*8 + sq.charCodeAt(0) - 97
@@ -238,11 +238,11 @@ export const LaunchpadMk2 = (state, actions) => {
 export const Launchpad1 = (state, actions) => ({
   ...Launchpad(state, actions),
   nToLaunch: n => {
-    if (state.invert) return 8 - (n % 8) + (n >> 3)*16
+    if (state.invert()) return 8 - (n % 8) + (n >> 3)*16
     else return 112 + (n % 8) - (n >> 3)*16
   },
   launchToN: l => {
-    if (state.invert) return (Math.floor(l/16) )*8 + 7 - ( (l % 8) >> 3 )
+    if (state.invert()) return (Math.floor(l/16) )*8 + 7 - ( (l % 8) >> 3 )
     else return (7 - Math.floor(l/16) )*8 + ( (l % 8) >> 3 )
   },
   toggleLive: (mode) => {
