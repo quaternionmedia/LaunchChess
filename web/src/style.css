@@ -198,6 +198,11 @@ i:active {
   grid-template-columns: repeat(9,1fr);
   grid-template-rows: repeat(12,1fr);
 }
+.top_user {
+  grid-row-start: 2;
+}
+.bottom_user {
+  grid-row-start: 12;
 }
 .svgicon {
   width: 1.5rem;

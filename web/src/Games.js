@@ -160,8 +160,12 @@ export const Opponent = state => state.opponent ? m('.opponent', {}, JSON.string
 export const GamePageOnline = (state, actions) => ({
   view: vnode => m('.gamePage', {}, [
     OnlineToolbar(state, actions),
+    m('.top_user', {},
       state.invert() != (state.color == 'b') ? Player() : Opponent(state),
+    ),
     Game(state, actions),
+    m('.bottom_user', {},
       state.invert() != (state.color == 'b') ? Opponent(state) : Player(),
+    )
   ])
 })
