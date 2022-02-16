@@ -53,6 +53,7 @@ export const GameThumb = (state, game) => m(game.isMyTurn ? '.gamethumb.myturn':
         onclick: e => {
           console.log('game clicked', game)
           state.game = game
+          state.opponent = game.opponent
           m.route.set('/online', {id: game.gameId})
         },
       }
@@ -153,8 +154,8 @@ export const GamePage = (state, actions) => ({
     Game(state, actions),
 ])})
 
-export const Player = () => m('', {}, User.username)
-export const Opponent = state => m('', {}, state.game ? JSON.stringify(state.game.opponent) : '?' )
+export const Player = () => m('.me', {}, User.username)
+export const Opponent = state => state.opponent ? m('.opponent', {}, JSON.stringify(state.opponent)) : null )
 
 export const GamePageOnline = (state, actions) => ({
   view: vnode => m('.gamePage', {}, [

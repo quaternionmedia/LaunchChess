@@ -24,6 +24,7 @@ export const State = () => ({
   changeLayout: null,
   game: null,
   games: Stream([]),
+  opponent: null,
   chess: new Chess(),
   ground: null,
   color: 'w',

@@ -49,7 +49,7 @@ nav a {
   height: 0;
   grid-column-start: 1;
   grid-column-end: 9;
-  grid-row-start: 2;
+  grid-row-start: 3;
   grid-row-end: 9;
 
 }
@@ -196,7 +196,8 @@ i:active {
   height: 70vh;
   display: grid;
   grid-template-columns: repeat(9,1fr);
-  grid-template-rows: repeat(10,1fr);
+  grid-template-rows: repeat(12,1fr);
+}
 }
 .svgicon {
   width: 1.5rem;
