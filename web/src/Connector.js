@@ -5,6 +5,7 @@ import { Button } from 'construct-ui'
 import { Launchpads, NOVATION, HEADERS, NAMES } from './Launchpad'
 import { onlineActions } from './index'
 import { ColorSelector } from './Color'
+import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 
 const equals = (a, b) =>
   a.length === b.length &&
@@ -185,10 +186,14 @@ export const LaunchpadSelector = (state, actions) => m('select', {
   },
 }, Object.keys(HEADERS).map(h => m('option', {value: h}, h)))
 
-export const LaunchpadButton = (name, actions) => m(Button, {
+export const LaunchpadButton = (name, state, actions) => m(Button, {
     label: name,
     onclick: e => {
-      actions.connect(name)
+      if (state.connected) {
+        actions.disconnect()
+      } else {
+        actions.connect(name)
+      }
     },
   }, name)
 
@@ -198,7 +203,7 @@ export const ConnectionPage = (state, actions) => ({
     StatusIcon(state),
     state.inputs().length ? state.inputs().map(i => {
       if (i.name in NAMES) {
-        return LaunchpadButton(i.name, actions)
+        return LaunchpadButton(i.name, state, actions)
       }
     }) : 'no Launchpads detected',
     m('h3', {}, 'Input'),
