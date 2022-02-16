@@ -71,7 +71,6 @@ export const HistoryDecrement = (state, actions) => m('i.material-icons', {
   title: 'decreace history',
   onclick: e => {
     actions.decrementHistory()
-    m.redraw()
   }}, 'history_toggle_off')
     
 export const NewGame = (state, actions) => m('i', {

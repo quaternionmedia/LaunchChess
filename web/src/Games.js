@@ -8,7 +8,7 @@ import { Board } from './Board'
 import { Toolbar, OnlineToolbar } from './Toolbar'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 import { toDests, toColor, playOtherSide } from './utils'
-import { NOTE_ON, CONTROL_CHANGE } from './Launchpad'
+import { NOTE_ON, CONTROL_CHANGE, COLORS } from './Launchpad'
 
 export const getGames = (state, actions) => ({
   getGames: () => {
@@ -87,6 +87,7 @@ export const Games = (state, actions) => ({
     })
     actions.clearAnimations()
     actions.clear()
+    state.output.send(NOTE_ON, [state.top[state.top.length - 1], COLORS['q']])
     
   },
   view: vnode => [

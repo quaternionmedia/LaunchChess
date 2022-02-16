@@ -1,6 +1,7 @@
 import m from 'mithril'
 let Stream = require("mithril/stream")
 import { Chess } from 'chess.js'
+import { COLORS } from './Launchpad'
 import { uci } from './ChessMaths'
 import { playOtherSide } from './utils'
 import { auth } from './User'
@@ -8,6 +9,7 @@ import { auth } from './User'
 export const range = (start, end) => Array.apply(0, Array(end - 1)).map((element, index) => index + start)
 
 export const State = () => ({
+  theme: 'dark',
   input: null, 
   output: null,
   inputName: null,
@@ -34,18 +36,19 @@ export const State = () => ({
   history: Stream(1),
   animationDuration: 400,
   animations: [],
+  colors: COLORS,
 })
 
 export const Actions = (state, actions) => ({
   incrementHistory: () => {
     state.history(state.history() + 1)
     actions.lightBoard()
-    m.redraw()
+    // m.redraw()
   },
   decrementHistory: () => {
     state.history(Math.max(0, state.history() - 1))
     actions.lightBoard()
-    m.redraw()
+    // m.redraw()
   },
 })
 
