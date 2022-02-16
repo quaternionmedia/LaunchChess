@@ -94,7 +94,6 @@ export const OnlineActions = (state, actions) => ({
     })
   },
   afterInit: () => {
-    actions.afterInit()
     actions.streamGame()
   }
 })
