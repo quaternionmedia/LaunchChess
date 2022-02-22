@@ -198,6 +198,14 @@ export const LaunchpadButton = (name, state, actions) => m(Button, {
     },
   }, name)
 
+export const Disconnect = (state, actions) => m(Button, {
+  onclick: e => {
+    actions.disconnect()
+  },
+  iconLeft: 'zap-off',
+  label: 'disconnect',
+}, )
+
 export const ConnectionPage = (state, actions) => ({
   view: vnode => m('.ConnectionPage', {}, [
     m('h1', 'Connect your Launchpad'),
@@ -207,6 +215,7 @@ export const ConnectionPage = (state, actions) => ({
         return LaunchpadButton(i.name, state, actions)
       }
     }) : 'no Launchpads detected',
+    state.connected ? Disconnect(state, actions) : null,
     m('h3', {}, 'Input'),
     MidiInputSelector(state, actions),
     m('h3', {}, 'Output'),
