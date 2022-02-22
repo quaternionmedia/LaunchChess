@@ -188,7 +188,7 @@ export const LaunchpadSelector = (state, actions) => m('select', {
 
 export const LaunchpadButton = (name, state, actions) => m(Button, {
     label: name,
-    class: state.connected ? 'glow': '',
+    class: state.connected && state.inputName == name ? 'glow active': '',
     onclick: e => {
       if (state.connected) {
         actions.disconnect()
