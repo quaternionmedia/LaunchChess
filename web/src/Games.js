@@ -73,6 +73,8 @@ export const Games = (state, actions) => ({
       actions.initMidi(message => {
         console.log('connector got message', message)
         let n = actions.launchToN(message.data[1])
+        /* n is 0-63, but represented bottom to top.
+        We need to invert the row to make it read top to bottom, left to right. */
         let g = (n % 8) + (7 - Math.floor(n/8))*8
         console.log('selected game', g)
         if (g < state.games().length) {
@@ -81,6 +83,7 @@ export const Games = (state, actions) => ({
       }, ()=>{}, ()=>{
           state.games().map((g, i) => {
             let note = g.isMyTurn ? NOTE_ON | 2 : NOTE_ON
+            /* Invert the row to get buttons to go top to bottom. */
             let n = (i % 8) + 8 * (7 - Math.floor(i/8))
             let l = actions.nToLaunch(n)
             console.log('sending', g, i, l)

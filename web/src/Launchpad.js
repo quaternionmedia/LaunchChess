@@ -45,14 +45,18 @@ export const COLORS = {
 export const Launchpad = (state, actions) => ({
 
   nToLaunch: n => {
-    // 0-63 mapped to launchpad notes
+    /** Convert a 0-63 chess square into a Launchpad MIDI number
+    * @param {int} n - 0-63, chess square
+    */
     if (state.invert()) {
       n = 63 - n
     }
     return 11 + (n>>3)*10 + n%8
   },
   launchToN: l => {
-    // launchpad note mapped to 0-63
+    /** Convert a Launchpad MIDI number into 0-63 for chess squares.
+    * @param {int} l - Launchpad MIDI number
+    */
     if ((l - 11) % 10 == 8) {
       // fix for LaunchpadMk2 sending side buttons as NOTE_ON
       return null
@@ -238,10 +242,17 @@ export const LaunchpadMk2 = (state, actions) => {
 export const Launchpad1 = (state, actions) => ({
   ...Launchpad(state, actions),
   nToLaunch: n => {
+    /** Convert a 0-63 chess square into a Launchpad MIDI number
+    * @param {int} n - 0-63, chess square
+    */
     if (state.invert()) return 8 - (n % 8) + (n >> 3)*16
     else return 112 + (n % 8) - (n >> 3)*16
   },
   launchToN: l => {
+    /** Convert a Launchpad MIDI number into 0-63 for chess squares.
+    * The original Launchpad uses a different grid numbering system than mk2+ Launchpads
+    * @param {int} l - Launchpad MIDI number
+    */
     if (state.invert()) return (Math.floor(l/16) )*8 + 7 - ( (l % 8) >> 3 )
     else return (7 - Math.floor(l/16) )*8 + ( (l % 8) >> 3 )
   },
