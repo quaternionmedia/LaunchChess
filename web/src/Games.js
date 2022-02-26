@@ -93,6 +93,9 @@ export const Games = (state, actions) => {
     actions.send(NOTE_ON, [state.top[state.top.length - 1], COLORS['q']])
     
   },
+  onremove: vnode => {
+    state.input.removeListener(listener)
+  },
   view: vnode => [
     
   m('.toolbar', {}, [
