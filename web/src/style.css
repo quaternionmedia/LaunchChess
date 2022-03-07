@@ -49,7 +49,7 @@ nav a {
   height: 0;
   grid-column-start: 1;
   grid-column-end: 9;
-  grid-row-start: 2;
+  grid-row-start: 3;
   grid-row-end: 9;
 
 }
@@ -135,10 +135,18 @@ i:hover {
 i:active {
   animation: blinker .2s 1;
 }
-.button {
+.cui-button {
+  border-radius: 5px;
+  box-shadow: 0 1px 0 #777;
+}
+.dark .cui-button {
   border-style: solid;
   border-color: #393939;
-  border-radius: 10px;
+  background: linear-gradient(to bottom, #3c3934, #33312e 100%);
+  color: #aaa;
+}
+.glow {
+  box-shadow: 0px 0px 3px 1px #d753bb;
 }
 .profile {
   padding-bottom: 1em;
@@ -188,7 +196,13 @@ i:active {
   height: 70vh;
   display: grid;
   grid-template-columns: repeat(9,1fr);
-  grid-template-rows: repeat(10,1fr);
+  grid-template-rows: repeat(12,1fr);
+}
+.top_user {
+  grid-row-start: 2;
+}
+.bottom_user {
+  grid-row-start: 12;
 }
 .svgicon {
   width: 1.5rem;

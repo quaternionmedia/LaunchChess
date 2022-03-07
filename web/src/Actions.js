@@ -24,12 +24,13 @@ export const State = () => ({
   changeLayout: null,
   game: null,
   games: Stream([]),
+  opponent: null,
   chess: new Chess(),
   ground: null,
   color: 'w',
   selectedSquare: null,
   selectedPiece: null,
-  invert: false,
+  invert: Stream(false),
   grid: true,
   pieces: true,
   influence: false,
@@ -94,6 +95,7 @@ export const OnlineActions = (state, actions) => ({
     })
   },
   afterInit: () => {
+    console.log('initing online actions')
     actions.afterInit()
     actions.streamGame()
   }

@@ -1,9 +1,11 @@
 import m from 'mithril'
 import { WebMidi} from 'webmidi'
 import { StatusIcon, ConnectToggle } from './Toolbar'
+import { Button } from 'construct-ui'
 import { Launchpads, NOVATION, HEADERS, NAMES } from './Launchpad'
 import { onlineActions } from './index'
 import { ColorSelector } from './Color'
+import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 
 const equals = (a, b) =>
   a.length === b.length &&
@@ -183,11 +185,26 @@ export const LaunchpadSelector = (state, actions) => m('select', {
     }
   },
 }, Object.keys(HEADERS).map(h => m('option', {value: h}, h)))
-export const LaunchpadButton = (state, actions) => m('button.button.launchpad', {
+
+export const LaunchpadButton = (name, state, actions) => m(Button, {
+    label: name,
+    class: state.connected && state.inputName == name ? 'glow active': '',
     onclick: e => {
-      actions.connect(state.name)
+      if (state.connected) {
+        actions.disconnect()
+      } else {
+        actions.connect(name)
+      }
     },
-}, state.name)
+  }, name)
+
+export const Disconnect = (state, actions) => m(Button, {
+  onclick: e => {
+    actions.disconnect()
+  },
+  iconLeft: 'zap-off',
+  label: 'disconnect',
+}, )
 
 export const ConnectionPage = (state, actions) => ({
   view: vnode => m('.ConnectionPage', {}, [
@@ -195,9 +212,10 @@ export const ConnectionPage = (state, actions) => ({
     StatusIcon(state),
     state.inputs().length ? state.inputs().map(i => {
       if (i.name in NAMES) {
-        return LaunchpadButton({name: i.name}, actions)
+        return LaunchpadButton(i.name, state, actions)
       }
     }) : 'no Launchpads detected',
+    state.connected ? Disconnect(state, actions) : null,
     m('h3', {}, 'Input'),
     MidiInputSelector(state, actions),
     m('h3', {}, 'Output'),

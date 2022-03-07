@@ -1,6 +1,6 @@
 import m from 'mithril'
 import { Connector, ConnectionPage } from './Connector'
-
+import { Button } from 'construct-ui'
 
 export const Home = (state, actions) => ({
   view: () => m('#home', {}, [
@@ -14,8 +14,14 @@ export const Home = (state, actions) => ({
     state.connected ? [
       'Connected!',
       m('br'),
-      m('button.button', {onclick: e => m.route.set('/otb')}, 'play over the board'),
-      m('button.button', {onclick: e => m.route.set('/games')}, 'play over the internet'),
+      m(Button, {
+        label: 'play over the board',
+        onclick: e => m.route.set('/otb')
+      }),
+      m(Button, {
+        label: 'play over the internet',
+        onclick: e => m.route.set('/games')
+      }),
     ] : null
   ])
 })
