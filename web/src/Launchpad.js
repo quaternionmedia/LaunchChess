@@ -23,7 +23,7 @@ export const NAMES = {
   'Launchpad X LPX MIDI Out': 'LaunchpadX',
   'MIDIIN2 (LPX MIDI)': 'LaunchpadX',
   'MIDIOUT2 (LPX MIDI)': 'LaunchpadX',
-  'Launchpad Mini': 'LaunchpadMini',
+  'Launchpad Mini': 'LaunchpadMk2',
 }
 
 export const COLORS = {
