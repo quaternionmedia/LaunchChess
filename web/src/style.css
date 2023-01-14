@@ -3,10 +3,11 @@
   color: #ddd;
 }
 
-.dark h1, .dark h2, .dark h3 {
+.dark h1,
+.dark h2,
+.dark h3 {
   color: #fff;
 }
-
 
 .dark h4 {
   color: #888;
@@ -28,7 +29,6 @@ nav a {
 .dark nav a {
   color: #ccc;
   text-decoration: none;
-
 }
 
 .layout {
@@ -38,10 +38,10 @@ nav a {
 .menu {
   display: flex;
   justify-content: space-between;
-  margin: 1em 1em .5em;
-  padding: .5em 1em;
+  margin: 1em 1em 0.5em;
+  padding: 0.5em 1em;
   background: #8883;
-} 
+}
 .board {
   padding-bottom: 100%;
 }
@@ -51,7 +51,6 @@ nav a {
   grid-column-end: 9;
   grid-row-start: 3;
   grid-row-end: 9;
-
 }
 .cg-wrap coords.ranks {
   right: 0px;
@@ -84,11 +83,11 @@ nav a {
 }
 .dark .gamethumb:hover {
   color: black;
-  background: ##fffdea;
+  background: #fffdea;
 }
 .selector {
   display: grid;
-  grid-template-columns: repeat(8,1fr);
+  grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(auto-fill, minmax(0px, 1fr));
   grid-column-gap: 10px;
   grid-row-gap: 10px;
@@ -126,14 +125,14 @@ i {
   border-style: solid;
   border-color: #393939;
   border-radius: 10px;
-  padding: .5rem;
+  padding: 0.5rem;
   width: fit-content;
 }
 i:hover {
   background-color: #393939;
 }
 i:active {
-  animation: blinker .2s 1;
+  animation: blinker 0.2s 1;
 }
 .cui-button {
   border-radius: 5px;
@@ -155,14 +154,14 @@ i:active {
   padding: 1em;
   border-radius: 1em;
   overflow: auto;
-  background: #88888833
+  background: #88888833;
 }
 .dark .profile {
   background: #444;
 }
 .toolbar {
   display: grid;
-  grid-template-columns: repeat(9,1fr);
+  grid-template-columns: repeat(9, 1fr);
   grid-column-end: 10;
   grid-column-start: 1;
   align-items: center;
@@ -171,14 +170,14 @@ i:active {
 .inline {
   display: inline-grid;
 }
-.tool {  
+.tool {
   margin-right: 1em;
 }
 .vl {
   border-left: thick solid #393939;
 }
 .turn {
-  padding: .5rem;
+  padding: 0.5rem;
   min-width: 2em;
   min-height: 2em;
 }
@@ -195,8 +194,8 @@ i:active {
   max-width: min(82vw, 82vh);
   height: 70vh;
   display: grid;
-  grid-template-columns: repeat(9,1fr);
-  grid-template-rows: repeat(12,1fr);
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(12, 1fr);
 }
 .top_user {
   grid-row-start: 2;

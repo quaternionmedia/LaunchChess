@@ -12,9 +12,7 @@ import { State, Actions, OnlineActions } from './Actions'
 import { LaunchpadX } from './Launchpad'
 import { Home } from './Home'
 
-
 console.log('launchchess started!')
-
 
 var state = State()
 export var actions = {}
@@ -24,12 +22,11 @@ Object.assign(actions, Connector(state, actions))
 Object.assign(actions, getGames(state, actions))
 export var onlineActions = {
   ...actions,
-  ...OnlineActions(state, actions)
+  ...OnlineActions(state, actions),
 }
 actions.initConnector()
 
 console.log(state, actions)
-
 
 m.mount(document.body, Layout(state))
 let main = document.getElementById('main')
@@ -42,7 +39,6 @@ m.route(main, '/', {
   '/online': GamePageOnline(state, onlineActions),
   '/login': Login,
   '/profile': ProfilePage,
-
 })
 
 // auto login

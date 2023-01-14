@@ -1,16 +1,32 @@
-
-::-webkit-scrollbar { width: 20px; height: 20px;}
-::-webkit-scrollbar-button {  background-color: #888; }
-::-webkit-scrollbar-track {  background-color: #000;}
-::-webkit-scrollbar-track-piece { background-color: #000;}
-::-webkit-scrollbar-thumb { height: 50px; background-color: #444; border-radius: 3px;}
-::-webkit-scrollbar-corner { background-color: #646464;}
-::-webkit-resizer { background-color: #666;}
+::-webkit-scrollbar {
+  width: 20px;
+  height: 20px;
+}
+::-webkit-scrollbar-button {
+  background-color: #888;
+}
+::-webkit-scrollbar-track {
+  background-color: #000;
+}
+::-webkit-scrollbar-track-piece {
+  background-color: #000;
+}
+::-webkit-scrollbar-thumb {
+  height: 50px;
+  background-color: #444;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-corner {
+  background-color: #646464;
+}
+::-webkit-resizer {
+  background-color: #666;
+}
 
 form {
   padding: 1em;
   margin: 1em;
-  border: 3px solid #46346E;
+  border: 3px solid #46346e;
   border-radius: 1em;
   background-color: #393939;
 }
@@ -21,7 +37,7 @@ form label {
   margin-right: 1em;
   vertical-align: middle;
 }
-form input[type=text] {
+form input[type='text'] {
   min-width: 40%;
   margin-top: 1em;
   margin-bottom: 1em;
@@ -43,17 +59,16 @@ form select {
 }
 .button {
   font-size: 1.3em;
-  padding: .4em;
+  padding: 0.4em;
   border-radius: 1em;
   color: #fff;
   background-color: #d652bb;
-  opacity: .8;
+  opacity: 0.8;
   box-shadow: -2px 2px #aaa;
 }
 .button:hover {
   transition: 0.3s;
   opacity: 1;
-
 }
 .button:active {
   box-shadow: 0 4px #555;

@@ -5,10 +5,10 @@ export const FILES = 'abcdefgh'
 let squares = []
 let files = [...FILES]
 files.forEach(f => {
-  for (let i=1; i<=8; i++) {
-      squares.push(f + i)
-    }
-  })
+  for (let i = 1; i <= 8; i++) {
+    squares.push(f + i)
+  }
+})
 
 export const SQUARES = squares
 
@@ -22,7 +22,7 @@ export function uci(move) {
 
 export function calculateInfluence(fen) {
   let chess = new Chess(fen)
-  let moves = chess.moves({verbose: true})//, legal: false})
+  let moves = chess.moves({ verbose: true }) //, legal: false})
   let defenders = Array(64).fill(0)
   moves.forEach((move, i) => {
     let index = chess.SQUARES.indexOf(move.to)
@@ -47,7 +47,7 @@ export function fenForOtherSide(fen) {
 
 export function makeDests(fen) {
   let chess = new Chess(fen)
-  let moves = chess.moves({verbose: true})
+  let moves = chess.moves({ verbose: true })
   let dests = {}
   moves.forEach((m, i) => {
     if (dests[m.from]) {
@@ -60,16 +60,14 @@ export function makeDests(fen) {
   return dests
 }
 
-
 export function getPieceLocations(chess, piece) {
   let res = []
   chess.board().map((rank, r) => {
     rank.map((p, f) => {
       if (p && p.type == piece.type && p.color == piece.color) {
-        res.push( FILES[f] + (8-r) )
+        res.push(FILES[f] + (8 - r))
       }
     })
-  })  
+  })
   return res
 }
-
