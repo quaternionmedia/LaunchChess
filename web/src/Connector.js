@@ -211,8 +211,12 @@ export const ConnectionPage = (state, actions) => ({
     m('h1', 'Connect your Launchpad'),
     StatusIcon(state),
     state.inputs().length ? state.inputs().map(i => {
-      if (i.name in NAMES) {
-        return LaunchpadButton(i.name, state, actions)
+      if (i.name in NAMES) { 
+        let matches = Object.keys(NAMES).filter(n => i.name.includes(n))
+        console.log(`checking ${i.name}`, matches)
+        if (matches.length) {
+          return LaunchpadButton(i.name, state, actions)
+        }
       }
     }) : 'no Launchpads detected',
     state.connected ? Disconnect(state, actions) : null,
