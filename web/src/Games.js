@@ -100,7 +100,7 @@ export const Games = (state, actions) => {
         m('i.material-icons', { onclick: actions.getGames }, 'refresh'),
         m(
           'a.inline',
-          { href: 'https://lichess.org/?any#hook', target: '_blank' },
+          { href: 'https://lichess.org/?any#ai', target: '_blank' },
           m(
             'i.material-icons',
             {
