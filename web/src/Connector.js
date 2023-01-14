@@ -11,6 +11,8 @@ const equals = (a, b) => a.length === b.length && a.every((v, i) => v === b[i])
 
 export const Connector = (state, actions) => ({
   connect: name => {
+    // search on device name only
+    name = name.replace(' Out', '')
     if (state.connected) {
       actions.disconnect()
     }
@@ -250,10 +252,10 @@ export const ConnectionPage = (state, actions) => ({
       MidiInputSelector(state, actions),
       m('h3', {}, 'Output'),
       MidiOutputSelector(state, actions),
-      m('br'),
-      ConnectToggle(state, actions),
-      m('br'),
-      LaunchpadSelector(state, actions),
-      ColorSelector(state),
+      // m('h3', {}, 'Type'),
+      // LaunchpadSelector(state, actions),
+      // m('br'),
+      // ConnectToggle(state, actions),
+      // ColorSelector(state),
     ]),
 })
