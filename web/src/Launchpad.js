@@ -12,7 +12,7 @@ export const HEADERS = {
   LaunchpadMk2: [2, 24],
   LaunchpadPro: [2, 16],
   LaunchpadMini: [2, 14],
-  // LaunchpadS: [9],
+  LaunchpadMiniMk3: [2, 13],
   LaunchpadS: [32, 0],
 }
 
@@ -23,7 +23,10 @@ export const NAMES = {
   'Launchpad X LPX MIDI Out': 'LaunchpadX',
   'MIDIIN2 (LPX MIDI)': 'LaunchpadX',
   'MIDIOUT2 (LPX MIDI)': 'LaunchpadX',
-  'Launchpad Mini': 'LaunchpadMini',
+  'Launchpad Mini In': 'LaunchpadMini',
+  'Launchpad Mini Out': 'LaunchpadMini',
+  'LPMiniMK3 MIDI In': 'LaunchpadMiniMk3',
+  'LPMiniMK3 MIDI Out': 'LaunchpadMiniMk3',
 }
 
 export const COLORS = {
@@ -259,7 +262,7 @@ export const LaunchpadMini = (state, actions) => {
   state.changeLayout = 14
   state.layout = [0, 1]
   return {
-    ...Launchpad(state, actions),
+    ...LaunchpadMk2(state, actions),
   }
 }
 
@@ -268,6 +271,14 @@ export const LaunchpadMk2 = (state, actions) => {
   state.header = [2, 24]
   state.changeLayout = 34
   state.layout = [0, 0]
+  return {
+    ...Launchpad(state, actions),
+  }
+}
+
+export const LaunchpadMiniMk3 = (state, actions) => {
+  state.changeLayout = 14
+  state.layout = [0, 1]
   return {
     ...Launchpad(state, actions),
   }
@@ -310,10 +321,11 @@ export const Launchpad1 = (state, actions) => ({
 })
 
 export const Launchpads = {
-  LaunchpadX: LaunchpadX,
-  LaunchpadPro: LaunchpadPro,
-  LaunchpadMini: LaunchpadMini,
-  LaunchpadMk2: LaunchpadMk2,
   Launchpad: Launchpad1,
   LaunchpadS: Launchpad1,
+  LaunchpadMk2: LaunchpadMk2,
+  LaunchpadX: LaunchpadX,
+  LaunchpadMini: LaunchpadMini,
+  LaunchpadMiniMk3: LaunchpadMiniMk3,
+  LaunchpadPro: LaunchpadPro,
 }

@@ -188,7 +188,7 @@ export const LaunchpadSelector = (state, actions) =>
     {
       value: state.deviceName,
       oninput: e => {
-        let value = e.target._id
+        let value = e.target.value
         console.log('selected', e, value)
         if (state.connected) {
           actions.connect(value)
@@ -200,7 +200,7 @@ export const LaunchpadSelector = (state, actions) =>
         }
       },
     },
-    Object.keys(HEADERS).map(h => m('option', { value: h }, h))
+    [m('option'), Object.keys(HEADERS).map(h => m('option', { value: h }, h))]
   )
 
 export const LaunchpadButton = (name, state, actions) =>
@@ -250,8 +250,10 @@ export const ConnectionPage = (state, actions) => ({
       MidiInputSelector(state, actions),
       m('h3', {}, 'Output'),
       MidiOutputSelector(state, actions),
-      // ConnectToggle(state, actions),
-      // LaunchpadSelector(state, actions),
+      m('br'),
+      ConnectToggle(state, actions),
+      m('br'),
+      LaunchpadSelector(state, actions),
       ColorSelector(state),
     ]),
 })
