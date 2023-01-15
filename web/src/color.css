@@ -4,13 +4,13 @@
 
 .colorgrid {
   display: grid;
-  grid-template-columns: repeat(8,1fr);
+  grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(auto-fill, minmax(0px, 1fr));
 }
 
 .colorchoice {
   height: 10vw;
-  opacity: .8;
+  opacity: 0.8;
 }
 
 .colorchoice:hover {

@@ -1,22 +1,25 @@
 import m from 'mithril'
-let Stream = require("mithril/stream")
+let Stream = require('mithril/stream')
 import { Chess } from 'chess.js'
 import { COLORS } from './Launchpad'
 import { uci } from './ChessMaths'
 import { playOtherSide } from './utils'
 import { auth } from './User'
 
-export const range = (start, end) => Array.apply(0, Array(end - 1)).map((element, index) => index + start)
+export const range = (start, end) =>
+  Array.apply(0, Array(end - 1)).map((element, index) => index + start)
 
 export const State = () => ({
   theme: 'dark',
-  input: null, 
+  input: null,
   output: null,
   inputName: null,
   outputName: null,
   inputs: Stream([]),
   outputs: Stream([]),
   deviceId: null,
+  deviceName: null,
+  deviceType: null,
   connected: false,
   top: range(91, 10),
   header: null,
@@ -70,27 +73,36 @@ export const Actions = (state, actions) => ({
   highlightAvailableMoves: () => null,
 })
 
-
 export const OnlineActions = (state, actions) => ({
   onmove: (orig, dest) => {
-    let move = {from: orig, to: dest}
+    let move = { from: orig, to: dest }
     let piece = state.chess.get(move.from)
-    if (piece.type == 'p' && ((piece.color == 'w' && move.to.charAt(1) == 8 ) || (piece.color == 'b' && move.to.charAt(1) == 1 ))) {
+    if (
+      piece.type == 'p' &&
+      ((piece.color == 'w' && move.to.charAt(1) == 8) ||
+        (piece.color == 'b' && move.to.charAt(1) == 1))
+    ) {
       console.log('promotion! Auto promote to Queen')
       move.promotion = 'q'
     }
     state.chess.move(move)
     console.log('moved', move, piece, state.chess.ascii())
-    state.ground.set({fen: state.chess.fen()})
-    
+    state.ground.set({ fen: state.chess.fen() })
+
     actions.lightBoard(true)
     playOtherSide(state.chess, state.ground)(orig, dest)
     m.redraw()
     // send to lichess api
     let move_uci = uci(move)
-    auth('https://lichess.org/api/board/game/' + m.route.param('id') + '/move/' + move_uci, {
-      method: 'post',
-    }).then(e => {
+    auth(
+      'https://lichess.org/api/board/game/' +
+        m.route.param('id') +
+        '/move/' +
+        move_uci,
+      {
+        method: 'post',
+      }
+    ).then(e => {
       console.log('played move', move_uci, e)
     })
   },
@@ -98,5 +110,5 @@ export const OnlineActions = (state, actions) => ({
     console.log('initing online actions')
     actions.afterInit()
     actions.streamGame()
-  }
+  },
 })
