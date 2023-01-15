@@ -60,7 +60,12 @@ export const Connector = (state, actions) => ({
   },
   disconnect: () => {
     if (state.input) {
-      if (state.connected) actions.toggleLive(false)
+      if (state.connected)
+        try {
+          actions.toggleLive(false)
+        } catch (err) {
+          console.log('error disconnecting', err)
+        }
       state.input.removeListener()
       state.input = null
       state.output = null
@@ -77,7 +82,7 @@ export const Connector = (state, actions) => ({
       console.log('auto connecting to ', name, launchpad)
       Object.assign(actions, Launchpads[launchpad](state, actions))
       Object.assign(onlineActions, Launchpads[launchpad](state, actions))
-      actions.connect(launchpad)
+      actions.connect(name)
       actions.toggleLive(state.connected)
     }
     m.redraw()
@@ -119,6 +124,7 @@ export const Connector = (state, actions) => ({
       state.input.removeListener()
       state.input.addListener('noteon', 'all', noteCallback)
       state.input.addListener('controlchange', 'all', ccCallback)
+      // state.input.addListener('midimessage', m => console.log('MIDI', m))
     } else {
       console.log('error, not connected')
     }
@@ -144,6 +150,7 @@ export const Connector = (state, actions) => ({
         for (const key in HEADERS) {
           if (equals(header, HEADERS[key])) {
             console.log('this is a ', key)
+            state.deviceType = key
             Object.assign(actions, Launchpads[key](state, actions))
             Object.assign(onlineActions, Launchpads[key](state, actions))
             input.removeListener('sysex')
@@ -188,12 +195,12 @@ export const LaunchpadSelector = (state, actions) =>
   m(
     'select',
     {
-      value: state.deviceName,
+      value: state.deviceType,
       oninput: e => {
         let value = e.target.value
         console.log('selected', e, value)
+        state.deviceType = value
         if (state.connected) {
-          actions.connect(value)
           Object.assign(actions, Launchpads[value](state, actions))
           Object.assign(onlineActions, Launchpads[value](state, actions))
           state.input.removeListener('sysex')
@@ -252,8 +259,8 @@ export const ConnectionPage = (state, actions) => ({
       MidiInputSelector(state, actions),
       m('h3', {}, 'Output'),
       MidiOutputSelector(state, actions),
-      // m('h3', {}, 'Type'),
-      // LaunchpadSelector(state, actions),
+      m('h3', {}, 'Type'),
+      LaunchpadSelector(state, actions),
       // m('br'),
       // ConnectToggle(state, actions),
       // ColorSelector(state),

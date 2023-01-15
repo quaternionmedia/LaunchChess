@@ -18,6 +18,8 @@ export const State = () => ({
   inputs: Stream([]),
   outputs: Stream([]),
   deviceId: null,
+  deviceName: null,
+  deviceType: null,
   connected: false,
   top: range(91, 10),
   header: null,
