@@ -33,7 +33,7 @@ export const LaunchGame = (state, actions) => ({
     actions.send(CONTROL_CHANGE, [state.top[2], 67])
     actions.send(CONTROL_CHANGE, [
       state.top[4],
-      state.invert() ? COLORS.brown : 3,
+      state.invert() ? COLORS.brown : COLORS.white,
     ])
     actions.send(CONTROL_CHANGE, [
       state.top[5],
@@ -43,7 +43,7 @@ export const LaunchGame = (state, actions) => ({
     // actions.send(CONTROL_CHANGE, [state.top[7], state.influence ? 5 : 7])
     actions.send(CONTROL_CHANGE, [
       state.top[state.top.length - 1],
-      state.chess.turn() == 'w' ? 3 : COLORS.brown,
+      state.chess.turn() == 'w' ? COLORS.white : COLORS.brown,
     ])
   },
   togglePieces: (mode = null) => {
