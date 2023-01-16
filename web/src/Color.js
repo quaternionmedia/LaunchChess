@@ -11,7 +11,7 @@ const ColorSelector = (piece, color, actions) =>
         customColors: LAUNCHPAD_COLORS,
         shades: 0,
       }).on('change', color => {
-        index = LAUNCHPAD_COLORS.indexOf(color)
+        let index = LAUNCHPAD_COLORS.indexOf(color)
         console.log(
           `color for piece ${piece} changed to ${color}, index ${index}`
         )
@@ -38,12 +38,12 @@ export const COLORS = {
   B: 37,
   Q: 53,
   K: 49,
-  p: 10,
-  r: 6,
-  n: 42,
-  b: 34,
-  q: 50,
-  k: 46,
+  p: 15,
+  r: 11,
+  n: 47,
+  b: 39,
+  q: 55,
+  k: 51,
   white: 3,
   dim_white: 1,
   black: 0,

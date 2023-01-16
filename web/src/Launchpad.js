@@ -107,10 +107,14 @@ export const Launchpad = (state, actions) => ({
           let pieceType =
             piece.color == 'w' ? piece.type.toUpperCase() : piece.type
           color = state.colors[pieceType]
-        } else if (state.grid) color = (i + (i >> 3)) % 2 == 0 ? 0 : 1
+        } else if (state.grid)
+          color =
+            (i + (i >> 3)) % 2 == 0 ? state.colors.off : state.colors.white
       } else {
         piece = null
-        if (state.grid) color = (i + (i >> 3)) % 2 == 0 ? 0 : 1
+        if (state.grid)
+          color =
+            (i + (i >> 3)) % 2 == 0 ? state.colors.off : state.colors.white
       }
 
       // console.log(i, piece, l)
@@ -133,9 +137,9 @@ export const Launchpad = (state, actions) => ({
       console.log('highlighting', lastMove, from_square, to_square)
       let path = findPath(from_square, to_square)
       path.push(path[path.length - 1])
-      let piece = lastMove.piece
+      let piece =
+        lastMove.color == 'w' ? lastMove.piece.toUpperCase() : lastMove.piece
       let color = state.colors[piece]
-      if (lastMove.color == 'b') color += 2
       if (animate) {
         actions.animatePath(path, color, 0)
       }
