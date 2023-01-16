@@ -1,7 +1,7 @@
 import m from 'mithril'
 let Stream = require('mithril/stream')
 import { Chess } from 'chess.js'
-import { COLORS } from './Launchpad'
+import { COLORS } from './Color'
 import { uci } from './ChessMaths'
 import { playOtherSide } from './utils'
 import { auth } from './User'

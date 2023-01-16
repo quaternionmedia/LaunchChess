@@ -8,7 +8,8 @@ import { Board } from './Board'
 import { Toolbar, OnlineToolbar } from './Toolbar'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 import { toDests, toColor, playOtherSide } from './utils'
-import { NOTE_ON, CONTROL_CHANGE, COLORS } from './Launchpad'
+import { NOTE_ON, CONTROL_CHANGE } from './Launchpad'
+import { COLORS } from './Color'
 
 export const getGames = (state, actions) => ({
   getGames: () =>

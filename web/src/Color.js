@@ -13,6 +13,22 @@ export const ColorSelector = state =>
     ),
   ])
 
+export const COLORS = {
+  p: 13,
+  r: 9,
+  n: 45,
+  b: 37,
+  q: 53,
+  k: 49,
+  white: 3,
+  dim_white: 1,
+  black: 0,
+  movable: 21,
+  moved: 89,
+  check: 5,
+  brown: 83,
+}
+
 export const LAUNCHPAD_COLORS = [
   '#000000',
   '#b3b3b3',

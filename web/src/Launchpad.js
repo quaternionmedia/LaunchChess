@@ -1,6 +1,7 @@
 import { getPieceLocations } from './ChessMaths'
 import { range } from './Actions'
 import { findPath } from './utils'
+import { COLORS } from './Color'
 
 export const NOTE_ON = 144
 export const CONTROL_CHANGE = 176
@@ -28,22 +29,6 @@ export const NAMES = {
   'Launchpad Mini Out': 'LaunchpadMini',
   'LPMiniMK3 MIDI In': 'LaunchpadMiniMk3',
   'LPMiniMK3 MIDI Out': 'LaunchpadMiniMk3',
-}
-
-export const COLORS = {
-  p: 13,
-  r: 9,
-  n: 45,
-  b: 37,
-  q: 53,
-  k: 49,
-  white: 3,
-  dim_white: 1,
-  black: 0,
-  movable: 21,
-  moved: 89,
-  check: 5,
-  brown: 83,
 }
 
 export const Launchpad = (state, actions) => ({

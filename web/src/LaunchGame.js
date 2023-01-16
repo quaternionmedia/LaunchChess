@@ -1,6 +1,7 @@
 import m from 'mithril'
 import { Chess } from 'chess.js'
-import { NOTE_ON, CONTROL_CHANGE, COLORS } from './Launchpad'
+import { NOTE_ON, CONTROL_CHANGE } from './Launchpad'
+import { COLORS } from './Color'
 import { streamJson } from './ndjson'
 import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'

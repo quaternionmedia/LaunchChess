@@ -263,6 +263,6 @@ export const ConnectionPage = (state, actions) => ({
       LaunchpadSelector(state, actions),
       // m('br'),
       // ConnectToggle(state, actions),
-      // ColorSelector(state),
+      ColorSelector(state),
     ]),
 })

@@ -11,6 +11,7 @@ import { Connector, ConnectionPage } from './Connector'
 import { State, Actions, OnlineActions } from './Actions'
 import { LaunchpadX } from './Launchpad'
 import { Home } from './Home'
+import { WebMidi } from 'webmidi'
 
 console.log('launchchess started!')
 
@@ -50,3 +51,7 @@ if (!User.loggedIn) {
     }
   })
 }
+
+window.state = state
+window.actions = actions
+window.midi = WebMidi
