@@ -4,7 +4,7 @@ import { StatusIcon, ConnectToggle } from './Toolbar'
 import { Button } from 'construct-ui'
 import { Launchpads, NOVATION, HEADERS, NAMES } from './Launchpad'
 import { onlineActions } from './index'
-import { ColorSelector } from './Color'
+import { ColorConfig } from './Color'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 
 const equals = (a, b) => a.length === b.length && a.every((v, i) => v === b[i])
@@ -263,6 +263,6 @@ export const ConnectionPage = (state, actions) => ({
       LaunchpadSelector(state, actions),
       // m('br'),
       // ConnectToggle(state, actions),
-      // ColorSelector(state),
+      ColorConfig(state, actions),
     ]),
 })

@@ -30,22 +30,6 @@ export const NAMES = {
   'LPMiniMK3 MIDI Out': 'LaunchpadMiniMk3',
 }
 
-export const COLORS = {
-  p: 13,
-  r: 9,
-  n: 45,
-  b: 37,
-  q: 53,
-  k: 49,
-  white: 3,
-  dim_white: 1,
-  black: 0,
-  movable: 21,
-  moved: 89,
-  check: 5,
-  brown: 83,
-}
-
 export const Launchpad = (state, actions) => ({
   nToLaunch: n => {
     /** Convert a 0-63 chess square into a Launchpad MIDI number
@@ -120,12 +104,17 @@ export const Launchpad = (state, actions) => ({
         piece = board[(63 - i) >> 3][i % 8]
         // console.log('piece at i', i, piece)
         if (state.pieces) {
-          color = COLORS[piece.type]
-          if (piece.color == 'b') color += 2
-        } else if (state.grid) color = (i + (i >> 3)) % 2 == 0 ? 0 : 1
+          let pieceType =
+            piece.color == 'w' ? piece.type.toUpperCase() : piece.type
+          color = state.colors[pieceType]
+        } else if (state.grid)
+          color =
+            (i + (i >> 3)) % 2 == 0 ? state.colors.off : state.colors.white
       } else {
         piece = null
-        if (state.grid) color = (i + (i >> 3)) % 2 == 0 ? 0 : 1
+        if (state.grid)
+          color =
+            (i + (i >> 3)) % 2 == 0 ? state.colors.off : state.colors.white
       }
 
       // console.log(i, piece, l)
@@ -148,9 +137,9 @@ export const Launchpad = (state, actions) => ({
       console.log('highlighting', lastMove, from_square, to_square)
       let path = findPath(from_square, to_square)
       path.push(path[path.length - 1])
-      let piece = lastMove.piece
-      let color = COLORS[piece]
-      if (lastMove.color == 'b') color += 2
+      let piece =
+        lastMove.color == 'w' ? lastMove.piece.toUpperCase() : lastMove.piece
+      let color = state.colors[piece]
       if (animate) {
         actions.animatePath(path, color, 0)
       }
@@ -168,7 +157,7 @@ export const Launchpad = (state, actions) => ({
     path.forEach((square, i) => {
       actions.send(NOTE_ON | 2, [
         actions.nToLaunch(square.y * 8 + square.x),
-        COLORS.moved,
+        state.colors.moved,
       ])
     })
     actions.send(NOTE_ON | 2, [
@@ -200,7 +189,7 @@ export const Launchpad = (state, actions) => ({
     console.log('check!', k)
     actions.send(NOTE_ON | 1, [
       actions.nToLaunch(actions.squareToN(k)),
-      COLORS.check,
+      state.colors.check,
     ])
   },
   highlightCheckmate: () => {
@@ -211,13 +200,13 @@ export const Launchpad = (state, actions) => ({
     console.log('mate!', k)
     actions.send(NOTE_ON, [
       actions.nToLaunch(actions.squareToN(k)),
-      COLORS.check,
+      state.colors.check,
     ])
   },
   highlightAvailableMoves: square => {
     let s = actions.nToLaunch(actions.squareToN(square))
     console.log('highlighting', square, s, actions.squareToN(square))
-    actions.send(NOTE_ON | 1, [s, COLORS.movable])
+    actions.send(NOTE_ON | 1, [s, state.colors.movable])
     let piece_moves = state.chess.moves({ square: square, verbose: true })
     console.log('possible moves', piece_moves)
     piece_moves.forEach((p, i) => {
@@ -227,13 +216,13 @@ export const Launchpad = (state, actions) => ({
         // console.log('capture', actions.nToLaunch(actions.squareToN(p.to)))
         actions.send(NOTE_ON | 1, [
           actions.nToLaunch(actions.squareToN(p.to)),
-          COLORS.movable,
+          state.colors.movable,
         ])
       } else {
         // console.log('regular move', p.to, actions.squareToN(p.to), actions.nToLaunch(actions.squareToN(p.to)))
         actions.send(NOTE_ON | 2, [
           actions.nToLaunch(actions.squareToN(p.to)),
-          COLORS.movable,
+          state.colors.movable,
         ])
       }
     })

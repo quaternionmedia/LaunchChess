@@ -1,6 +1,7 @@
 import m from 'mithril'
 import { Chess } from 'chess.js'
-import { NOTE_ON, CONTROL_CHANGE, COLORS } from './Launchpad'
+import { NOTE_ON, CONTROL_CHANGE } from './Launchpad'
+import { COLORS } from './Color'
 import { streamJson } from './ndjson'
 import { LICHESS_API_URL } from './config'
 import { User, auth } from './User'
@@ -32,7 +33,7 @@ export const LaunchGame = (state, actions) => ({
     actions.send(CONTROL_CHANGE, [state.top[2], 67])
     actions.send(CONTROL_CHANGE, [
       state.top[4],
-      state.invert() ? COLORS.brown : 3,
+      state.invert() ? COLORS.brown : COLORS.white,
     ])
     actions.send(CONTROL_CHANGE, [
       state.top[5],
@@ -42,7 +43,7 @@ export const LaunchGame = (state, actions) => ({
     // actions.send(CONTROL_CHANGE, [state.top[7], state.influence ? 5 : 7])
     actions.send(CONTROL_CHANGE, [
       state.top[state.top.length - 1],
-      state.chess.turn() == 'w' ? 3 : COLORS.brown,
+      state.chess.turn() == 'w' ? COLORS.white : COLORS.brown,
     ])
   },
   togglePieces: (mode = null) => {
