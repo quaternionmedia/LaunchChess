@@ -1,18 +1,36 @@
 import m from 'mithril'
+import HueBee from 'huebee'
+import '../node_modules/huebee/huebee.css'
 import './color.css'
 
-export const Color = color =>
-  m('input[type=color]', {
+const ColorSelector = (piece, color, actions) =>
+  m('input.color-input', {
     value: LAUNCHPAD_COLORS[color],
+    oncreate: vnode => {
+      new HueBee(vnode.dom, {
+        customColors: LAUNCHPAD_COLORS,
+        shades: 0,
+      }).on('change', color => {
+        index = LAUNCHPAD_COLORS.indexOf(color)
+        console.log(
+          `color for piece ${piece} changed to ${color}, index ${index}`
+        )
+        actions.setColor(piece, index)
+      })
+    },
   })
 
-export const ColorSelector = state =>
+export const ColorConfig = (state, actions) =>
   m('.colors', {}, [
-    Object.keys(state.colors).map((k, n) =>
-      m('span.color', {}, [m('p.type', {}, k), Color(state.colors[k])])
+    Object.keys(state.colors).map((piece, n) =>
+      m('span.color', {}, [
+        m('p.type', {}, piece),
+        ColorSelector(piece, state.colors[piece], actions),
+      ])
     ),
   ])
 
+// Default colors
 export const COLORS = {
   p: 13,
   r: 9,
@@ -29,58 +47,59 @@ export const COLORS = {
   brown: 83,
 }
 
+// Available Launchpad colors
 export const LAUNCHPAD_COLORS = [
   '#000000',
-  '#b3b3b3',
-  '#dddddd',
-  '#ffffff',
-  '#ffb3b3 ',
-  '#ff6161',
-  '#dd6161',
-  '#b36161',
-  '#fff3d5',
-  '#ffb361',
-  '#dd8c61',
-  '#b37661',
-  '#ffeea1',
-  '#ffff61',
-  '#dddd61',
-  '#b3b361',
-  '#ddffa1',
-  '#c2ff61',
-  '#a1dd61',
-  '#81b361',
-  '#c2ffb3',
-  '#61ff61',
-  '#61dd61',
-  '#61b361',
-  '#c2ffc2',
-  '#61ff8c',
-  '#61dd76',
-  '#61b36b',
-  '#c2ffcc',
-  '#61ffcc',
-  '#61dda1',
-  '#61b381',
-  '#c2fff3',
-  '#61ffe9',
-  '#61ddc2',
-  '#61b396',
-  '#c2f3ff',
-  '#61eeff',
-  '#61c7dd',
-  '#61a1b3',
-  '#c2ddff',
-  '#61c7ff',
-  '#61a1dd',
-  '#6181b3',
-  '#a18cff',
-  '#6161ff',
-  '#6161dd',
-  '#6161b3',
-  '#ccb3ff',
-  '#a161ff',
-  '#8161dd',
+  '#B3B3B3',
+  '#DDDDDD',
+  '#FFFFFF',
+  '#FFB3B3 ',
+  '#FF6161',
+  '#DD6161',
+  '#B36161',
+  '#FFF3D5',
+  '#FFB361',
+  '#DD8C61',
+  '#B37661',
+  '#FFEEA1',
+  '#FFFF61',
+  '#DDDD61',
+  '#B3B361',
+  '#DDFFA1',
+  '#C2FF61',
+  '#A1DD61',
+  '#81B361',
+  '#C2FFB3',
+  '#61FF61',
+  '#61DD61',
+  '#61B361',
+  '#C2FFC2',
+  '#61FF8C',
+  '#61DD76',
+  '#61B36B',
+  '#C2FFCC',
+  '#61FFCC',
+  '#61DDA1',
+  '#61B381',
+  '#C2FFF3',
+  '#61FFE9',
+  '#61DDC2',
+  '#61B396',
+  '#C2F3FF',
+  '#61EEFF',
+  '#61C7DD',
+  '#61A1B3',
+  '#C2DDFF',
+  '#61C7FF',
+  '#61A1DD',
+  '#6181B3',
+  '#A18CFF',
+  '#6161FF',
+  '#6161DD',
+  '#6161B3',
+  '#CCB3FF',
+  '#A161FF',
+  '#8161DD',
   '#7761B2',
   '#FFB2FE',
   '#FF60FE',

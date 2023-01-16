@@ -71,6 +71,10 @@ export const Actions = (state, actions) => ({
   clearAnimations: () => null,
   clear: () => null,
   highlightAvailableMoves: () => null,
+  setColor: (piece, color) => {
+    console.debug(`setting {piece} to {color}`)
+    state.colors[piece] = color
+  },
 })
 
 export const OnlineActions = (state, actions) => ({
