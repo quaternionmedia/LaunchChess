@@ -33,11 +33,11 @@ export const State = () => ({
   color: 'w',
   selectedSquare: null,
   selectedPiece: null,
-  invert: Stream(false),
-  grid: true,
-  pieces: true,
-  influence: false,
-  history: Stream(1),
+  invert: Stream(false), // flip board
+  grid: true, // show / hide grid
+  pieces: true, // show / hide pieces
+  influence: false, // showInfluence mode
+  history: Stream(1), // number of plys of history to show
   animationDuration: 400,
   animations: [],
   colors: COLORS,

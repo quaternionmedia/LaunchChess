@@ -147,6 +147,8 @@ export const Launchpad = (state, actions) => ({
       let to_square = lastMove.to
       console.log('highlighting', lastMove, from_square, to_square)
       let path = findPath(from_square, to_square)
+      // Add an extra final square to the animation list
+      // so the piece holds on the final square before restarting
       path.push(path[path.length - 1])
       let piece = lastMove.piece
       let color = COLORS[piece]
@@ -163,7 +165,7 @@ export const Launchpad = (state, actions) => ({
     }
   },
   animatePath: (path, color, step) => {
-    // console.log('animating path', path, step)
+    console.log('animating path', path, step)
     let current = path.splice(step, 1)[0]
     path.forEach((square, i) => {
       actions.send(NOTE_ON | 2, [

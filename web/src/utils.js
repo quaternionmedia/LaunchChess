@@ -1,5 +1,4 @@
-import { Api } from 'chessground/api'
-import { Color, Key } from 'chessground/types'
+import { Api, Color, Key } from 'chessground'
 import { getPieceLocations } from './ChessMaths'
 import { Graph, astar } from 'javascript-astar'
 
