@@ -1,10 +1,10 @@
 import { Api, Color, Key } from 'chessground'
-import { getPieceLocations } from './ChessMaths'
+import { getPieceLocations, SQUARES } from './ChessMaths'
 import { Graph, astar } from 'javascript-astar'
 
 export function toDests(chess) {
   const dests = new Map()
-  chess.SQUARES.forEach(s => {
+  SQUARES.forEach(s => {
     const ms = chess.moves({ square: s, verbose: true })
     if (ms.length)
       dests.set(
