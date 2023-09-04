@@ -156,10 +156,10 @@ export const Launchpad = (state, actions) => ({
       if (animate) {
         actions.animatePath(path, color, 0)
       }
-      if (state.chess.in_check()) {
+      if (state.chess.isCheck()) {
         actions.highlightCheck()
       }
-      if (state.chess.in_checkmate()) {
+      if (state.chess.isCheckmate()) {
         actions.highlightCheckmate()
       }
     }

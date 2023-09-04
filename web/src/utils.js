@@ -30,7 +30,7 @@ export function playOtherSide(chess, ground) {
 export function setBoard(chess, ground) {
   ground.set({
     fen: chess.fen(),
-    check: chess.in_check(),
+    check: chess.isCheck(),
     turnColor: toColor(chess),
     movable: {
       color: toColor(chess),
