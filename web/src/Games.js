@@ -9,12 +9,7 @@ import { toDests, toColor, playOtherSide } from './utils'
 import { NOTE_ON, CONTROL_CHANGE, COLORS } from './Launchpad'
 
 export const getGames = (state, actions) => ({
-  getGames: () =>
-    new Promise((resolve, reject) => {
-      auth(LICHESS_API_URL + 'account/playing?nb=50')
-        .then(res => res.nowPlaying)
-        .then(resolve)
-    }),
+  getGames: async () => state.nowPlaying = await state.auth.fetchBody(LICHESS_API_URL + 'account/playing?nb=50'),
   streamGames: () => {
     streamJson(LICHESS_API_URL + 'stream/event', state.user.token, res => {
       console.log('new lichess event', res)

@@ -18,9 +18,8 @@ export const UserActions = (state, actions) => ({
     state.user.username = state.user.profile.username
   },
   logout: () => {
-    console.log('logging out', User)
-    // don't need to use auth() because cookie is enough here
-    m.request('/oauth/logout')
+    console.log('logging out')
+    state.auth.logout()
     state.user.username = null
     state.user.loggedIn = false
     window.localStorage.setItem('CREDENTIALS_FLUSH', Date.now().toString())

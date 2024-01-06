@@ -22,7 +22,7 @@ export function ProfilePage(state, actions) {
               confirm(
                 'Are you sure you want to deauthorize this device?',
                 affirm => {
-                  state.actions.logout()
+                  actions.logout()
                   m.route.set('/')
                   message('logged out', 3)
                 },
