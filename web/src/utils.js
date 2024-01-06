@@ -1,11 +1,10 @@
-import { Api } from 'chessground/api'
-import { Color, Key } from 'chessground/types'
-import { getPieceLocations } from './ChessMaths'
+import { Api, Color, Key } from 'chessground'
+import { getPieceLocations, SQUARES } from './ChessMaths'
 import { Graph, astar } from 'javascript-astar'
 
 export function toDests(chess) {
   const dests = new Map()
-  chess.SQUARES.forEach(s => {
+  SQUARES.forEach(s => {
     const ms = chess.moves({ square: s, verbose: true })
     if (ms.length)
       dests.set(
@@ -31,7 +30,7 @@ export function playOtherSide(chess, ground) {
 export function setBoard(chess, ground) {
   ground.set({
     fen: chess.fen(),
-    check: chess.in_check(),
+    check: chess.isCheck(),
     turnColor: toColor(chess),
     movable: {
       color: toColor(chess),

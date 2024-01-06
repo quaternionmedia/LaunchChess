@@ -25,10 +25,10 @@ export function calculateInfluence(fen) {
   let moves = chess.moves({ verbose: true }) //, legal: false})
   let defenders = Array(64).fill(0)
   moves.forEach((move, i) => {
-    let index = chess.SQUARES.indexOf(move.to)
+    let index = SQUARES.indexOf(move.to)
     defenders[index] += 1
   })
-  chess.SQUARES.forEach((square, i) => {
+  SQUARES.forEach((square, i) => {
     if (chess.get(square) && chess.get(square).color == chess.turn()) {
       defenders[i] += 1
     }
