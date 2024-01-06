@@ -15,6 +15,7 @@
   "author": "Harpo",
   "license": "MIT",
   "dependencies": {
+    "@bity/oauth2-auth-code-pkce": "^2.13.0",
     "alertifyjs": "^1.13.1",
     "can-ndjson-stream": "^1.0.2",
     "chess.js": "^1.0.0-beta.6",
@@ -29,7 +30,7 @@
   "devDependencies": {
     "@babel/cli": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
-    "parcel": "^2.9.3",
+    "parcel": "^2.11.0",
     "process": "^0.11.10"
   }
 }

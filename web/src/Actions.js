@@ -5,11 +5,13 @@ import { COLORS } from './Launchpad'
 import { uci } from './ChessMaths'
 import { playOtherSide } from './utils'
 import { auth } from './User'
+import { Auth } from './Auth'
 
 export const range = (start, end) =>
   Array.apply(0, Array(end - 1)).map((element, index) => index + start)
 
 export const State = () => ({
+  auth: null,
   theme: 'dark',
   input: null,
   output: null,

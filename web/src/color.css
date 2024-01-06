@@ -16,3 +16,14 @@
 .colorchoice:hover {
   opacity: 1;
 }
+
+.huebee__container {
+  top: 20px; /* position */
+  background: #444;
+  border: 5px solid #222;
+  border-radius: 0;
+}
+
+.huebee__cursor {
+  border: 5px solid #19f;
+}

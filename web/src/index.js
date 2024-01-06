@@ -1,7 +1,7 @@
 import m from 'mithril'
 import { Layout } from './Menu'
 import { LaunchGame } from './LaunchGame'
-import { Login } from './Login'
+import { Login, LoginActions } from './Login'
 import 'construct-ui/lib/index.css'
 import './style.css'
 import { User } from './User'
@@ -11,6 +11,7 @@ import { Connector, ConnectionPage } from './Connector'
 import { State, Actions, OnlineActions } from './Actions'
 import { LaunchpadX } from './Launchpad'
 import { Home } from './Home'
+import { Auth } from './Auth'
 
 console.log('launchchess started!')
 
@@ -20,11 +21,15 @@ Object.assign(actions, Actions(state, actions))
 Object.assign(actions, LaunchGame(state, actions))
 Object.assign(actions, Connector(state, actions))
 Object.assign(actions, getGames(state, actions))
+Object.assign(actions, LoginActions(state, actions))
+
 export var onlineActions = {
   ...actions,
   ...OnlineActions(state, actions),
 }
+
 actions.initConnector()
+actions.initLogin()
 
 console.log(state, actions)
 
@@ -37,7 +42,7 @@ m.route(main, '/', {
   '/otb': GamePage(state, actions),
   '/games': Games(state, actions),
   '/online': GamePageOnline(state, onlineActions),
-  '/login': Login,
+  '/login': Login(state, actions),
   '/profile': ProfilePage,
 })
 
@@ -50,3 +55,6 @@ if (!User.loggedIn) {
     }
   })
 }
+
+window.state = state
+window.actions = actions
