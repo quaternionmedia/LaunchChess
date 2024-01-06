@@ -1,10 +1,9 @@
 import m from 'mithril'
 import { Layout } from './Menu'
 import { LaunchGame } from './LaunchGame'
-import { Login, LoginActions } from './Login'
+import { Login } from './Login'
 import 'construct-ui/lib/index.css'
 import './style.css'
-import { User } from './User'
 import { GamePage, GamePageOnline, Games, getGames } from './Games'
 import { ProfilePage } from './Profile'
 import { Connector, ConnectionPage } from './Connector'
@@ -12,6 +11,7 @@ import { State, Actions, OnlineActions } from './Actions'
 import { LaunchpadX } from './Launchpad'
 import { Home } from './Home'
 import { Auth } from './Auth'
+import { UserActions } from './User'
 
 console.log('launchchess started!')
 
@@ -21,7 +21,7 @@ Object.assign(actions, Actions(state, actions))
 Object.assign(actions, LaunchGame(state, actions))
 Object.assign(actions, Connector(state, actions))
 Object.assign(actions, getGames(state, actions))
-Object.assign(actions, LoginActions(state, actions))
+Object.assign(actions, UserActions(state, actions))
 
 export var onlineActions = {
   ...actions,
@@ -29,7 +29,7 @@ export var onlineActions = {
 }
 
 actions.initConnector()
-actions.initLogin()
+actions.initAuth()
 
 console.log(state, actions)
 
@@ -43,18 +43,8 @@ m.route(main, '/', {
   '/games': Games(state, actions),
   '/online': GamePageOnline(state, onlineActions),
   '/login': Login(state, actions),
-  '/profile': ProfilePage,
+  '/profile': ProfilePage(state, actions),
 })
-
-// auto login
-if (!User.loggedIn) {
-  m.request('/oauth/token').then(res => {
-    if (res) {
-      console.log('session continued', res)
-      User.login(res)
-    }
-  })
-}
 
 window.state = state
 window.actions = actions

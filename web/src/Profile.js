@@ -1,5 +1,4 @@
 import m from 'mithril'
-import { User } from './User'
 import { defaults, confirm, message } from 'alertifyjs'
 import '../node_modules/alertifyjs/build/css/alertify.min.css'
 import '../node_modules/alertifyjs/build/css/themes/semantic.css'
@@ -11,11 +10,11 @@ defaults.theme.ok = 'ui positive button'
 defaults.theme.cancel = 'ui black button'
 defaults.notifier.delay = 10
 
-export function ProfilePage() {
+export function ProfilePage(state, actions) {
   return {
     view: vnode => {
       return [
-        m(Profile, {}, User.profile),
+        m(Profile, {}, state.user.profile),
         m(
           'i',
           {
@@ -23,7 +22,7 @@ export function ProfilePage() {
               confirm(
                 'Are you sure you want to deauthorize this device?',
                 affirm => {
-                  User.logout()
+                  state.actions.logout()
                   m.route.set('/')
                   message('logged out', 3)
                 },
@@ -47,7 +46,7 @@ export function Profile() {
         'table.profile',
         vnode.attrs,
         Object.keys(vnode.children[0]).map((k, i) => {
-          console.log(k, i)
+          // console.log(k, i)
           return m('tr.entry', {}, [
             m('td.key', {}, k),
             // m('td.seperator', {}, ' - '),

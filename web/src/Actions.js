@@ -12,6 +12,11 @@ export const range = (start, end) =>
 
 export const State = () => ({
   auth: null,
+  loggedIn: Stream(false),
+  user: {
+    username: null,
+    profile: null,
+  },
   theme: 'dark',
   input: null,
   output: null,
@@ -96,17 +101,14 @@ export const OnlineActions = (state, actions) => ({
     m.redraw()
     // send to lichess api
     let move_uci = uci(move)
-    auth(
-      'https://lichess.org/api/board/game/' +
-        m.route.param('id') +
-        '/move/' +
-        move_uci,
+    let body = state.auth.fetchBody('https://lichess.org/api/board/game/' +
+      m.route.param('id') +
+      '/move/' +
+      move_uci,
       {
         method: 'post',
-      }
-    ).then(e => {
-      console.log('played move', move_uci, e)
-    })
+      })
+    console.log('played move', move_uci, body)
   },
   afterInit: () => {
     console.log('initing online actions')

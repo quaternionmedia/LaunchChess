@@ -1,9 +1,7 @@
 import m from 'mithril'
-import { User, auth } from './User'
 import { LICHESS_API_URL } from './config'
 import { streamJson } from './ndjson'
 import { Chessground } from 'chessground'
-import { Chess } from 'chess.js'
 import { Board } from './Board'
 import { Toolbar, OnlineToolbar } from './Toolbar'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
@@ -18,7 +16,7 @@ export const getGames = (state, actions) => ({
         .then(resolve)
     }),
   streamGames: () => {
-    streamJson(LICHESS_API_URL + 'stream/event', User.token, res => {
+    streamJson(LICHESS_API_URL + 'stream/event', state.user.token, res => {
       console.log('new lichess event', res)
       if (res.type == 'gameStart' && state.games().length == 0) {
         console.log('auto starting game')
@@ -53,7 +51,7 @@ export const Games = (state, actions) => {
   return {
     listener: null,
     oninit: vnode => {
-      if (!User.loggedIn) {
+      if (!state.loggedIn) {
         m.route.set('/login')
       }
       state.invert(false)
@@ -175,7 +173,7 @@ export const GamePage = (state, actions) => ({
     m('.gamePage', {}, [Toolbar(state, actions), Game(state, actions)]),
 })
 
-export const Player = () => m('.me', {}, User.username)
+export const Player = () => m('.me', {}, state.user.username)
 export const Opponent = state =>
   state.opponent ? m('.opponent', {}, JSON.stringify(state.opponent)) : null
 

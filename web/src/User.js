@@ -1,75 +1,40 @@
 import m from 'mithril'
-import jwt_decode from 'jwt-decode'
+import { Auth } from './Auth'
 
-export function auth(url, opts) {
-  const req = new Promise((resolve, reject) => {
-    m.request(url, {
-      headers: {
-        Authorization: User.token.token_type + ' ' + User.token.access_token,
-      },
-      ...opts,
-    })
-      .then(res => {
-        console.log('auth success')
-        resolve(res)
-        // return res
-      })
-      .catch(e => {
-        if (e.code == 401) {
-          m.request('/refresh', {
-            method: 'post',
-          })
-            .then(token => {
-              User.login(token)
-              auth(url, opts).then(res => {
-                console.log('resolved refresh')
-                resolve(res)
-              })
-            })
-            .catch(err => {
-              console.log('error making auth request', url, opts, err)
-              error('Not authorized')
-              m.route.set('/login', {
-                redirect: m.route.get(),
-              })
-              reject(err)
-            })
-        }
-      })
-  })
-  return req
-}
 
-export var User = {
-  username: null,
-  token: null,
-  loggedIn: false,
-  profile: null,
-  login: token => {
-    User.token = token
-    User.loggedIn = true
-    console.log('logged in as: ', User)
+export const UserActions = (state, actions) => ({
+  login: async token => {
+    console.log('logging in')
+    state.auth.login()
+    console.log('logged in as: ', state.user.username)
+    state.user.loggedIn = true
     if (m.route.param('redirect')) {
       m.route.set(m.route.param('redirect'))
     } else if (m.route.get() == '/login') {
       m.route.set('/')
     }
     // m.redraw()
-    auth('/oauth/profile').then(res => {
-      console.log('profile', res)
-      User.profile = res
-      User.username = res.username
-    })
+    state.user.profile = await state.auth.fetchBody('/oauth/profile')
+    state.user.username = state.user.profile.username
   },
   logout: () => {
     console.log('logging out', User)
     // don't need to use auth() because cookie is enough here
     m.request('/oauth/logout')
-    User.username = null
-    User.token = null
-    User.loggedIn = false
+    state.user.username = null
+    state.user.loggedIn = false
     window.localStorage.setItem('CREDENTIALS_FLUSH', Date.now().toString())
     window.localStorage.removeItem('CREDENTIALS_FLUSH')
     // m.redraw()
   },
-}
+  initAuth: () => {
+    if (localStorage.getItem('me')) {
+      state.user = JSON.parse(localStorage.getItem('me'))
+      state.user.loggedIn = true
+      console.log('loaded user from localstorage', state.user)
+    }
+    state.auth = Auth(state)
+    state.auth.init()
+    console.log('auth inited')
+  }
+})
