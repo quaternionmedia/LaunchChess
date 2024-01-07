@@ -34,6 +34,7 @@ export const State = () => ({
   changeLayout: null,
   game: null,
   games: Stream([]),
+  stream: null, // NDJson stream of games from API
   opponent: null,
   chess: new Chess(),
   ground: null,

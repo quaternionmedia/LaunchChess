@@ -67,7 +67,8 @@ export const Auth = (state, actions) => ({
     state.user = me;
     state.loggedIn(true);
     localStorage.setItem('me', JSON.stringify(me));
-    console.log('Authenticated as', me.username);
+    console.log('Authenticated as', me.username, actions);
+    await actions.getGames()
     m.redraw();
   },
 

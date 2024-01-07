@@ -26,14 +26,14 @@ export const UserActions = (state, actions) => ({
     window.localStorage.removeItem('CREDENTIALS_FLUSH')
     // m.redraw()
   },
-  initAuth: () => {
+  initAuth: async () => {
     if (localStorage.getItem('me')) {
       state.user = JSON.parse(localStorage.getItem('me'))
       state.user.loggedIn = true
       console.log('loaded user from localstorage', state.user)
     }
-    state.auth = Auth(state)
-    state.auth.init()
+    state.auth = Auth(state, actions)
+    await state.auth.init()
     console.log('auth inited')
   }
 })

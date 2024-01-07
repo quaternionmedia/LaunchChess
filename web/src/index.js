@@ -4,7 +4,7 @@ import { LaunchGame } from './LaunchGame'
 import { Login } from './Login'
 import 'construct-ui/lib/index.css'
 import './style.css'
-import { GamePage, GamePageOnline, Games, getGames } from './Games'
+import { GamePage, GamePageOnline, Games, GamesActions } from './Games'
 import { ProfilePage } from './Profile'
 import { Connector, ConnectionPage } from './Connector'
 import { State, Actions, OnlineActions } from './Actions'
@@ -20,7 +20,7 @@ export var actions = {}
 Object.assign(actions, Actions(state, actions))
 Object.assign(actions, LaunchGame(state, actions))
 Object.assign(actions, Connector(state, actions))
-Object.assign(actions, getGames(state, actions))
+Object.assign(actions, GamesActions(state, actions))
 Object.assign(actions, UserActions(state, actions))
 
 export var onlineActions = {
