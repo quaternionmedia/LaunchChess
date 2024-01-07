@@ -5,7 +5,7 @@ import { Chessground } from 'chessground'
 import { Board } from './Board'
 import { Toolbar, OnlineToolbar } from './Toolbar'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
-import { toDests, toColor, playOtherSide } from './utils'
+import { toDests } from './utils'
 import { NOTE_ON, CONTROL_CHANGE, COLORS } from './Launchpad'
 
 export const GamesActions = (state, actions) => ({
@@ -37,16 +37,7 @@ export const GamesActions = (state, actions) => ({
           break
       }
     })
-  },
-  streamGames: () => {
-    streamJson(LICHESS_API_URL + 'stream/event', state.user.token, res => {
-      console.log('new lichess event', res)
-      if (res.type == 'gameStart' && state.games().length == 0) {
-        console.log('auto starting game')
-        actions.getGames()
-      }
-    })
-  },
+  }
 })
 
 export const GameThumb = (state, game) =>
@@ -85,21 +76,20 @@ export const Games = (state, actions) => {
         console.log('one active game. loading now!')
         state.game = games[0]
         m.route.set('/online', { id: state.game.gameId })
-      } else if (games.length == 0) {
-        actions.streamGames()
       }
-
-      listener = state.input.addListener('noteon', 'all', message => {
-        console.log('connector got message', message)
-        let n = actions.launchToN(message.data[1])
-        /* n is 0-63, but represented bottom to top.
-      We need to invert the row to make it read top to bottom, left to right. */
-        let g = (n % 8) + (7 - Math.floor(n / 8)) * 8
-        console.log('selected game', g)
-        if (g < games.length) {
-          m.route.set('/online', { id: games[g].gameId })
-        }
-      })
+      if (state.input) {
+        listener = state.input.addListener('noteon', 'all', message => {
+          console.log('connector got message', message)
+          let n = actions.launchToN(message.data[1])
+          /* n is 0-63, but represented bottom to top.
+        We need to invert the row to make it read top to bottom, left to right. */
+          let g = (n % 8) + (7 - Math.floor(n / 8)) * 8
+          console.log('selected game', g)
+          if (g < games.length) {
+            m.route.set('/online', { id: games[g].gameId })
+          }
+        })
+      }
       games.map((g, i) => {
         let note = g.isMyTurn ? NOTE_ON | 2 : NOTE_ON
         /* Invert the row to get buttons to go top to bottom. */
@@ -155,7 +145,7 @@ export const Game = (state, actions) =>
   m('.board', {
     oninit: vnode => {
       console.log('game loading', vnode.attrs, state.chess.ascii())
-      actions.afterInit()
+      actions.streamGame()
     },
     oncreate: vnode => {
       state.ground = Chessground(vnode.dom, {
@@ -195,7 +185,7 @@ export const GamePage = (state, actions) => ({
     m('.gamePage', {}, [Toolbar(state, actions), Game(state, actions)]),
 })
 
-export const Player = () => m('.me', {}, state.user.username)
+export const Player = (state) => m('.me', {}, state.user.username)
 export const Opponent = state =>
   state.opponent ? m('.opponent', {}, JSON.stringify(state.opponent)) : null
 
@@ -212,13 +202,13 @@ export const GamePageOnline = (state, actions) => ({
       m(
         '.top_user',
         {},
-        state.invert() != (state.color == 'b') ? Player() : Opponent(state)
+        state.invert() != (state.color == 'b') ? Player(state) : Opponent(state)
       ),
       Game(state, actions),
       m(
         '.bottom_user',
         {},
-        state.invert() != (state.color == 'b') ? Opponent(state) : Player()
+        state.invert() != (state.color == 'b') ? Opponent(state) : Player(state)
       ),
     ]),
 })

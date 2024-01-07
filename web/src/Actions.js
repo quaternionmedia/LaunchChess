@@ -98,11 +98,10 @@ export const OnlineActions = (state, actions) => ({
     state.ground.set({ fen: state.chess.fen() })
 
     actions.lightBoard(true)
-    playOtherSide(state.chess, state.ground)(orig, dest)
     m.redraw()
     // send to lichess api
     let move_uci = uci(move)
-    let body = state.auth.fetchBody('https://lichess.org/api/board/game/' +
+    let body = state.auth.fetchBody('/api/board/game/' +
       m.route.param('id') +
       '/move/' +
       move_uci,
@@ -110,10 +109,5 @@ export const OnlineActions = (state, actions) => ({
         method: 'post',
       })
     console.log('played move', move_uci, body)
-  },
-  afterInit: () => {
-    console.log('initing online actions')
-    actions.afterInit()
-    actions.streamGame()
   },
 })
