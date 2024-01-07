@@ -35,7 +35,6 @@ export const Connector = (state, actions) => ({
     state.inputName = state.input.name
     console.log('connected', state.input)
     if (state.input) {
-      // send sysex to see if device is a launchpad
       state.connected = true
     } else {
       state.connected = false
@@ -245,14 +244,14 @@ export const ConnectionPage = (state, actions) => ({
       StatusIcon(state),
       state.inputs().length
         ? state.inputs().map(i => {
-            if (i.name in NAMES) {
-              let matches = Object.keys(NAMES).filter(n => i.name.includes(n))
-              console.log(`checking ${i.name}`, matches)
-              if (matches.length) {
-                return LaunchpadButton(i.name, state, actions)
-              }
+          if (i.name in NAMES) {
+            let matches = Object.keys(NAMES).filter(n => i.name.includes(n))
+            console.log(`checking ${i.name}`, matches)
+            if (matches.length) {
+              return LaunchpadButton(i.name, state, actions)
             }
-          })
+          }
+        })
         : 'no Launchpads detected',
       state.connected ? Disconnect(state, actions) : null,
       m('h3', {}, 'Input'),

@@ -20,7 +20,6 @@ export const GamesActions = (state, actions) => ({
           if (games.length == 1) {
             console.log('one active game. loading now!')
             state.game = games[0]
-            m.route.set('/online', { id: state.game.gameId })
           }
           break
         case 'gameFinish':
@@ -72,11 +71,6 @@ export const Games = (state, actions) => {
       let games = state.games()
       console.log('games', games)
       state.games(games)
-      if (games.length == 1) {
-        console.log('one active game. loading now!')
-        state.game = games[0]
-        m.route.set('/online', { id: state.game.gameId })
-      }
       if (state.input) {
         listener = state.input.addListener('noteon', 'all', message => {
           console.log('connector got message', message)
@@ -89,21 +83,27 @@ export const Games = (state, actions) => {
             m.route.set('/online', { id: games[g].gameId })
           }
         })
+
+        games.map((g, i) => {
+          let note = g.isMyTurn ? NOTE_ON | 2 : NOTE_ON
+          /* Invert the row to get buttons to go top to bottom. */
+          let n = (i % 8) + 8 * (7 - Math.floor(i / 8))
+          let l = actions.nToLaunch(n)
+          console.log('sending', g, i, l)
+          actions.send(note, [l, g.color == 'white' ? 15 : 83])
+        })
+        actions.clearAnimations()
+        actions.clear()
+        actions.send(NOTE_ON, [state.top[state.top.length - 1], COLORS['q']])
       }
-      games.map((g, i) => {
-        let note = g.isMyTurn ? NOTE_ON | 2 : NOTE_ON
-        /* Invert the row to get buttons to go top to bottom. */
-        let n = (i % 8) + 8 * (7 - Math.floor(i / 8))
-        let l = actions.nToLaunch(n)
-        console.log('sending', g, i, l)
-        actions.send(note, [l, g.color == 'white' ? 15 : 83])
-      })
-      actions.clearAnimations()
-      actions.clear()
-      actions.send(NOTE_ON, [state.top[state.top.length - 1], COLORS['q']])
+      if (games.length == 1) {
+        console.log('one active game. loading now!')
+        state.game = games[0]
+        m.route.set('/online', { id: state.game.gameId })
+      }
     },
     onremove: vnode => {
-      state.input.removeListener(listener)
+      if (state.input) state.input.removeListener(listener)
     },
     view: vnode => [
       m('.toolbar', {}, [
@@ -146,6 +146,7 @@ export const Game = (state, actions) =>
     oninit: vnode => {
       console.log('game loading', vnode.attrs, state.chess.ascii())
       actions.streamGame()
+      actions.afterInit()
     },
     oncreate: vnode => {
       state.ground = Chessground(vnode.dom, {

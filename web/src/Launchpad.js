@@ -165,7 +165,7 @@ export const Launchpad = (state, actions) => ({
     }
   },
   animatePath: (path, color, step) => {
-    console.log('animating path', path, step)
+    // console.log('animating path', path, step)
     let current = path.splice(step, 1)[0]
     path.forEach((square, i) => {
       actions.send(NOTE_ON | 2, [
