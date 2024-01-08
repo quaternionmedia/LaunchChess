@@ -3,7 +3,10 @@
     "version": "0.1.1",
     "description": "Chess on a Launchpad",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "parcel build --no-cache --dist-dir dist src/index.html",
+        "ci": "parcel build --no-cache --dist-dir build src/index.html",
+        "dev": "parcel --port 5555 --no-cache --dist-dir dist src/index.html"
     },
     "browserslist": [
         "defaults"
