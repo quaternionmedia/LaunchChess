@@ -22,6 +22,8 @@ jobs:
       - name: 🛠️ Install and Build
         run: |
           npm ci
+          # Fixes duplicate "main" definition in package.json
+          sed '17d' node_modules/javascript-astar/package.json
           npm run ci
 
       - name: 🚀 Deploy
