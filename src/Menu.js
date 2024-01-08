@@ -2,6 +2,7 @@ import m from 'mithril'
 import { StatusIcon } from './Toolbar'
 import { message } from 'alertifyjs'
 import { Switch } from 'construct-ui'
+import './logo.svg'
 
 export const Link = () => ({
   view: vnode => {
@@ -40,7 +41,7 @@ export const Links = state => [
 ]
 
 export const Menu = state => [
-  m(Link, { href: '/' }, m('img.logo#logo', { src: '/static/logo.svg' })),
+  m(Link, { href: '/' }, m('img.logo#logo', { src: 'logo.svg' })),
   Links(state),
 ]
 
