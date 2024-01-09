@@ -7,6 +7,8 @@ import { Toolbar, OnlineToolbar } from './Toolbar'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
 import { toDests } from './utils'
 import { NOTE_ON, CONTROL_CHANGE, COLORS } from './Launchpad'
+import lichess_logo from './svg/lichess-logo.svg'
+import lichess_logo_white from './svg/lichess-logo-white.svg'
 
 export const GamesActions = (state, actions) => ({
   getGames: async () => {
@@ -118,9 +120,7 @@ export const Games = (state, actions) => {
             },
             m('img.svgicon', {
               src:
-                state.theme == 'dark'
-                  ? 'static/lichess-logo-white.svg'
-                  : 'static/lichess-logo.svg',
+                state.theme == 'dark' ? lichess_logo_white : lichess_logo,
             })
           )
         ),
