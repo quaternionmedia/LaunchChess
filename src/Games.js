@@ -64,7 +64,7 @@ export const Games = (state, actions) => {
   return {
     listener: null,
     oninit: vnode => {
-      if (!state.loggedIn) {
+      if (!state.loggedIn()) {
         m.route.set('/login')
       }
       state.invert(false)
@@ -192,7 +192,7 @@ export const Opponent = state =>
 
 export const GamePageOnline = (state, actions) => ({
   oninit: vnode => {
-    if (!state.loggedIn) {
+    if (!state.loggedIn()) {
       console.log('not logged in. Redirecting to login')
       m.route.set('/login')
     }

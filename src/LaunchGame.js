@@ -207,44 +207,46 @@ export const LaunchGame = (state, actions) => ({
     actions.lightBoard()
   },
   streamGame: () => {
-    if (!state.loggedIn) {
+    if (!state.loggedIn()) {
       m.route.set('/login')
-    }
-    console.log('streaming game', m.route.param('id'))
+      console.log('not logged in. Redirecting to login page')
+    } else {
+      console.log('streaming game', m.route.param('id'), state.loggedIn())
 
-    state.auth.openStream('/api/board/game/stream/' + m.route.param('id'), {}, v => {
-      console.log('calling back', v)
-      if (v.type == 'gameFull') {
-        state.game = v
-        // TODO: change to Stream()
-        // m.redraw()
-        console.log('loading game', v.state.moves)
-        console.log(
-          'loaded?',
-          state.chess.loadPgn(v.state.moves, { sloppy: true })
-        )
-        if (v.black.id == state.user.profile.id && !state.invert()) {
-          // if playing black, and not already inverted, flip board
-          actions.flipBoard()
-          state.color = 'b'
-        } else {
-          state.color = 'w'
+      state.auth.openStream('/api/board/game/stream/' + m.route.param('id'), {}, v => {
+        console.log('calling back', v)
+        if (v.type == 'gameFull') {
+          state.game = v
+          // TODO: change to Stream()
+          // m.redraw()
+          console.log('loading game', v.state.moves)
+          console.log(
+            'loaded?',
+            state.chess.loadPgn(v.state.moves, { sloppy: true })
+          )
+          if (v.black.id == state.user.profile.id && !state.invert()) {
+            // if playing black, and not already inverted, flip board
+            actions.flipBoard()
+            state.color = 'b'
+          } else {
+            state.color = 'w'
+          }
+        } else if (v.type == 'gameState') {
+          console.log('move played', v.moves)
+          console.log(
+            'loaded?',
+            state.chess.loadPgn(v.moves, { sloppy: true })
+          )
         }
-      } else if (v.type == 'gameState') {
-        console.log('move played', v.moves)
-        console.log(
-          'loaded?',
-          state.chess.loadPgn(v.moves, { sloppy: true })
-        )
+        let turn = state.chess.turn() == 'w' ? 'white' : 'black'
+        console.log('updated. turn is', turn)
+
+        setBoard(state.chess, state.ground)
+
+        actions.lightBoard(true)
       }
-      let turn = state.chess.turn() == 'w' ? 'white' : 'black'
-      console.log('updated. turn is', turn)
-
-      setBoard(state.chess, state.ground)
-
-      actions.lightBoard(true)
+      )
     }
-    )
   },
   newGame: () => {
     state.chess = new Chess()

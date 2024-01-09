@@ -7,7 +7,7 @@ export const UserActions = (state, actions) => ({
     console.log('logging in')
     state.auth.login()
     console.log('logged in as: ', state.user.username)
-    state.user.loggedIn = true
+    state.loggedIn(true)
     if (m.route.param('redirect')) {
       m.route.set(m.route.param('redirect'))
     } else if (m.route.get() == '/login') {
@@ -21,7 +21,7 @@ export const UserActions = (state, actions) => ({
     console.log('logging out')
     state.auth.logout()
     state.user.username = null
-    state.user.loggedIn = false
+    state.loggedIn(false)
     window.localStorage.setItem('CREDENTIALS_FLUSH', Date.now().toString())
     window.localStorage.removeItem('CREDENTIALS_FLUSH')
     // m.redraw()
@@ -29,7 +29,6 @@ export const UserActions = (state, actions) => ({
   initAuth: async () => {
     if (localStorage.getItem('me')) {
       state.user = JSON.parse(localStorage.getItem('me'))
-      state.user.loggedIn = true
       console.log('loaded user from localstorage', state.user)
     }
     state.auth = Auth(state, actions)
