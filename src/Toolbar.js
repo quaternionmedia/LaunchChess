@@ -1,6 +1,8 @@
 import m from 'mithril'
 import { confirm } from 'alertifyjs'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
+import chess_tile from './svg/Chess_tile_ql.svg'
+
 
 export const StatusIcon = state =>
   m(
@@ -81,7 +83,7 @@ export const ForwardsButton = (state, actions) =>
     'i.material-icons',
     {
       title: 'does nothing',
-      onclick: e => {},
+      onclick: e => { },
     },
     'arrow_right'
   )
@@ -106,7 +108,7 @@ export const PiecesToggle = (state, actions) =>
       title: state.pieces ? 'hide pieces' : 'show pieces',
       onclick: e => actions.togglePieces(),
     },
-    m('img.svgicon', { src: 'static/Chess_tile_ql.svg' })
+    m('img.svgicon', { src: chess_tile })
   )
 
 export const HistoryIncrement = (state, actions) =>

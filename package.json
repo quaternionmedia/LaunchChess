@@ -5,7 +5,7 @@
     "scripts": {
         "build": "parcel build --no-cache --dist-dir dist src/index.html",
         "ci": "parcel build --no-cache --dist-dir build --public-url /LaunchChess src/index.html src/*.svg",
-        "dev": "parcel --port 5555 --no-cache --dist-dir dist src/index.html"
+        "dev": "parcel --no-cache --dist-dir dist src/index.html src/*.svg"
     },
     "browserslist": [
         "defaults"

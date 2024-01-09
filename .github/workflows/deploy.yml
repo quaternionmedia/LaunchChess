@@ -25,7 +25,6 @@ jobs:
           # Fixes duplicate "main" definition in package.json
           sed -i '17d' node_modules/javascript-astar/package.json
           npm run ci
-          cp -r static build/
 
       - name: 🚀 Deploy
         uses: JamesIves/github-pages-deploy-action@v4
