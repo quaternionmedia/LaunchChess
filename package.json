@@ -3,8 +3,8 @@
     "version": "0.1.1",
     "description": "Chess on a Launchpad",
     "scripts": {
-        "build": "parcel build --no-cache --dist-dir dist src/index.html",
-        "ci": "parcel build --no-cache --dist-dir build --public-url /LaunchChess src/index.html src/*.svg",
+        "build": "parcel build --no-cache --dist-dir dist src/index.html src/*.svg",
+        "ci": "parcel build --no-cache --dist-dir build src/index.html src/*.svg",
         "dev": "parcel --no-cache --dist-dir dist src/index.html src/*.svg"
     },
     "browserslist": [
