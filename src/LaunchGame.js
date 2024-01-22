@@ -25,9 +25,9 @@ export const LaunchGame = (state, actions) => ({
     }
     actions.send(CONTROL_CHANGE, [
       state.top[0],
-      Math.min(state.history() + 1, 3),
+      Math.min(state.viewHistory() + 1, 3),
     ])
-    actions.send(CONTROL_CHANGE, [state.top[1], Math.min(state.history(), 3)])
+    actions.send(CONTROL_CHANGE, [state.top[1], Math.min(state.viewHistory(), 3)])
     actions.send(CONTROL_CHANGE, [state.top[2], 67])
     actions.send(CONTROL_CHANGE, [
       state.top[4],
@@ -143,6 +143,7 @@ export const LaunchGame = (state, actions) => ({
           .map(legal_move => legal_move.to)
         if (squares.includes(move.to)) {
           actions.makeMove(move)
+          actions.onmove(move.from, move.to)
         } else {
           console.log('illegal move', move)
         }
@@ -275,7 +276,12 @@ export const LaunchGame = (state, actions) => ({
     state.ground.set({ fen: state.chess.fen() })
 
     actions.lightBoard(true)
-    playOtherSide(state.chess, state.ground)(orig, dest)
+    console.log('adding to history', orig, dest)
+    let history = state.history()
+    history.push(state.chess.history()[state.chess.moveNumber() - 1])
+    state.history(history)
+    state.fen(state.chess.fen())
+    state.pgn(state.chess.pgn())
   },
   afterInit: () => {
     actions.initMidi(actions.onInput, actions.onCC, () => {
