@@ -1,5 +1,4 @@
-import { Api, Color, Key } from 'chessground'
-import { getPieceLocations, SQUARES } from './ChessMaths'
+import { SQUARES } from './ChessMaths'
 import { Graph, astar } from 'javascript-astar'
 
 export function toDests(chess) {

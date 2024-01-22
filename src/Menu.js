@@ -1,8 +1,8 @@
 import m from 'mithril'
-import { User } from './User'
 import { StatusIcon } from './Toolbar'
 import { message } from 'alertifyjs'
 import { Switch } from 'construct-ui'
+import './logo.svg'
 
 export const Link = () => ({
   view: vnode => {
@@ -28,20 +28,20 @@ export const Links = state => [
     },
   }),
   // ,
-  User.username
-    ? m(Link, { href: '/profile' }, User.username)
+  state.user.username
+    ? m(Link, { href: '/profile' }, state.user.username)
     : m(
-        Link,
-        {
-          href: '/login',
-          id: 'loginButton',
-        },
-        'Login'
-      ),
+      Link,
+      {
+        href: '/login',
+        id: 'loginButton',
+      },
+      'Login'
+    ),
 ]
 
 export const Menu = state => [
-  m(Link, { href: '/' }, m('img.logo#logo', { src: '/static/logo.svg' })),
+  m(Link, { href: '/' }, m('img.logo#logo', { src: 'logo.svg' })),
   Links(state),
 ]
 

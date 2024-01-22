@@ -1,31 +1,44 @@
 import m from 'mithril'
-import { User, auth } from './User'
 import { LICHESS_API_URL } from './config'
 import { streamJson } from './ndjson'
 import { Chessground } from 'chessground'
-import { Chess } from 'chess.js'
 import { Board } from './Board'
 import { Toolbar, OnlineToolbar } from './Toolbar'
 import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css'
-import { toDests, toColor, playOtherSide } from './utils'
+import { toDests } from './utils'
 import { NOTE_ON, CONTROL_CHANGE, COLORS } from './Launchpad'
+import lichess_logo from './svg/lichess-logo.svg'
+import lichess_logo_white from './svg/lichess-logo-white.svg'
 
-export const getGames = (state, actions) => ({
-  getGames: () =>
-    new Promise((resolve, reject) => {
-      auth(LICHESS_API_URL + 'account/playing?nb=50')
-        .then(res => res.nowPlaying)
-        .then(resolve)
-    }),
-  streamGames: () => {
-    streamJson(LICHESS_API_URL + 'stream/event', User.token, res => {
-      console.log('new lichess event', res)
-      if (res.type == 'gameStart' && state.games().length == 0) {
-        console.log('auto starting game')
-        actions.getGames()
+export const GamesActions = (state, actions) => ({
+  getGames: async () => {
+    state.stream = await state.auth.openStream('/api/stream/event', {}, msg => {
+      console.log('got game stream msg', msg)
+      switch (msg.type) {
+        case 'gameStart':
+          let games = state.games()
+          games.push(msg.game)
+          state.games(games)
+          if (games.length == 1) {
+            console.log('one active game. loading now!')
+            state.game = games[0]
+          }
+          break
+        case 'gameFinish':
+          state.games(state.games().filter(g => g.gameId != msg.game.gameId))
+          break
+        case 'challenge':
+          // TODO
+          break
+        case 'challengeCanceled':
+          // TODO
+          break
+        case 'challengeDeclined':
+          // TODO
+          break
       }
     })
-  },
+  }
 })
 
 export const GameThumb = (state, game) =>
@@ -53,21 +66,14 @@ export const Games = (state, actions) => {
   return {
     listener: null,
     oninit: vnode => {
-      if (!User.loggedIn) {
+      if (!state.loggedIn()) {
         m.route.set('/login')
       }
       state.invert(false)
-      actions.getGames().then(games => {
-        console.log('got games', games)
-        state.games(games)
-        if (games.length == 1) {
-          console.log('one active game. loading now!')
-          state.game = games[0]
-          m.route.set('/online', { id: state.game.gameId })
-        } else if (games.length == 0) {
-          actions.streamGames()
-        }
-
+      let games = state.games()
+      console.log('games', games)
+      state.games(games)
+      if (state.input) {
         listener = state.input.addListener('noteon', 'all', message => {
           console.log('connector got message', message)
           let n = actions.launchToN(message.data[1])
@@ -79,6 +85,7 @@ export const Games = (state, actions) => {
             m.route.set('/online', { id: games[g].gameId })
           }
         })
+
         games.map((g, i) => {
           let note = g.isMyTurn ? NOTE_ON | 2 : NOTE_ON
           /* Invert the row to get buttons to go top to bottom. */
@@ -87,13 +94,18 @@ export const Games = (state, actions) => {
           console.log('sending', g, i, l)
           actions.send(note, [l, g.color == 'white' ? 15 : 83])
         })
-      })
-      actions.clearAnimations()
-      actions.clear()
-      actions.send(NOTE_ON, [state.top[state.top.length - 1], COLORS['q']])
+        actions.clearAnimations()
+        actions.clear()
+        actions.send(NOTE_ON, [state.top[state.top.length - 1], COLORS['q']])
+      }
+      if (games.length == 1) {
+        console.log('one active game. loading now!')
+        state.game = games[0]
+        m.route.set('/online', { id: state.game.gameId })
+      }
     },
     onremove: vnode => {
-      state.input.removeListener(listener)
+      if (state.input) state.input.removeListener(listener)
     },
     view: vnode => [
       m('.toolbar', {}, [
@@ -108,9 +120,7 @@ export const Games = (state, actions) => {
             },
             m('img.svgicon', {
               src:
-                state.theme == 'dark'
-                  ? 'static/lichess-logo-white.svg'
-                  : 'static/lichess-logo.svg',
+                state.theme == 'dark' ? lichess_logo_white : lichess_logo,
             })
           )
         ),
@@ -135,6 +145,7 @@ export const Game = (state, actions) =>
   m('.board', {
     oninit: vnode => {
       console.log('game loading', vnode.attrs, state.chess.ascii())
+      actions.streamGame()
       actions.afterInit()
     },
     oncreate: vnode => {
@@ -175,24 +186,30 @@ export const GamePage = (state, actions) => ({
     m('.gamePage', {}, [Toolbar(state, actions), Game(state, actions)]),
 })
 
-export const Player = () => m('.me', {}, User.username)
+export const Player = (state) => m('.me', {}, state.user.username)
 export const Opponent = state =>
   state.opponent ? m('.opponent', {}, JSON.stringify(state.opponent)) : null
 
 export const GamePageOnline = (state, actions) => ({
+  oninit: vnode => {
+    if (!state.loggedIn()) {
+      console.log('not logged in. Redirecting to login')
+      m.route.set('/login')
+    }
+  },
   view: vnode =>
     m('.gamePage', {}, [
       OnlineToolbar(state, actions),
       m(
         '.top_user',
         {},
-        state.invert() != (state.color == 'b') ? Player() : Opponent(state)
+        state.invert() != (state.color == 'b') ? Player(state) : Opponent(state)
       ),
       Game(state, actions),
       m(
         '.bottom_user',
         {},
-        state.invert() != (state.color == 'b') ? Opponent(state) : Player()
+        state.invert() != (state.color == 'b') ? Opponent(state) : Player(state)
       ),
     ]),
 })

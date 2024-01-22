@@ -4,13 +4,14 @@ import { LaunchGame } from './LaunchGame'
 import { Login } from './Login'
 import 'construct-ui/lib/index.css'
 import './style.css'
-import { User } from './User'
-import { GamePage, GamePageOnline, Games, getGames } from './Games'
+import { GamePage, GamePageOnline, Games, GamesActions } from './Games'
 import { ProfilePage } from './Profile'
 import { Connector, ConnectionPage } from './Connector'
 import { State, Actions, OnlineActions } from './Actions'
 import { LaunchpadX } from './Launchpad'
 import { Home } from './Home'
+import { Auth } from './Auth'
+import { UserActions } from './User'
 
 console.log('launchchess started!')
 
@@ -19,12 +20,16 @@ export var actions = {}
 Object.assign(actions, Actions(state, actions))
 Object.assign(actions, LaunchGame(state, actions))
 Object.assign(actions, Connector(state, actions))
-Object.assign(actions, getGames(state, actions))
+Object.assign(actions, GamesActions(state, actions))
+Object.assign(actions, UserActions(state, actions))
+
 export var onlineActions = {
   ...actions,
   ...OnlineActions(state, actions),
 }
+
 actions.initConnector()
+actions.initAuth()
 
 console.log(state, actions)
 
@@ -37,16 +42,9 @@ m.route(main, '/', {
   '/otb': GamePage(state, actions),
   '/games': Games(state, actions),
   '/online': GamePageOnline(state, onlineActions),
-  '/login': Login,
-  '/profile': ProfilePage,
+  '/login': Login(state, actions),
+  '/profile': ProfilePage(state, actions),
 })
 
-// auto login
-if (!User.loggedIn) {
-  m.request('/oauth/token').then(res => {
-    if (res) {
-      console.log('session continued', res)
-      User.login(res)
-    }
-  })
-}
+window.state = state
+window.actions = actions

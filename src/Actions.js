@@ -5,11 +5,18 @@ import { COLORS } from './Launchpad'
 import { uci } from './ChessMaths'
 import { playOtherSide } from './utils'
 import { auth } from './User'
+import { Auth } from './Auth'
 
 export const range = (start, end) =>
   Array.apply(0, Array(end - 1)).map((element, index) => index + start)
 
 export const State = () => ({
+  auth: null,
+  loggedIn: Stream(false),
+  user: {
+    username: null,
+    profile: null,
+  },
   theme: 'dark',
   input: null,
   output: null,
@@ -27,6 +34,7 @@ export const State = () => ({
   changeLayout: null,
   game: null,
   games: Stream([]),
+  stream: null, // NDJson stream of games from API
   opponent: null,
   chess: new Chess(),
   ground: null,
@@ -90,25 +98,16 @@ export const OnlineActions = (state, actions) => ({
     state.ground.set({ fen: state.chess.fen() })
 
     actions.lightBoard(true)
-    playOtherSide(state.chess, state.ground)(orig, dest)
     m.redraw()
     // send to lichess api
     let move_uci = uci(move)
-    auth(
-      'https://lichess.org/api/board/game/' +
-        m.route.param('id') +
-        '/move/' +
-        move_uci,
+    let body = state.auth.fetchBody('/api/board/game/' +
+      m.route.param('id') +
+      '/move/' +
+      move_uci,
       {
         method: 'post',
-      }
-    ).then(e => {
-      console.log('played move', move_uci, e)
-    })
-  },
-  afterInit: () => {
-    console.log('initing online actions')
-    actions.afterInit()
-    actions.streamGame()
+      })
+    console.log('played move', move_uci, body)
   },
 })
