@@ -10,9 +10,69 @@ import '../node_modules/chessground/assets/chessground.brown.css'
 import '../node_modules/chessground/assets/chessground.cburnett.css'
 import './moves.css'
 import { toDests } from './utils'
+import { getPieceLocations } from './ChessMaths'
+// const chess = new Chess()
+// var ground //: typeof Chessground //= Chessground(
 
-const chess = new Chess()
-var ground //: typeof Chessground //= Chessground(
+const Board = cell =>
+  m('#board', {
+    oncreate: vnode => {
+      let ground = Chessground(vnode.dom, {
+        // fen: window.chess.fen(),
+        movable: {
+          free: false,
+          color: 'white',
+          dests: toDests(cell.state.chess),
+        },
+        highlight: {
+          check: true,
+        },
+        events: {
+          move: (orig, dest) => {
+            console.log('move', orig, dest)
+            cell.state.chess.move({ from: orig, to: dest })
+            // console.log(cell.state.chess.fen())
+            ground.set({
+              // fen: cell.state.chess.fen(),
+              movable: {
+                color: cell.state.chess.turn() == 'w' ? 'white' : 'black',
+                dests: toDests(cell.state.chess),
+              },
+              check: cell.state.chess.inCheck(),
+            })
+            console.log('move', orig, dest)
+            cell.update({
+              fen: cell.state.chess.fen(),
+              moves: cell.state.chess
+                .history({ verbose: true })
+                .map(move => move.san),
+              // ground: ground,
+            })
+          },
+        },
+      })
+      window.ground = ground
+    },
+  })
+
+const History = cell =>
+  m('.history', {}, [
+    m('h3', {}, 'Moves'),
+    m(
+      'table',
+      {},
+      Array.from(
+        { length: Math.ceil(cell.state.moves?.length / 2) },
+        (_, i) => i
+      ).map(index =>
+        m('tr', {}, [
+          m('td.move-number', {}, index + 1),
+          m('td.move', {}, cell.state.moves[2 * index]),
+          m('td.move', {}, cell.state.moves[2 * index + 1]),
+        ])
+      )
+    ),
+  ])
 
 interface State {
   page: string
@@ -21,7 +81,7 @@ interface State {
     password: string
   }
   data?: string[] | string
-  chess?: Chess
+  chess: Chess
   ground?: typeof Chessground
   fen?: string
   moves?: string[]
@@ -30,7 +90,7 @@ interface State {
 const app: MeiosisViewComponent<State> = {
   initial: {
     page: 'Home',
-    fen: chess.fen(),
+    chess: new Chess(),
   },
 
   services: [],
@@ -45,59 +105,9 @@ const app: MeiosisViewComponent<State> = {
       'Login'
     ),
     m('#fen', {}, 'fen: ' + cell.state.fen),
-    m('#board', {
-      oncreate: vnode => {
-        ground = Chessground(vnode.dom, {
-          // fen: window.chess.fen(),
-          movable: {
-            free: false,
-            color: 'both',
-            dests: toDests(chess),
-          },
-          drawable: {
-            enabled: true,
-            eraseOnClick: false,
-          },
-          trustAllEvents: true,
-          events: {
-            move: (orig, dest) => {
-              console.log('move', orig, dest)
-              chess.move({ from: orig, to: dest })
-              console.log(chess.fen())
-              ground.set({
-                fen: chess.fen(),
-                movable: {
-                  color: chess.turn() == 'w' ? 'white' : 'black',
-                  dests: toDests(chess),
-                },
-              })
-              console.log('move', orig, dest)
-              cell.update({
-                fen: chess.fen(),
-                moves: chess.history({ verbose: true }).map(move => move.san),
-              })
-            },
-          },
-        })
-      },
-    }),
-    m('.history', {}, [
-      m('h3', {}, 'moves'),
-      m(
-        'table',
-        {},
-        Array.from(
-          { length: Math.ceil(cell.state.moves?.length / 2) },
-          (_, i) => i
-        ).map(index =>
-          m('tr', {}, [
-            m('td.move-number', {}, index + 1),
-            m('td.move', {}, cell.state.moves[2 * index]),
-            m('td.move', {}, cell.state.moves[2 * index + 1]),
-          ])
-        )
-      ),
-    ]),
+    Board(cell),
+    History(cell),
+    // m('#pgn', {}, cell.state.chess.pgn()),
   ],
 }
 
