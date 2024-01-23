@@ -8,9 +8,11 @@ import './chessground.css'
 // import '../node_modules/chessground/assets/chessground.base.css'
 import '../node_modules/chessground/assets/chessground.brown.css'
 import '../node_modules/chessground/assets/chessground.cburnett.css'
+import './moves.css'
 import { toDests } from './utils'
 
-let chess = new Chess()
+const chess = new Chess()
+var ground //: typeof Chessground //= Chessground(
 
 interface State {
   page: string
@@ -19,11 +21,16 @@ interface State {
     password: string
   }
   data?: string[] | string
+  chess?: Chess
+  ground?: typeof Chessground
+  fen?: string
+  moves?: string[]
 }
 
 const app: MeiosisViewComponent<State> = {
   initial: {
     page: 'Home',
+    fen: chess.fen(),
   },
 
   services: [],
@@ -37,10 +44,10 @@ const app: MeiosisViewComponent<State> = {
       },
       'Login'
     ),
+    m('#fen', {}, 'fen: ' + cell.state.fen),
     m('#board', {
       oncreate: vnode => {
-        console.log('creating board', chess.fen())
-        let ground = Chessground(vnode.dom, {
+        ground = Chessground(vnode.dom, {
           // fen: window.chess.fen(),
           movable: {
             free: false,
@@ -65,14 +72,32 @@ const app: MeiosisViewComponent<State> = {
                 },
               })
               console.log('move', orig, dest)
+              cell.update({
+                fen: chess.fen(),
+                moves: chess.history({ verbose: true }).map(move => move.san),
+              })
             },
           },
         })
-        window.ground = ground
-        window.chess = chess
-        console.log(window.ground)
       },
     }),
+    m('.history', {}, [
+      m('h3', {}, 'moves'),
+      m(
+        'table',
+        {},
+        Array.from(
+          { length: Math.ceil(cell.state.moves?.length / 2) },
+          (_, i) => i
+        ).map(index =>
+          m('tr', {}, [
+            m('td.move-number', {}, index + 1),
+            m('td.move', {}, cell.state.moves[2 * index]),
+            m('td.move', {}, cell.state.moves[2 * index + 1]),
+          ])
+        )
+      ),
+    ]),
   ],
 }
 
@@ -84,5 +109,7 @@ m.mount(document.getElementById('app'), {
 
 cells.map(() => m.redraw())
 
-// meiosisTracer({ selector: '#tracer', rows: 25, streams: [cells] });
 window.cells = cells
+
+// This is a handy dev tool, but it breaks the chess board
+// meiosisTracer({ selector: '#tracer', rows: 25, streams: [cells] })
