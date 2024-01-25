@@ -5,17 +5,34 @@ import meiosisTracer from 'meiosis-tracer'
 import { Chessground } from 'chessground'
 import { Chess } from 'chess.js'
 import './chessground.css'
+import './meiosis.css'
 // import '../node_modules/chessground/assets/chessground.base.css'
 import '../node_modules/chessground/assets/chessground.brown.css'
 import '../node_modules/chessground/assets/chessground.cburnett.css'
 import './moves.css'
 import { toDests } from './utils'
 import { getPieceLocations } from './ChessMaths'
-// const chess = new Chess()
-// var ground //: typeof Chessground //= Chessground(
+
+interface State {
+  page: string
+  login?: {
+    username: string
+    password: string
+  }
+  data?: string[] | string
+  chess: Chess
+  ground?: typeof Chessground
+  fen?: string
+  moves?: []
+  pgn?: string
+  isHistoryCollapsed: boolean
+  isFENCollapsed: boolean
+  isPGNCollapsed: boolean
+  isInfoCollapsed: boolean
+}
 
 const Board = cell =>
-  m('#board', {
+  m('#board.board', {
     oncreate: vnode => {
       let ground = Chessground(vnode.dom, {
         // fen: window.chess.fen(),
@@ -29,24 +46,26 @@ const Board = cell =>
         },
         events: {
           move: (orig, dest) => {
+            let state = cell.getState()
             console.log('move', orig, dest)
-            cell.state.chess.move({ from: orig, to: dest })
+            state.chess.move({ from: orig, to: dest })
             // console.log(cell.state.chess.fen())
             ground.set({
               // fen: cell.state.chess.fen(),
               movable: {
-                color: cell.state.chess.turn() == 'w' ? 'white' : 'black',
-                dests: toDests(cell.state.chess),
+                color: state.chess.turn() == 'w' ? 'white' : 'black',
+                dests: toDests(state.chess),
               },
-              check: cell.state.chess.inCheck(),
+              check: state.chess.inCheck(),
             })
             console.log('move', orig, dest)
             cell.update({
-              fen: cell.state.chess.fen(),
-              moves: cell.state.chess
+              fen: state.chess.fen(),
+              moves: state.chess
                 .history({ verbose: true })
                 .map(move => move.san),
               // ground: ground,
+              pgn: state.chess.pgn(),
             })
           },
         },
@@ -74,28 +93,8 @@ const History = cell =>
     ),
   ])
 
-interface State {
-  page: string
-  login?: {
-    username: string
-    password: string
-  }
-  data?: string[] | string
-  chess: Chess
-  ground?: typeof Chessground
-  fen?: string
-  moves?: string[]
-}
-
-const app: MeiosisViewComponent<State> = {
-  initial: {
-    page: 'Home',
-    chess: new Chess(),
-  },
-
-  services: [],
-
-  view: (cell: MeiosisCell<State>) => [
+const Menu = cell =>
+  m('#toolbar.component', {}, [
     m('', {}, cell.state.page),
     m(
       'button',
@@ -104,10 +103,104 @@ const app: MeiosisViewComponent<State> = {
       },
       'Login'
     ),
-    m('#fen', {}, 'fen: ' + cell.state.fen),
-    Board(cell),
-    History(cell),
-    // m('#pgn', {}, cell.state.chess.pgn()),
+  ])
+const Collapsible = {
+  view: ({ attrs: { title, isCollapsed, toggle }, children }) =>
+    m('.component.collapsible', [
+      m('span', m('h4', title)),
+      m('button', { onclick: toggle }, isCollapsed ? '+' : '-'),
+      isCollapsed ? null : m('.content', children),
+    ]),
+}
+
+const Copyable = {
+  view: ({ attrs: { content }, children }) => [
+    children,
+    m(
+      'button',
+      { onclick: () => navigator.clipboard.writeText(content) },
+      'Copy'
+    ),
+  ],
+}
+const app: MeiosisViewComponent<State> = {
+  initial: {
+    page: 'Home',
+    chess: new Chess(),
+    isHistoryCollapsed: false,
+    isFENCollapsed: true,
+    isPGNCollapsed: true,
+    isInfoCollapsed: false,
+  },
+
+  services: [],
+
+  view: (cell: MeiosisCell<State>) => [
+    m('#toolbar.component', {}, [
+      m('', {}, cell.state.page),
+      m(
+        'button',
+        {
+          onclick: () => cell.update({ page: 'Login' }),
+        },
+        'Login'
+      ),
+    ]),
+    m('#game.component', {}, [
+      Board(cell),
+
+      m(
+        Collapsible,
+        {
+          title: 'Game Info',
+          isCollapsed: cell.state.isInfoCollapsed,
+          toggle: () =>
+            cell.update({ isInfoCollapsed: !cell.state.isInfoCollapsed }),
+        },
+        [
+          m(
+            Collapsible,
+            {
+              title: 'History',
+              isCollapsed: cell.state.isHistoryCollapsed,
+              toggle: () =>
+                cell.update({
+                  isHistoryCollapsed: !cell.state.isHistoryCollapsed,
+                }),
+            },
+            [History(cell)]
+          ),
+          m(
+            Collapsible,
+            {
+              title: 'FEN',
+              isCollapsed: cell.state.isFENCollapsed,
+              toggle: () =>
+                cell.update({ isFENCollapsed: !cell.state.isFENCollapsed }),
+            },
+            m(
+              Copyable,
+              { content: cell.state.fen },
+              m('#fen', {}, [m('h4', 'FEN'), cell.state.fen])
+            )
+          ),
+          m(
+            Collapsible,
+            {
+              title: 'PGN',
+              isCollapsed: cell.state.isPGNCollapsed,
+              toggle: () =>
+                cell.update({ isPGNCollapsed: !cell.state.isPGNCollapsed }),
+            },
+            m(
+              Copyable,
+              { content: cell.state.pgn },
+              m('#pgn', {}, [m('h4', 'PGN'), cell.state.pgn])
+            )
+          ),
+        ]
+      ),
+    ]),
   ],
 }
 
@@ -119,7 +212,10 @@ m.mount(document.getElementById('app'), {
 
 cells.map(() => m.redraw())
 
-window.cells = cells
+meiosisTracer({
+  selector: '#tracer',
+  rows: 25,
+  streams: [cells],
+})
 
-// This is a handy dev tool, but it breaks the chess board
-// meiosisTracer({ selector: '#tracer', rows: 25, streams: [cells] })
+window.cells = cells
