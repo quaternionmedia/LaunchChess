@@ -12,6 +12,9 @@ import '../node_modules/chessground/assets/chessground.cburnett.css'
 import './moves.css'
 import { toDests } from './utils'
 import { getPieceLocations } from './ChessMaths'
+import '@fortawesome/fontawesome-free/css/all.css'
+import { notify } from 'alertifyjs'
+import 'alertifyjs/build/css/alertify.css'
 
 interface State {
   page: string
@@ -61,16 +64,17 @@ const Board = cell =>
             console.log('move', orig, dest)
             cell.update({
               fen: state.chess.fen(),
+              pgn: state.chess.pgn(),
               moves: state.chess
                 .history({ verbose: true })
                 .map(move => move.san),
               // ground: ground,
-              pgn: state.chess.pgn(),
             })
           },
         },
       })
       window.ground = ground
+      cell.update({ fen: cell.state.chess.fen(), pgn: cell.state.chess.pgn() })
     },
   })
 
@@ -107,22 +111,30 @@ const Menu = cell =>
 const Collapsible = {
   view: ({ attrs: { title, isCollapsed, toggle }, children }) =>
     m('.component.collapsible', [
-      m('span', m('h4', title)),
-      m('button', { onclick: toggle }, isCollapsed ? '+' : '-'),
+      m('.collapsible-header', [
+        m('h4', title),
+        m('button', { onclick: toggle }, isCollapsed ? '+' : '-'),
+      ]),
       isCollapsed ? null : m('.content', children),
     ]),
 }
 
-const Copyable = {
-  view: ({ attrs: { content }, children }) => [
-    children,
-    m(
-      'button',
-      { onclick: () => navigator.clipboard.writeText(content) },
-      'Copy'
-    ),
+const Copy = {
+  view: ({ attrs: { content, name } }) => [
+    m('i.fas.fa-copy', {
+      onclick: () => {
+        navigator.clipboard.writeText(content)
+        notify(`copied ${name} to clipboard!`, 'success', 2)
+      },
+      title: `Copy ${name} to clipboard`,
+    }),
   ],
 }
+
+const Alert = {
+  view: ({ attrs: { message } }) => m('.alert', message),
+}
+
 const app: MeiosisViewComponent<State> = {
   initial: {
     page: 'Home',
@@ -178,11 +190,8 @@ const app: MeiosisViewComponent<State> = {
               toggle: () =>
                 cell.update({ isFENCollapsed: !cell.state.isFENCollapsed }),
             },
-            m(
-              Copyable,
-              { content: cell.state.fen },
-              m('#fen', {}, [m('h4', 'FEN'), cell.state.fen])
-            )
+            m(Copy, { content: cell.state.fen, name: 'FEN' }),
+            m('#fen', {}, [m('h4', 'FEN'), cell.state.fen])
           ),
           m(
             Collapsible,
@@ -192,11 +201,8 @@ const app: MeiosisViewComponent<State> = {
               toggle: () =>
                 cell.update({ isPGNCollapsed: !cell.state.isPGNCollapsed }),
             },
-            m(
-              Copyable,
-              { content: cell.state.pgn },
-              m('#pgn', {}, [m('h4', 'PGN'), cell.state.pgn])
-            )
+            m(Copy, { content: cell.state.pgn, name: 'PGN' }),
+            m('#pgn', {}, [m('h4', 'PGN'), cell.state.pgn])
           ),
         ]
       ),

@@ -10,13 +10,15 @@
     flex-direction: column;
     justify-content: space-between;
     min-height: 75vh;
+
 }
 
 #game.component {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-
+    width: 100vw;
+    height: 80vh;
 }
 
 .stacked.component {
@@ -24,8 +26,17 @@
     flex-direction: column;
 }
 
-#board.board.component {
-    max-width: 100vw;
-    max-height: 100vh;
-    object-fit: contain;
+.board {
+    /* width: 100%;
+    height: 100%; */
+}
+
+.collapsible-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#info.component {
+    min-width: 25vw;
 }
