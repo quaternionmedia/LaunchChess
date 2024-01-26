@@ -19,6 +19,7 @@
     justify-content: space-between;
     width: 100vw;
     height: 80vh;
+    position: relative;
 }
 
 .stacked.component {
@@ -26,9 +27,20 @@
     flex-direction: column;
 }
 
+.board-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
 .board {
-    /* width: 100%;
-    height: 100%; */
+    width: 70vw;
+    height: 70vw;
+    max-width: 70vh;
+    max-height: 70vh;
 }
 
 .collapsible-header {

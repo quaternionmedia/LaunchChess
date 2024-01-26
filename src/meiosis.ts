@@ -35,48 +35,55 @@ interface State {
 }
 
 const Board = cell =>
-  m('#board.board', {
-    oncreate: vnode => {
-      let ground = Chessground(vnode.dom, {
-        // fen: window.chess.fen(),
-        movable: {
-          free: false,
-          color: 'white',
-          dests: toDests(cell.state.chess),
-        },
-        highlight: {
-          check: true,
-        },
-        events: {
-          move: (orig, dest) => {
-            let state = cell.getState()
-            console.log('move', orig, dest)
-            state.chess.move({ from: orig, to: dest })
-            // console.log(cell.state.chess.fen())
-            ground.set({
-              // fen: cell.state.chess.fen(),
-              movable: {
-                color: state.chess.turn() == 'w' ? 'white' : 'black',
-                dests: toDests(state.chess),
-              },
-              check: state.chess.inCheck(),
-            })
-            console.log('move', orig, dest)
-            cell.update({
-              fen: state.chess.fen(),
-              pgn: state.chess.pgn(),
-              moves: state.chess
-                .history({ verbose: true })
-                .map(move => move.san),
-              // ground: ground,
-            })
+  m(
+    '.board-wrapper',
+    {},
+    m('#board.board', {
+      oncreate: vnode => {
+        let ground = Chessground(vnode.dom, {
+          // fen: window.chess.fen(),
+          movable: {
+            free: false,
+            color: 'white',
+            dests: toDests(cell.state.chess),
           },
-        },
-      })
-      window.ground = ground
-      cell.update({ fen: cell.state.chess.fen(), pgn: cell.state.chess.pgn() })
-    },
-  })
+          highlight: {
+            check: true,
+          },
+          events: {
+            move: (orig, dest) => {
+              let state = cell.getState()
+              console.log('move', orig, dest)
+              state.chess.move({ from: orig, to: dest })
+              // console.log(cell.state.chess.fen())
+              ground.set({
+                // fen: cell.state.chess.fen(),
+                movable: {
+                  color: state.chess.turn() == 'w' ? 'white' : 'black',
+                  dests: toDests(state.chess),
+                },
+                check: state.chess.inCheck(),
+              })
+              console.log('move', orig, dest)
+              cell.update({
+                fen: state.chess.fen(),
+                pgn: state.chess.pgn(),
+                moves: state.chess
+                  .history({ verbose: true })
+                  .map(move => move.san),
+                // ground: ground,
+              })
+            },
+          },
+        })
+        window.ground = ground
+        cell.update({
+          fen: cell.state.chess.fen(),
+          pgn: cell.state.chess.pgn(),
+        })
+      },
+    })
+  )
 
 const History = cell =>
   m('.history', {}, [
@@ -109,10 +116,11 @@ const Menu = cell =>
     ),
   ])
 const Collapsible = {
-  view: ({ attrs: { title, isCollapsed, toggle }, children }) =>
+  view: ({ attrs: { title, isCollapsed, toggle, header }, children }) =>
     m('.component.collapsible', [
       m('.collapsible-header', [
         m('h4', title),
+        header,
         m('button', { onclick: toggle }, isCollapsed ? '+' : '-'),
       ]),
       isCollapsed ? null : m('.content', children),
@@ -129,10 +137,6 @@ const Copy = {
       title: `Copy ${name} to clipboard`,
     }),
   ],
-}
-
-const Alert = {
-  view: ({ attrs: { message } }) => m('.alert', message),
 }
 
 const app: MeiosisViewComponent<State> = {
@@ -189,8 +193,9 @@ const app: MeiosisViewComponent<State> = {
               isCollapsed: cell.state.isFENCollapsed,
               toggle: () =>
                 cell.update({ isFENCollapsed: !cell.state.isFENCollapsed }),
+
+              header: m(Copy, { content: cell.state.fen, name: 'FEN' }),
             },
-            m(Copy, { content: cell.state.fen, name: 'FEN' }),
             m('#fen', {}, [m('h4', 'FEN'), cell.state.fen])
           ),
           m(
@@ -200,8 +205,8 @@ const app: MeiosisViewComponent<State> = {
               isCollapsed: cell.state.isPGNCollapsed,
               toggle: () =>
                 cell.update({ isPGNCollapsed: !cell.state.isPGNCollapsed }),
+              header: m(Copy, { content: cell.state.pgn, name: 'PGN' }),
             },
-            m(Copy, { content: cell.state.pgn, name: 'PGN' }),
             m('#pgn', {}, [m('h4', 'PGN'), cell.state.pgn])
           ),
         ]
