@@ -40,12 +40,20 @@ const Board = cell =>
     {},
     m('#board.board', {
       oncreate: vnode => {
+        console.log(
+          'Board oncreate',
+          cell.state,
+          cell.state.chess.history({ verbose: true })
+        )
+        let lastMove = cell.state.chess.history({ verbose: true }).pop()
         let ground = Chessground(vnode.dom, {
-          // fen: window.chess.fen(),
+          fen: cell.state.fen,
+          turnColor: cell.state.chess.turn() == 'w' ? 'white' : 'black',
+          lastMove: lastMove ? [lastMove.from, lastMove.to] : undefined,
           movable: {
             free: false,
-            color: 'white',
             dests: toDests(cell.state.chess),
+            color: cell.state.chess.turn() == 'w' ? 'white' : 'black',
           },
           highlight: {
             check: true,
@@ -116,9 +124,12 @@ const Menu = cell =>
     ),
   ])
 const Collapsible = {
-  view: ({ attrs: { title, isCollapsed, toggle, header }, children }) =>
+  view: ({
+    attrs: { title, isCollapsed, toggle, header, className },
+    children,
+  }) =>
     m('.component.collapsible', [
-      m('.collapsible-header', [
+      m('.collapsible-header', { class: className }, [
         m('h4', title),
         header,
         m('button', { onclick: toggle }, isCollapsed ? '+' : '-'),
@@ -139,10 +150,24 @@ const Copy = {
   ],
 }
 
-const app: MeiosisViewComponent<State> = {
+const state: State = JSON.parse(
+  localStorage.getItem('launchchess') || '{}'
+)?.state
+
+const chess: Chess = new Chess()
+
+if (state) {
+  console.log('loading from pgn', state)
+  chess.loadPgn(state.pgn)
+  state.fen = chess.fen()
+}
+
+const App: MeiosisViewComponent<State> = {
   initial: {
-    page: 'Home',
-    chess: new Chess(),
+    page: state?.page || 'Home',
+    chess: chess,
+    fen: state?.fen || chess.fen(),
+    pgn: state?.pgn || chess.pgn(),
     isHistoryCollapsed: false,
     isFENCollapsed: true,
     isPGNCollapsed: true,
@@ -169,6 +194,7 @@ const app: MeiosisViewComponent<State> = {
         Collapsible,
         {
           title: 'Game Info',
+          className: 'info',
           isCollapsed: cell.state.isInfoCollapsed,
           toggle: () =>
             cell.update({ isInfoCollapsed: !cell.state.isInfoCollapsed }),
@@ -178,6 +204,7 @@ const app: MeiosisViewComponent<State> = {
             Collapsible,
             {
               title: 'History',
+              className: 'history',
               isCollapsed: cell.state.isHistoryCollapsed,
               toggle: () =>
                 cell.update({
@@ -215,13 +242,17 @@ const app: MeiosisViewComponent<State> = {
   ],
 }
 
-const cells = meiosisSetup<State>({ app })
+const cells = meiosisSetup<State>({ app: App })
 
 m.mount(document.getElementById('app'), {
-  view: () => app.view(cells()),
+  view: () => App.view(cells()),
 })
 
-cells.map(() => m.redraw())
+cells.map(state => {
+  console.log('cells', state)
+  localStorage.setItem('launchchess', JSON.stringify(state))
+  m.redraw()
+})
 
 meiosisTracer({
   selector: '#tracer',
