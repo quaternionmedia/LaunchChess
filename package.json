@@ -3,9 +3,9 @@
     "version": "0.1.1",
     "description": "Chess on a Launchpad",
     "scripts": {
-        "build": "parcel build --no-cache --dist-dir dist src/index.html src/*.svg",
-        "ci": "parcel build --no-cache --dist-dir build src/index.html src/*.svg",
-        "dev": "parcel --no-cache --dist-dir dist --host 0.0.0.0 src/index.html src/*.svg"
+        "build": "vite build",
+        "ci": "vite build",
+        "dev": "vite"
     },
     "browserslist": [
         "defaults"
@@ -36,7 +36,7 @@
     "devDependencies": {
         "@babel/cli": "^7.12.10",
         "@babel/preset-env": "^7.12.11",
-        "parcel": "^2.11.0",
-        "process": "^0.11.10"
+        "process": "^0.11.10",
+        "vite": "^5.0.12"
     }
 }
