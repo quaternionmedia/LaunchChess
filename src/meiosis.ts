@@ -16,7 +16,7 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import { notify } from 'alertifyjs'
 import 'alertifyjs/build/css/alertify.css'
 
-interface State {
+export interface State {
   page: string
   login?: {
     username: string
@@ -26,7 +26,7 @@ interface State {
   chess: Chess
   ground?: typeof Chessground
   fen?: string
-  moves?: []
+  moves?: string[]
   pgn?: string
   isHistoryCollapsed: boolean
   isFENCollapsed: boolean
@@ -34,7 +34,7 @@ interface State {
   isInfoCollapsed: boolean
 }
 
-const Board = cell =>
+export const Board = cell =>
   m(
     '.board-wrapper',
     {},
@@ -93,7 +93,7 @@ const Board = cell =>
     })
   )
 
-const History = cell =>
+export const History = cell =>
   m('.history', {}, [
     m('h3', {}, 'Moves'),
     m(
@@ -112,7 +112,7 @@ const History = cell =>
     ),
   ])
 
-const Menu = cell =>
+export const Menu = cell =>
   m('#toolbar.component', {}, [
     m('', {}, cell.state.page),
     m(
@@ -123,7 +123,7 @@ const Menu = cell =>
       'Login'
     ),
   ])
-const Collapsible = {
+export const Collapsible = {
   view: ({
     attrs: { title, isCollapsed, toggle, header, className },
     children,
@@ -138,7 +138,7 @@ const Collapsible = {
     ]),
 }
 
-const Copy = {
+export const Copy = {
   view: ({ attrs: { content, name } }) => [
     m('i.fas.fa-copy', {
       onclick: () => {
@@ -150,24 +150,26 @@ const Copy = {
   ],
 }
 
-const state: State = JSON.parse(
+export const state: State = JSON.parse(
   localStorage.getItem('launchchess') || '{}'
 )?.state
 
-const chess: Chess = new Chess()
+export const chess: Chess = new Chess()
 
 if (state) {
   console.log('loading from pgn', state)
   chess.loadPgn(state.pgn)
   state.fen = chess.fen()
+  state.moves = chess.history({ verbose: true }).map(move => move.san)
 }
 
-const App: MeiosisViewComponent<State> = {
+export const App: MeiosisViewComponent<State> = {
   initial: {
     page: state?.page || 'Home',
     chess: chess,
     fen: state?.fen || chess.fen(),
     pgn: state?.pgn || chess.pgn(),
+    moves: state?.moves || [],
     isHistoryCollapsed: false,
     isFENCollapsed: true,
     isPGNCollapsed: true,
