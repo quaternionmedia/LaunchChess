@@ -10,6 +10,7 @@ export interface State {
   data?: string[] | string
   chess: Chess
   ground?: typeof Chessground
+  orientation?: string
   fen?: string
   moves?: string[]
   pgn?: string

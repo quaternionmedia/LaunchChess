@@ -28,6 +28,18 @@ export const restartGame = cell => {
 export const GameToolbar = cell =>
   m('.game-toolbar', {}, [
     m('button', { onclick: () => restartGame(cell) }, 'new game'),
+    m(
+      'button',
+      {
+        onclick: () => {
+          let orientation =
+            cell.state.orientation == 'white' ? 'black' : 'white'
+          window.ground.set({ orientation: orientation })
+          cell.update({ orientation: orientation })
+        },
+      },
+      'flip'
+    ),
   ])
 
 export const Game = cell =>

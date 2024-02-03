@@ -18,6 +18,7 @@ export const Board = cell =>
         let lastMove = cell.state.chess.history({ verbose: true }).pop()
         let ground = Chessground(vnode.dom, {
           fen: cell.state.fen,
+          orientation: cell.state.orientation,
           turnColor: cell.state.chess.turn() == 'w' ? 'white' : 'black',
           lastMove: lastMove ? [lastMove.from, lastMove.to] : undefined,
           movable: {

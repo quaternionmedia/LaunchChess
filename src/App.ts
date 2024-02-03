@@ -15,6 +15,7 @@ if (state) {
   chess.loadPgn(state.pgn)
   state.fen = chess.fen()
   state.moves = chess.history({ verbose: true }).map(move => move.san)
+  state.orientation = state.orientation || 'white'
 }
 
 export const App: MeiosisViewComponent<State> = {
@@ -24,6 +25,7 @@ export const App: MeiosisViewComponent<State> = {
     fen: state?.fen || chess.fen(),
     pgn: state?.pgn || chess.pgn(),
     moves: state?.moves || [],
+    orientation: state?.orientation || 'white',
     isHistoryCollapsed: false,
     isFENCollapsed: true,
     isPGNCollapsed: true,
