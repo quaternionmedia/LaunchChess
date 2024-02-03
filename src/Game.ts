@@ -20,7 +20,9 @@ export const restartGame = cell => {
     cell.update({
       fen: cell.state.chess.fen(),
       pgn: cell.state.chess.pgn(),
-      moves: cell.state.chess.history({ verbose: true }).map(move => move.san),
+      history: cell.state.chess
+        .history({ verbose: true })
+        .map(move => move.san),
     })
   })
 }
@@ -28,6 +30,22 @@ export const restartGame = cell => {
 export const GameToolbar = cell =>
   m('.game-toolbar', {}, [
     m('button', { onclick: () => restartGame(cell) }, 'new game'),
+    m(
+      'button',
+      {
+        onclick: () =>
+          cell.update({ historyIndex: cell.state.historyIndex - 1 }),
+      },
+      'previous'
+    ),
+    m(
+      'button',
+      {
+        onclick: () =>
+          cell.update({ historyIndex: cell.state.historyIndex + 1 }),
+      },
+      'next'
+    ),
     m(
       'button',
       {
@@ -80,7 +98,7 @@ export const Game = cell =>
 
             header: m(Copy, { content: cell.state.fen, name: 'FEN' }),
           },
-          m('#fen', {}, [m('h4', 'FEN'), cell.state.fen])
+          m('#fen', {}, cell.state.fen)
         ),
         m(
           Collapsible,
@@ -91,7 +109,7 @@ export const Game = cell =>
               cell.update({ isPGNCollapsed: !cell.state.isPGNCollapsed }),
             header: m(Copy, { content: cell.state.pgn, name: 'PGN' }),
           },
-          m('#pgn', {}, [m('h4', 'PGN'), cell.state.pgn])
+          m('#pgn', {}, cell.state.pgn)
         ),
       ]
     ),

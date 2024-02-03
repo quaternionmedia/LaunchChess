@@ -26,23 +26,20 @@ export const Toolbar = ({ state, update }) =>
 
 
   export const History = cell =>
-    m('.history', {}, [
-      m('h3', {}, 'Moves'),
-      m(
-        'table',
-        {},
-        Array.from(
-          { length: Math.ceil(cell.state.moves?.length / 2) },
-          (_, i) => i
-        ).map(index =>
-          m('tr', {}, [
-            m('td.move-number', {}, index + 1),
-            m('td.move', {}, cell.state.moves[2 * index]),
-            m('td.move', {}, cell.state.moves[2 * index + 1]),
-          ])
-        )
-      ),
-    ])
+    m(
+      'table.history',
+      {},
+      Array.from(
+        { length: Math.ceil(cell.state.history?.length / 2) },
+        (_, i) => i
+      ).map(index =>
+        m('tr', {}, [
+          m('td.move-number', {}, index + 1),
+          m('td.move', {}, cell.state.history[2 * index]),
+          m('td.move', {}, cell.state.history[2 * index + 1]),
+        ])
+      )
+    )
 
 export const Menu = cell =>
   m('#toolbar.component', {}, [

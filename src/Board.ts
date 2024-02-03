@@ -47,10 +47,10 @@ export const Board = cell =>
               cell.update({
                 fen: state.chess.fen(),
                 pgn: state.chess.pgn(),
-                moves: state.chess
+                history: state.chess
                   .history({ verbose: true })
                   .map(move => move.san),
-                // ground: ground,
+                historyIndex: state.chess.history().length,
               })
             },
           },

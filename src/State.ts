@@ -12,7 +12,8 @@ export interface State {
   ground?: typeof Chessground
   orientation?: string
   fen?: string
-  moves?: string[]
+  history?: string[]
+  historyIndex?: number
   pgn?: string
   isHistoryCollapsed: boolean
   isFENCollapsed: boolean

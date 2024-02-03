@@ -4,6 +4,9 @@ import { State } from './State'
 import { Game } from './Game.ts'
 import { Toolbar } from './meiosis.ts'
 
+export const DEFAULT_POSITION =
+  'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+
 export const state: State = JSON.parse(
   localStorage.getItem('launchchess') || '{}'
 )?.state
@@ -14,7 +17,8 @@ if (state) {
   console.log('loading from pgn', state)
   chess.loadPgn(state.pgn)
   state.fen = chess.fen()
-  state.moves = chess.history({ verbose: true }).map(move => move.san)
+  state.history = chess.history({ verbose: true }).map(move => move.san)
+  state.historyIndex = state.history.length
   state.orientation = state.orientation || 'white'
 }
 
@@ -24,7 +28,8 @@ export const App: MeiosisViewComponent<State> = {
     chess: chess,
     fen: state?.fen || chess.fen(),
     pgn: state?.pgn || chess.pgn(),
-    moves: state?.moves || [],
+    history: state?.history || [],
+    historyIndex: state?.historyIndex || 0,
     orientation: state?.orientation || 'white',
     isHistoryCollapsed: false,
     isFENCollapsed: true,
@@ -32,7 +37,32 @@ export const App: MeiosisViewComponent<State> = {
     isInfoCollapsed: false,
   },
 
-  services: [],
+  services: [
+    {
+      onchange: (state: State) => state.historyIndex,
+      run: cell => {
+        console.log('historyIndex', cell.state.historyIndex)
+        if (cell.state.historyIndex < 0) {
+          cell.update({ historyIndex: 0 })
+          return
+        }
+        if (cell.state.historyIndex > cell.state.history.length) {
+          cell.update({ historyIndex: cell.state.history.length })
+          return
+        }
+        // if (cell.state.historyIndex != cell.state.history.length) {
+        let move = cell.state.chess.history({ verbose: true })[
+          cell.state.historyIndex - 1
+        ]
+        window.ground?.set({
+          fen: move ? move.after : DEFAULT_POSITION,
+          lastMove: move ? [move.from, move.to] : undefined,
+          turnColor: move?.color == 'w' ? 'white' : 'black',
+        })
+      },
+    },
+    // },
+  ],
 
   view: (cell: MeiosisCell<State>) => [Toolbar(cell), Game(cell)],
 }
