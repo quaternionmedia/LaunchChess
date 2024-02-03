@@ -1,6 +1,34 @@
 import m from 'mithril'
 import { Board } from './Board.ts'
 import { History, Collapsible, Copy } from './meiosis'
+import { toDests } from './utils'
+import { confirm } from 'alertifyjs'
+
+export const restartGame = cell => {
+  console.log('restartGame')
+  confirm('Are you sure you want to start a new game?', () => {
+    cell.state.chess.reset()
+    window.ground.set({
+      fen: cell.state.chess.fen(),
+      turnColor: cell.state.chess.turn() == 'w' ? 'white' : 'black',
+      lastMove: undefined,
+      movable: {
+        color: cell.state.chess.turn() == 'w' ? 'white' : 'black',
+        dests: toDests(cell.state.chess),
+      },
+    })
+    cell.update({
+      fen: cell.state.chess.fen(),
+      pgn: cell.state.chess.pgn(),
+      moves: cell.state.chess.history({ verbose: true }).map(move => move.san),
+    })
+  })
+}
+
+export const GameToolbar = cell =>
+  m('.game-toolbar', {}, [
+    m('button', { onclick: () => restartGame(cell) }, 'new game'),
+  ])
 
 export const Game = cell =>
   m('#game.component', {}, [
@@ -16,6 +44,7 @@ export const Game = cell =>
           cell.update({ isInfoCollapsed: !cell.state.isInfoCollapsed }),
       },
       [
+        GameToolbar(cell),
         m(
           Collapsible,
           {
