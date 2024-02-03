@@ -16,6 +16,30 @@ cells.map(state => {
   m.redraw()
 })
 
+let cell = cells()
+
+// Handle left and right arrow key presses
+document.removeEventListener('keydown', cell.state.onkeydown)
+document.addEventListener('keydown', function (event) {
+  switch(event.key) {
+    case 'ArrowLeft':
+      cell.update({ historyIndex: cell.getState().historyIndex - 1 })
+      break
+    case 'ArrowRight':
+      cell.update({ historyIndex: cell.getState().historyIndex + 1 })
+      break
+    case 'ArrowUp':
+      cell.update({ historyIndex: 0 })
+      break
+    case 'ArrowDown':
+      cell.update({ historyIndex: cell.getState().history.length })
+      break
+  }
+})
+
+
+// Debug
+
 meiosisTracer({
   selector: '#tracer',
   rows: 25,
