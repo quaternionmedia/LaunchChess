@@ -11,24 +11,38 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import { notify } from 'alertifyjs'
 import 'alertifyjs/build/css/alertify.css'
 
-export const History = cell =>
-  m('.history', {}, [
-    m('h3', {}, 'Moves'),
+
+export const Toolbar = ({ state, update }) =>
+  m('#toolbar.component', {}, [
+    m('', {}, state.page),
     m(
-      'table',
-      {},
-      Array.from(
-        { length: Math.ceil(cell.state.moves?.length / 2) },
-        (_, i) => i
-      ).map(index =>
-        m('tr', {}, [
-          m('td.move-number', {}, index + 1),
-          m('td.move', {}, cell.state.moves[2 * index]),
-          m('td.move', {}, cell.state.moves[2 * index + 1]),
-        ])
-      )
+      'button',
+      {
+        onclick: () => update({ page: 'Login' }),
+      },
+      'Login'
     ),
   ])
+
+
+  export const History = cell =>
+    m('.history', {}, [
+      m('h3', {}, 'Moves'),
+      m(
+        'table',
+        {},
+        Array.from(
+          { length: Math.ceil(cell.state.moves?.length / 2) },
+          (_, i) => i
+        ).map(index =>
+          m('tr', {}, [
+            m('td.move-number', {}, index + 1),
+            m('td.move', {}, cell.state.moves[2 * index]),
+            m('td.move', {}, cell.state.moves[2 * index + 1]),
+          ])
+        )
+      ),
+    ])
 
 export const Menu = cell =>
   m('#toolbar.component', {}, [
