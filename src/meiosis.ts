@@ -35,8 +35,22 @@ export const Toolbar = ({ state, update }) =>
       ).map(index =>
         m('tr', {}, [
           m('td.move-number', {}, index + 1),
-          m('td.move', {}, cell.state.history[2 * index]),
-          m('td.move', {}, cell.state.history[2 * index + 1]),
+          m(
+            'td.move',
+            {
+              class:
+                2 * index + 1 === cell.state.historyIndex ? 'highlight' : '',
+            },
+            cell.state.history[2 * index]
+          ),
+          m(
+            'td.move',
+            {
+              class:
+                2 * index + 2 === cell.state.historyIndex ? 'highlight' : '',
+            },
+            cell.state.history[2 * index + 1]
+          ),
         ])
       )
     )

@@ -3,6 +3,7 @@ import { Chess } from 'chess.js'
 import { State } from './State'
 import { Game } from './Game.ts'
 import { Toolbar } from './meiosis.ts'
+import { toDests } from './utils'
 
 export const DEFAULT_POSITION =
   'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
@@ -59,6 +60,25 @@ export const App: MeiosisViewComponent<State> = {
           lastMove: move ? [move.from, move.to] : undefined,
           turnColor: move?.color == 'w' ? 'white' : 'black',
         })
+        if (cell.state.historyIndex == cell.state.history.length) {
+          // Back to current game state. Set movable color to current turn
+          window.ground?.set({
+            turnColor: cell.state.chess.turn() == 'w' ? 'white' : 'black',
+            movable: {
+              color: cell.state.chess.turn() == 'w' ? 'white' : 'black',
+              dests: toDests(cell.state.chess),
+            },
+          })
+        } else {
+          // Disable moving pieces while viewing history
+          // TODO: Implement variation navigation
+          window.ground?.set({
+            movable: {
+              color: undefined,
+              dests: {},
+            },
+          })
+        }
       },
     },
     // },

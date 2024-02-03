@@ -1,3 +1,25 @@
+/* Colors */
+:root {
+    --primary: #7b00ff;
+    --secondary: #6c757d;
+    --highlight: rgb(149, 149, 149);
+    --success: #28a745;
+    --info: #17a2b8;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --light: #f8f9fa;
+    --dark: #343a40;
+    --white: #fff;
+    --black: #000;
+
+}
+
+
+body {
+    background-color: #333;
+    color: #fff;
+}
+
 .component {
     border: 1px solid #000;
     margin: 10px;
@@ -49,4 +71,8 @@
 
 .history {
     overflow-y: auto;
+}
+
+.highlight {
+    background-color: var(--highlight);
 }

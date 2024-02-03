@@ -1,6 +1,5 @@
 import './moves.css'
 import { toDests } from './utils'
-import { getPieceLocations } from './ChessMaths'
 import m from 'mithril'
 import { Chessground } from 'chessground'
 
