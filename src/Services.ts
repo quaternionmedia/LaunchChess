@@ -1,6 +1,7 @@
 import { State } from './State'
 import { toDests } from './utils'
 import { Chess } from 'chess.js'
+import m from 'mithril'
 
 export const DEFAULT_POSITION =
   'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
@@ -48,5 +49,14 @@ export const HistoryService = {
         },
       })
     }
+  },
+}
+
+export const PageService = {
+  // Watch for changes to page and update the board
+  onchange: (state: State) => state.page,
+  run: cell => {
+    console.log('page', cell.state.page)
+    m.route.set('/' + cell.state.page.toLowerCase())
   },
 }

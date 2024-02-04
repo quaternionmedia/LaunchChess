@@ -1,13 +1,11 @@
 import { Chess } from 'chess.js'
 import { Chessground } from 'chessground'
+import { HttpClient, OAuth2AuthCodePKCE } from '@bity/oauth2-auth-code-pkce'
 
 export interface State {
   page: string
-  login?: {
-    username: string
-    password: string
-  }
-  data?: string[] | string
+
+  // Chess
   chess: Chess
   ground?: typeof Chessground
   orientation?: string
@@ -19,4 +17,13 @@ export interface State {
   isFENCollapsed: boolean
   isPGNCollapsed: boolean
   isInfoCollapsed: boolean
+
+  // User
+  user?: {
+    username: string
+    profile: Object
+    httpClient: HttpClient
+  }
+  oauth?: OAuth2AuthCodePKCE
+  auth?: {}
 }

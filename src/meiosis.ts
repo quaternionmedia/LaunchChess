@@ -20,6 +20,20 @@ export const Toolbar = ({ state, update }) =>
     m(
       'button',
       {
+        onclick: () => update({ page: 'Home' }),
+      },
+      'Home'
+    ),
+    m(
+      'button',
+      {
+        onclick: () => update({ page: 'Game' }),
+      },
+      'Game'
+    ),
+    m(
+      'button',
+      {
         onclick: () => update({ page: 'Login' }),
       },
       'Login'

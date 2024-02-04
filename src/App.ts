@@ -3,7 +3,9 @@ import { Chess } from 'chess.js'
 import { State } from './State'
 import { Game } from './Game.ts'
 import { Toolbar } from './meiosis.ts'
-import { HistoryService } from './Services'
+import { Login } from './Login.ts'
+import { HistoryService, PageService } from './Services'
+import m from 'mithril'
 
 export const state: State = JSON.parse(
   localStorage.getItem('launchchess') || '{}'
@@ -35,10 +37,12 @@ export const App: MeiosisViewComponent<State> = {
     isInfoCollapsed: false,
   },
 
-  services: [
-    HistoryService,
-    // },
-  ],
+  services: [HistoryService, PageService],
 
-  view: (cell: MeiosisCell<State>) => [Toolbar(cell), Game(cell)],
+  view: (cell: MeiosisCell<State>) => [
+    Toolbar(cell),
+    cell.state.page === 'Game' && Game(cell),
+    cell.state.page === 'Home' && m('h1', 'Home'),
+    cell.state.page === 'Login' && Login(cell),
+  ],
 }
