@@ -5,7 +5,7 @@ import { Game } from './Game.ts'
 import { Toolbar } from './meiosis.ts'
 import { Login } from './Login.ts'
 import { HistoryService, PageService } from './Services'
-import { UserIcon, UserProfile } from './User.ts'
+import { UserProfile } from './User.ts'
 import m from 'mithril'
 
 export const state: State = JSON.parse(
@@ -26,8 +26,7 @@ if (state) {
 
 export const App: MeiosisViewComponent<State> = {
   initial: {
-    // page: state?.page || 'Home',
-    page: 'Home',
+    page: state?.page || 'Home',
     chess: chess,
     fen: state?.fen || chess.fen(),
     pgn: state?.pgn || chess.pgn(),

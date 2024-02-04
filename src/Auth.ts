@@ -10,8 +10,9 @@ export interface Me {
   id: string
   username: string
   httpClient: HttpClient // with pre-set Authorization header
-  perfs: { [key: string]: any }
+  profile: Object
 }
+
 export const oauth = new OAuth2AuthCodePKCE({
   authorizationUrl: `${lichessHost}/oauth`,
   tokenUrl: `${lichessHost}/api/token`,
@@ -24,36 +25,20 @@ export const oauth = new OAuth2AuthCodePKCE({
   },
   onInvalidGrant: console.warn,
 })
+
 export const Auth = {
-  login: async () => {
-    await oauth.fetchAuthorizationCode()
-  },
-
-  logout: async ({ state, update }) => {
-    if (state.user)
-      await state.user.httpClient(`${lichessHost}/api/token`, {
-        method: 'DELETE',
-      })
-    localStorage.clear()
-    update({ user: undefined })
-  },
-
-  authenticate: async ({ state }) => {
+  authenticate: async ({ state, update }) => {
     const httpClient = oauth.decorateFetchHTTPClient(window.fetch)
     const res = await httpClient(`${lichessHost}/api/account`)
     if (res.error) throw res.error
     const profile = await res.json()
-    const me = {
+    const me: Me = {
+      id: profile.id,
       username: profile.username,
       profile,
       httpClient,
     }
-    state.user = me
-    // state.loggedIn(true)
-    localStorage.setItem('me', JSON.stringify(me))
-    console.log('Authenticated as', me.username)
-    // await actions.getGames()
-    m.redraw()
+    update({ user: me })
   },
 
   openStream: async (path: string, config: any, handler: (_: any) => void) => {
@@ -68,7 +53,7 @@ export const Auth = {
   },
 
   fetchResponse: async (path: string, config: any = {}) => {
-    const res = await(state.user.httpClient || window.fetch)(
+    const res = await (state.user.httpClient || window.fetch)(
       `${lichessHost}${path}`,
       config
     )

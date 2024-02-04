@@ -7,21 +7,17 @@ export const clientId = 'launchchess-client'
 export const clientUrl = `${location.protocol}//${location.host}${location.pathname}`
 
 export const actions = {
-  initAuth: async ({ state }) => {
-    // if (localStorage.getItem('me')) {
-    //   update({ user: JSON.parse(localStorage.getItem('me')) })
-    //   console.log('loaded user from localstorage', state.user)
-    // }
+  initAuth: async ({ state, update }) => {
     try {
       const accessContext = await oauth.getAccessToken()
-      if (accessContext) await Auth.authenticate({ state })
+      if (accessContext) await Auth.authenticate({ state, update })
     } catch (err) {
       console.error(err)
     }
     if (!state.user) {
       try {
         const hasAuthCode = await oauth.isReturningFromAuthServer()
-        if (hasAuthCode) await Auth.authenticate({ state })
+        if (hasAuthCode) await Auth.authenticate({ state, update })
       } catch (err) {
         console.error(err)
       }
@@ -30,14 +26,16 @@ export const actions = {
   },
   login: async ({ state, update }) => {
     console.log('logging in')
-    Auth.login()
-    console.log('logged in as: ', state.user.username)
-    state.user.profile = await Auth.fetchBody('/oauth/profile')
-    state.user.username = state.user.profile.username
+    await oauth.fetchAuthorizationCode()
   },
-  logout: ({ state, update }) => {
+  logout: async ({ state, update }) => {
     console.log('logging out')
-    Auth.logout({ state, update })
+    if (state.user)
+      await state.user.httpClient(`${lichessHost}/api/token`, {
+        method: 'DELETE',
+      })
+    localStorage.clear()
+    update({ user: undefined })
     window.localStorage.setItem('CREDENTIALS_FLUSH', Date.now().toString())
     window.localStorage.removeItem('CREDENTIALS_FLUSH')
   },

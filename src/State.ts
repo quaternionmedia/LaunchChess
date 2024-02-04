@@ -1,6 +1,6 @@
 import { Chess } from 'chess.js'
 import { Chessground } from 'chessground'
-import { HttpClient, OAuth2AuthCodePKCE } from '@bity/oauth2-auth-code-pkce'
+import { HttpClient } from '@bity/oauth2-auth-code-pkce'
 
 export interface State {
   page: string
@@ -24,6 +24,4 @@ export interface State {
     profile: Object
     httpClient: HttpClient
   }
-  oauth?: OAuth2AuthCodePKCE
-  auth?: {}
 }
