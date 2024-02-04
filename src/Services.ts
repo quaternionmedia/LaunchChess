@@ -1,5 +1,6 @@
 import { State } from './State'
 import { toDests } from './utils'
+import { Chess } from 'chess.js'
 
 export const DEFAULT_POSITION =
   'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
@@ -20,11 +21,12 @@ export const HistoryService = {
     let move = cell.state.chess.history({ verbose: true })[
       cell.state.historyIndex - 1
     ]
+    let position = new Chess(move ? move.after : DEFAULT_POSITION)
     window.ground?.set({
-      fen: move ? move.after : DEFAULT_POSITION,
+      fen: position.fen(),
       lastMove: move ? [move.from, move.to] : undefined,
       turnColor: move?.color == 'w' ? 'white' : 'black',
-      check: cell.state.chess.inCheck(),
+      check: position.inCheck(),
     })
     if (cell.state.historyIndex == cell.state.history.length) {
       // Back to current game state. Set movable color to current turn
