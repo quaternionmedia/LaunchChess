@@ -28,6 +28,7 @@ export const Board = cell =>
           highlight: {
             check: true,
           },
+          check: cell.state.chess.inCheck(),
           events: {
             move: (orig, dest) => {
               let state = cell.getState()

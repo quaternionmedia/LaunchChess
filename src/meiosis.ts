@@ -8,10 +8,12 @@ import '../node_modules/chessground/assets/chessground.brown.css'
 import '../node_modules/chessground/assets/chessground.cburnett.css'
 
 import '@fortawesome/fontawesome-free/css/all.css'
-import { notify } from 'alertifyjs'
+import alertify, { notify } from 'alertifyjs'
 import 'alertifyjs/build/css/alertify.css'
-
-
+import 'alertifyjs/build/css/themes/semantic.css'
+alertify.defaults.transition = 'zoom'
+// alertify.defaults.theme.ok = 'ui positive button'
+// alertify.defaults.theme.cancel = 'ui black button'
 export const Toolbar = ({ state, update }) =>
   m('#toolbar.component', {}, [
     m('', {}, state.page),
@@ -24,36 +26,35 @@ export const Toolbar = ({ state, update }) =>
     ),
   ])
 
-
-  export const History = cell =>
-    m(
-      'table.history',
-      {},
-      Array.from(
-        { length: Math.ceil(cell.state.history?.length / 2) },
-        (_, i) => i
-      ).map(index =>
-        m('tr', {}, [
-          m('td.move-number', {}, index + 1),
-          m(
-            'td.move',
-            {
-              class:
-                2 * index + 1 === cell.state.historyIndex ? 'highlight' : '',
-            },
-            cell.state.history[2 * index]
-          ),
-          m(
-            'td.move',
-            {
-              class:
-                2 * index + 2 === cell.state.historyIndex ? 'highlight' : '',
-            },
-            cell.state.history[2 * index + 1]
-          ),
-        ])
-      )
+export const History = cell =>
+  m(
+    'table.history',
+    {},
+    Array.from(
+      { length: Math.ceil(cell.state.history?.length / 2) },
+      (_, i) => i
+    ).map(index =>
+      m('tr', {}, [
+        m('td.move-number', {}, index + 1),
+        m(
+          'td.move',
+          {
+            class: 2 * index + 1 === cell.state.historyIndex ? 'highlight' : '',
+            onclick: () => cell.update({ historyIndex: 2 * index + 1 }),
+          },
+          cell.state.history[2 * index]
+        ),
+        m(
+          'td.move',
+          {
+            class: 2 * index + 2 === cell.state.historyIndex ? 'highlight' : '',
+            onclick: () => cell.update({ historyIndex: 2 * index + 2 }),
+          },
+          cell.state.history[2 * index + 1]
+        ),
+      ])
     )
+  )
 
 export const Menu = cell =>
   m('#toolbar.component', {}, [
