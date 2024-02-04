@@ -6,7 +6,7 @@ export const scopes = ['board:play']
 export const clientId = 'launchchess-client'
 export const clientUrl = `${location.protocol}//${location.host}${location.pathname}`
 
-const actions = {
+export const actions = {
   initAuth: async ({ state }) => {
     // if (localStorage.getItem('me')) {
     //   update({ user: JSON.parse(localStorage.getItem('me')) })
@@ -47,9 +47,6 @@ export const Login = cell =>
   m(
     'button',
     {
-      oninit: () => {
-        actions.initAuth(cell)
-      },
       onclick: () => actions.login(cell),
     },
     'Login with lichess'

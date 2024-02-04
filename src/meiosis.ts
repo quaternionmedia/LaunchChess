@@ -11,9 +11,12 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import alertify, { notify } from 'alertifyjs'
 import 'alertifyjs/build/css/alertify.css'
 import 'alertifyjs/build/css/themes/semantic.css'
+import { UserIcon } from './User.ts'
+
 alertify.defaults.transition = 'zoom'
 // alertify.defaults.theme.ok = 'ui positive button'
 // alertify.defaults.theme.cancel = 'ui black button'
+
 export const Toolbar = ({ state, update }) =>
   m('#toolbar.component', {}, [
     m('', {}, state.page),
@@ -31,13 +34,15 @@ export const Toolbar = ({ state, update }) =>
       },
       'Game'
     ),
-    m(
-      'button',
-      {
-        onclick: () => update({ page: 'Login' }),
-      },
-      'Login'
-    ),
+    state.user
+      ? UserIcon({ state, update })
+      : m(
+          'button',
+          {
+            onclick: () => update({ page: 'Login' }),
+          },
+          'Login'
+        ),
   ])
 
 export const History = cell =>

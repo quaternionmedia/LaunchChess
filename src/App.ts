@@ -5,6 +5,7 @@ import { Game } from './Game.ts'
 import { Toolbar } from './meiosis.ts'
 import { Login } from './Login.ts'
 import { HistoryService, PageService } from './Services'
+import { UserIcon, UserProfile } from './User.ts'
 import m from 'mithril'
 
 export const state: State = JSON.parse(
@@ -20,11 +21,13 @@ if (state) {
   state.history = chess.history({ verbose: true }).map(move => move.san)
   state.historyIndex = state.history.length
   state.orientation = state.orientation || 'white'
+  state.user = state.user || undefined
 }
 
 export const App: MeiosisViewComponent<State> = {
   initial: {
-    page: state?.page || 'Home',
+    // page: state?.page || 'Home',
+    page: 'Home',
     chess: chess,
     fen: state?.fen || chess.fen(),
     pgn: state?.pgn || chess.pgn(),
@@ -35,6 +38,8 @@ export const App: MeiosisViewComponent<State> = {
     isFENCollapsed: true,
     isPGNCollapsed: true,
     isInfoCollapsed: false,
+
+    user: state?.user || undefined,
   },
 
   services: [HistoryService, PageService],
@@ -44,5 +49,6 @@ export const App: MeiosisViewComponent<State> = {
     cell.state.page === 'Game' && Game(cell),
     cell.state.page === 'Home' && m('h1', 'Home'),
     cell.state.page === 'Login' && Login(cell),
+    cell.state.page === 'User' && cell.state.user && UserProfile(cell),
   ],
 }

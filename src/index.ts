@@ -3,8 +3,13 @@ import { App } from './App'
 import { State } from './State'
 import meiosisTracer from 'meiosis-tracer'
 import { meiosisSetup } from 'meiosis-setup'
-
+import { actions } from './Login.ts'
 const cells = meiosisSetup<State>({ app: App })
+
+// Initialize Auth
+actions.initAuth(cells())
+
+
 
 m.mount(document.getElementById('app'), {
   view: () => App.view(cells()),
