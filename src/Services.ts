@@ -58,5 +58,15 @@ export const PageService = {
   run: cell => {
     console.log('page', cell.state.page)
     m.route.set('/' + cell.state.page.toLowerCase())
+    switch (cell.state.page) {
+      case 'Logout':
+        localStorage.clear()
+        cell.update({ user: undefined, page: 'Home' })
+        break
+      case 'Login':
+        if (cell.state.user) {
+          cell.update({ page: 'User' })
+        }
+    }
   },
 }

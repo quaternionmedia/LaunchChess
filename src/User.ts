@@ -5,6 +5,7 @@ export const UserIcon = ({ state, update }) =>
   m(
     'span.profile-icon',
     {
+      class: state.page === 'User' ? 'active' : '',
       onclick: () => update({ page: 'User' }),
     },
     state.user.username[0].toUpperCase()
@@ -15,6 +16,6 @@ export const UserProfile = cell =>
     '.user-profile',
     {},
     m('h2', {}, cell.state.user.username),
+    m('button', { onclick: () => cell.update({ page: 'Logout' }) }, 'Logout'),
     m('pre', {}, JSON.stringify(cell.state.user.profile, null, 2))
-    // m('button', { onclick: () => cell.update({ page: 'Login' }) }, 'Logout')
   )
