@@ -26,9 +26,9 @@ export interface State {
   }
   // MIDI
   midi?: {
-    input?: WebMidi.MIDIInput
-    output?: WebMidi.MIDIOutput
-    inputs?: WebMidi.MIDIInput[]
-    outputs?: WebMidi.MIDIOutput[]
+    input?: string
+    output?: string
+    inputs?: string[]
+    outputs?: string[]
   }
 }

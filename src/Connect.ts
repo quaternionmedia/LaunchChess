@@ -5,6 +5,7 @@ function deviceNames(devices: Array<WebMidi.MIDIPort>) {
   return devices.map(device => device.name)
 }
 
+const re = /^Launchpad/
 export const ConnectActions = {
   init: ({ state, update }) => {
     try {
@@ -20,6 +21,10 @@ export const ConnectActions = {
               outputs: deviceNames(WebMidi.outputs),
             },
           })
+          if (e.port.type === 'output' && re.exec(e.port.name)) {
+            console.log('found launchpad', e.port.name)
+            update({ midi: { output: e.port.name } })
+          }
         })
 
         WebMidi.addListener('disconnected', e => {
@@ -30,21 +35,30 @@ export const ConnectActions = {
               outputs: deviceNames(WebMidi.outputs),
             },
           })
-          //   if (e.port.name == state.deviceName) {
-          //     console.log('active device disconnected!')
-          //     state.connected = false
-          //     m.redraw()
-          //   }
-          //   actions.reloadInputs()
         })
       }, true)
       window.onunload = e => {
         console.log('unloading')
-        actions.disconnect()
+        ConnectActions.disconnect({ state, update })
       }
     } catch (err) {
       console.log('error setting up WebMidi', err)
     }
+  },
+  connect: ({ state, update }) => {
+    console.log('connecting')
+  },
+  disconnect: ({ state, update }) => {
+    if (!state.input) return
+    console.log('disconnecting')
+    try {
+      update({ midi: { live: false } })
+    } catch (err) {
+      console.log('error disconnecting', err)
+    }
+    state.input.removeListener()
+    update({ midi: { input: undefined, output: undefined } })
+    WebMidi.disable()
   },
 }
 
@@ -55,3 +69,5 @@ export const ConnectionPage = cell => [
   m('h2', 'Outputs'),
   m('', {}, [WebMidi.outputs.map(output => m('', {}, output.name))]),
 ]
+
+window.midi = WebMidi

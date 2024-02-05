@@ -22,20 +22,29 @@ export const History = cell =>
   m(
     'table.history',
     {},
+    // Create a table row for each set of moves in the game.
+    // Each row contains the move number, and two moves: one for white and one for black.
+    // So we need to iterate over the history array in steps of 2.
     Array.from(
       { length: Math.ceil(cell.state.history?.length / 2) },
       (_, i) => i
     ).map(index =>
+      // Create a table row for each move pair.
       m('tr', {}, [
+        // Add move number
         m('td.move-number', {}, index + 1),
+        // Add White's move
         m(
           'td.move',
           {
+            // Highlight the move if it is the current move
             class: 2 * index + 1 === cell.state.historyIndex ? 'highlight' : '',
+            // When the move is clicked, update the historyIndex to the move number
             onclick: () => cell.update({ historyIndex: 2 * index + 1 }),
           },
           cell.state.history[2 * index]
         ),
+        // Add Black's move
         m(
           'td.move',
           {
@@ -48,17 +57,9 @@ export const History = cell =>
     )
   )
 
-export const Menu = cell =>
-  m('#toolbar.component', {}, [
-    m('', {}, cell.state.page),
-    m(
-      'button',
-      {
-        onclick: () => cell.update({ page: 'Login' }),
-      },
-      'Login'
-    ),
-  ])
+// Collapsable component
+// This component renders the `children` components in a collapsable frame with a dropdown toggle.
+// It includes a customizable header, dropdown toggle, and accepts class names for styling.
 export const Collapsible = {
   view: ({
     attrs: { title, isCollapsed, toggle, header, className },
@@ -74,6 +75,7 @@ export const Collapsible = {
     ]),
 }
 
+// Generica Copy button icon, which copies the child contents to the clipboard
 export const Copy = {
   view: ({ attrs: { content, name } }) => [
     m('i.fas.fa-copy', {
