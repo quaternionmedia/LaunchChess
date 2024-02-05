@@ -3,6 +3,7 @@ import { Chess } from 'chess.js'
 import { State } from './State'
 import { Game } from './Game.ts'
 import { Toolbar } from './Toolbar.ts'
+import { ConnectionPage } from './Connect.ts'
 import { Login } from './Login.ts'
 import { HistoryService, PageService } from './Services'
 import { UserProfile } from './User.ts'
@@ -45,8 +46,9 @@ export const App: MeiosisViewComponent<State> = {
 
   view: (cell: MeiosisCell<State>) => [
     Toolbar(cell),
-    cell.state.page === 'Game' && Game(cell),
     cell.state.page === 'Home' && m('h1', 'Home'),
+    cell.state.page === 'Connect' && ConnectionPage(cell),
+    cell.state.page === 'Game' && Game(cell),
     cell.state.page === 'Login' && Login(cell),
     cell.state.page === 'User' && cell.state.user && UserProfile(cell),
   ],

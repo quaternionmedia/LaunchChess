@@ -4,11 +4,14 @@ import { State } from './State'
 import meiosisTracer from 'meiosis-tracer'
 import { meiosisSetup } from 'meiosis-setup'
 import { actions } from './Login.ts'
+import { ConnectActions } from './Connect.ts'
 const cells = meiosisSetup<State>({ app: App })
 
 // Initialize Auth
 actions.initAuth(cells())
 
+// Initialize MIDI
+ConnectActions.init(cells())
 
 
 m.mount(document.getElementById('app'), {

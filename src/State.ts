@@ -24,4 +24,11 @@ export interface State {
     profile: Object
     httpClient: HttpClient
   }
+  // MIDI
+  midi?: {
+    input?: WebMidi.MIDIInput
+    output?: WebMidi.MIDIOutput
+    inputs?: WebMidi.MIDIInput[]
+    outputs?: WebMidi.MIDIOutput[]
+  }
 }

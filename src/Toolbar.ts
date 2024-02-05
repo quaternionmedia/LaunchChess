@@ -15,6 +15,14 @@ export const Toolbar = ({ state, update }) =>
     m(
       '',
       {
+        class: state.page === 'Connect' ? 'active' : '',
+        onclick: () => update({ page: 'Connect' }),
+      },
+      'Connect'
+    ),
+    m(
+      '',
+      {
         class: state.page === 'Game' ? 'active' : '',
         onclick: () => update({ page: 'Game' }),
       },
