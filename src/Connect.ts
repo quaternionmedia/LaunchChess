@@ -82,12 +82,19 @@ export const ConnectActions = {
         state.header = header
         for (const key in HEADERS) {
           if (equals(header, HEADERS[key])) {
-            console.log('this is a ', key)
-            state.deviceType = key
-            Object.assign(actions, Launchpads[key](state, actions))
-            Object.assign(onlineActions, Launchpads[key](state, actions))
-            device.removeListener('sysex')
-            actions.toggleLive(true)
+            let launchpads = state.midi?.launchpads || new Set()
+            launchpads.add(key)
+            console.log('this is a ', key, launchpads)
+
+            update({
+              midi: {
+                launchpads: { name: device.name, type: Array.from(launchpads) },
+              },
+            })
+            // Object.assign(actions, Launchpads[key](state, actions))
+            // Object.assign(onlineActions, Launchpads[key](state, actions))
+            // device.removeListener('sysex')
+            // actions.toggleLive(true)
           }
         }
       }

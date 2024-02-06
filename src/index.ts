@@ -5,6 +5,8 @@ import meiosisTracer from 'meiosis-tracer'
 import { meiosisSetup } from 'meiosis-setup'
 import { actions } from './Login.ts'
 import { ConnectActions } from './Connect.ts'
+
+// Initialize Meiosis
 const cells = meiosisSetup<State>({ app: App })
 
 // Initialize Auth

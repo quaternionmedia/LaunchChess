@@ -30,5 +30,6 @@ export interface State {
     output?: string
     inputs?: string[]
     outputs?: string[]
+    launchpads?: Set<string>
   }
 }
