@@ -1,17 +1,11 @@
 import m from 'mithril'
-import { HttpClient, OAuth2AuthCodePKCE } from '@bity/oauth2-auth-code-pkce';
-import { readStream } from './ndJsonStream';
+import { User } from './State'
+import { HttpClient, OAuth2AuthCodePKCE } from '@bity/oauth2-auth-code-pkce'
+import { readStream } from './ndJsonStream'
 export const lichessHost = 'https://lichess.org'
 export const scopes = ['board:play']
 export const clientId = 'launchchess-client'
 export const clientUrl = `${location.protocol}//${location.host}${location.pathname}`
-
-export interface Me {
-  id: string
-  username: string
-  httpClient: HttpClient // with pre-set Authorization header
-  profile: Object
-}
 
 export const oauth = new OAuth2AuthCodePKCE({
   authorizationUrl: `${lichessHost}/oauth`,
@@ -32,7 +26,7 @@ export const Auth = {
     const res = await httpClient(`${lichessHost}/api/account`)
     if (res.error) throw res.error
     const profile = await res.json()
-    const me: Me = {
+    const me: User = {
       id: profile.id,
       username: profile.username,
       profile,

@@ -2,6 +2,21 @@ import { Chess } from 'chess.js'
 import { Chessground } from 'chessground'
 import { HttpClient } from '@bity/oauth2-auth-code-pkce'
 
+
+export interface User {
+  id: string
+  username: string
+  httpClient: HttpClient // with pre-set Authorization header
+  profile: Object
+}
+
+export interface Launchpad {
+  name: string
+  input: string
+  output: string
+  type: string
+}
+
 export interface State {
   page: string
 
@@ -19,17 +34,14 @@ export interface State {
   isInfoCollapsed: boolean
 
   // User
-  user?: {
-    username: string
-    profile: Object
-    httpClient: HttpClient
-  }
+  user?: User
+
   // MIDI
   midi?: {
     input?: string
     output?: string
     inputs?: string[]
     outputs?: string[]
-    launchpads?: Set<string>
+    launchpads?: { [id: string]: Launchpad }
   }
 }

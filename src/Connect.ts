@@ -1,6 +1,8 @@
 import m from 'mithril'
 import { WebMidi } from 'webmidi'
 import { NOVATION, HEADERS } from './config.ts'
+import { Launchpad } from './State.ts'
+import { NAMES } from './Launchpad'
 
 function deviceNames(devices: Array<WebMidi.MIDIPort>) {
   return devices.map(device => device.name)
@@ -11,31 +13,39 @@ const equals = (a, b) => a.length === b.length && a.every((v, i) => v === b[i])
 
 export const ConnectActions = {
   init: ({ state, update }) => {
-    try {
-      console.log('init webmidi')
-      WebMidi.enable(function (err) {
+    console.log('init webmidi')
+    WebMidi.enable({ sysex: true })
+      .then(() => {
         console.log(WebMidi.inputs)
         console.log(WebMidi.outputs)
         ConnectActions.updateMidiDevices({ state, update })
 
         WebMidi.addListener('connected', e => {
-          ConnectActions.updateMidiDevices({ state, update }, e)
+          ConnectActions.updateMidiDevices({ state, update })
+          for (let input of WebMidi.inputs) {
+            ConnectActions.detectDevice({ state, update }, input)
+          }
         })
         WebMidi.addListener('disconnected', e => {
           console.log('device disconnected', e)
-          ConnectActions.updateMidiDevices({ state, update }, e)
+          ConnectActions.updateMidiDevices({ state, update })
+          if (state.midi?.input?.id === e.port.id) {
+            // ConnectActions.disconnect({ state, update })
+          }
+          if (state.midi?.output?.id === e.port.id) {
+            // ConnectActions.disconnect({ state, update })
+          }
+          if (state.midi?.launchpads[e.port.id]) {
+            update({ midi: { launchpads: { [e.port.id]: undefined } } })
+          }
         })
         for (let input of WebMidi.inputs) {
           ConnectActions.detectDevice({ state, update }, input)
         }
-      }, true)
-      window.onunload = e => {
-        console.log('unloading')
-        ConnectActions.disconnect({ state, update })
-      }
-    } catch (err) {
-      console.log('error setting up WebMidi', err)
-    }
+      })
+      .catch(err => {
+        console.log('error setting up WebMidi', err)
+      })
   },
   connect: ({ state, update }) => {
     console.log('connecting')
@@ -82,13 +92,17 @@ export const ConnectActions = {
         state.header = header
         for (const key in HEADERS) {
           if (equals(header, HEADERS[key])) {
-            let launchpads = state.midi?.launchpads || new Set()
-            launchpads.add(key)
+            let launchpads = state.midi?.launchpads || {}
+            launchpads[device.id] = {
+              name: key,
+              input: device.name,
+              output: device.name.replace(' Out', ' In'),
+            }
             console.log('this is a ', key, launchpads)
 
             update({
               midi: {
-                launchpads: { name: device.name, type: Array.from(launchpads) },
+                launchpads,
               },
             })
             // Object.assign(actions, Launchpads[key](state, actions))
@@ -100,7 +114,7 @@ export const ConnectActions = {
       }
     })
     let output = WebMidi.getOutputByName(device.name.replace(' Out', ''))
-    output.sendSysex([126, 127, 6], [1])
+    output?.sendSysex([126, 127, 6], [1])
     // const input = WebMidi.getInputByName(name)
     // const output = WebMidi.getOutputByName(name)
     // if (input && output) {
@@ -110,12 +124,27 @@ export const ConnectActions = {
   },
 }
 
-export const ConnectionPage = cell => [
+export const LaunchpadButton = ({ state, actions }, launchpad: Launchpad) =>
+  m('button.launchpad', {}, launchpad.name)
+
+export const ConnectionPage = ({ state }) => [
   m('h1', 'Connect your Launchpad'),
-  m('h2', 'Inputs'),
-  m('', {}, [WebMidi.inputs.map(input => m('', {}, input.name))]),
-  m('h2', 'Outputs'),
-  m('', {}, [WebMidi.outputs.map(output => m('', {}, output.name))]),
+  state.midi?.launchpads &&
+    Object.keys(state.midi?.launchpads).map(id =>
+      m('button', {}, state.midi.launchpads[id].name)
+    ),
+  // ? [
+  //     m('h2', 'Launchpads'),
+  //     m('', {}, [
+  //       Object.keys(state.midi.launchpads).map(input =>
+  //         m('', {}, state.midi.launchpads[input])
+  //       ),
+  //     ]),
+  //   ]
+  // : [
+  //     m('h2', 'No Launchpads found'),
+  //     m('p', 'Connect your Launchpad to get started'),
+  //   ],
 ]
 
 window.midi = WebMidi
