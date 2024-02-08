@@ -1,0 +1,23 @@
+#toolbar {
+    position: relative;
+    height: 60px;
+    background-color: #606060;
+    padding: 10px; /* Adjust padding as needed */
+    align-items: center;
+  }
+
+.toolbar-flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+#toolbar div {
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+}
+
+#toolbar .active {
+    background-color: #333;
+    cursor: pointer;
+}

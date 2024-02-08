@@ -9,6 +9,7 @@ import { toDests } from './utils'
 import { NOTE_ON, CONTROL_CHANGE, COLORS } from './Launchpad'
 import lichess_logo from './svg/lichess-logo.svg'
 import lichess_logo_white from './svg/lichess-logo-white.svg'
+import { MoveList, Fen } from './MoveList'
 
 export const GamesActions = (state, actions) => ({
   getGames: async () => {
@@ -183,7 +184,7 @@ export const Game = (state, actions) =>
 
 export const GamePage = (state, actions) => ({
   view: vnode =>
-    m('.gamePage', {}, [Toolbar(state, actions), Game(state, actions)]),
+    m('.gamePage', {}, [Toolbar(state, actions), Game(state, actions), MoveList(state), Fen(state)]),
 })
 
 export const Player = (state) => m('.me', {}, state.user.username)

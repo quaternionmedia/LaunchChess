@@ -45,7 +45,10 @@ export const State = () => ({
   grid: true, // show / hide grid
   pieces: true, // show / hide pieces
   influence: false, // showInfluence mode
-  history: Stream(1), // number of plys of history to show
+  history: Stream([]), // history of moves
+  viewHistory: Stream(1), // number of plys of history to show
+  fen: Stream(''), // fen of current position
+  pgn: Stream(''), // pgn of current position
   animationDuration: 400,
   animations: [],
   colors: COLORS,
@@ -53,11 +56,11 @@ export const State = () => ({
 
 export const Actions = (state, actions) => ({
   incrementHistory: () => {
-    state.history(state.history() + 1)
+    state.viewHistory(state.viewHistory() + 1)
     actions.lightBoard()
   },
   decrementHistory: () => {
-    state.history(Math.max(0, state.history() - 1))
+    state.viewHistory(Math.max(0, state.viewHistory() - 1))
     actions.lightBoard()
   },
   send: (type, message) => {
@@ -96,6 +99,7 @@ export const OnlineActions = (state, actions) => ({
     state.chess.move(move)
     console.log('moved', move, piece, state.chess.ascii())
     state.ground.set({ fen: state.chess.fen() })
+    // state.history(state.history().push(move))
 
     actions.lightBoard(true)
     m.redraw()

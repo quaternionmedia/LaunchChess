@@ -3,9 +3,9 @@
     "version": "0.1.1",
     "description": "Chess on a Launchpad",
     "scripts": {
-        "build": "parcel build --no-cache --dist-dir dist src/index.html src/*.svg",
-        "ci": "parcel build --no-cache --dist-dir build src/index.html src/*.svg",
-        "dev": "parcel --no-cache --dist-dir dist src/index.html src/*.svg"
+        "build": "vite build",
+        "ci": "vite build",
+        "dev": "vite"
     },
     "browserslist": [
         "defaults"
@@ -18,21 +18,25 @@
     "license": "MIT",
     "dependencies": {
         "@bity/oauth2-auth-code-pkce": "^2.13.0",
+        "@fortawesome/fontawesome-free": "^6.5.1",
         "alertifyjs": "^1.13.1",
         "can-ndjson-stream": "^1.0.2",
         "chess.js": "^1.0.0-beta.6",
-        "chessground": "^9.0.2",
+        "chessground": "^9.0.4",
         "construct-ui": "^0.3.3",
         "javascript-astar": "^0.4.1",
-        "jwt-decode": "^3.1.2",
+        "jwt-decode": "^4.0.0",
         "material-design-icons-iconfont": "^6.1.0",
+        "meiosis": "^2.0.0",
+        "meiosis-setup": "^6.2.3",
+        "meiosis-tracer": "^6.0.1",
         "mithril": "^2.2.2",
         "webmidi": "^3.0.25"
     },
     "devDependencies": {
         "@babel/cli": "^7.12.10",
         "@babel/preset-env": "^7.12.11",
-        "parcel": "^2.11.0",
-        "process": "^0.11.10"
+        "process": "^0.11.10",
+        "vite": "^5.0.12"
     }
 }
